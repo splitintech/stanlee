@@ -9,7 +9,7 @@ waived or converted into unsupported upstream limitations.
 | Step 0 | Approved plan and project context persisted before code work | Complete |
 | Step 1 | Public Stanlee and Pencil2D fork; upstream baseline pinned; unchanged Mac build and 768 assertions/58 native tests pass; Python dependencies locked; identity/settings separated | Remote platform/Qt matrix; reproducible packaged applications |
 | Step 2 | 124 main-window actions; 2,159 discovered UI/API entries; drift checker | Semantic review, full mappings, dialog/tool controls, per-capability acceptance |
-| Step 3 | Optional runtime activation; private authenticated POSIX IPC; bounded framing; GUI-thread dispatch; native signal revisions; polling events; visible disconnect | Windows ACL/named pipes; stale crash-discovery cleanup; full observation coverage |
+| Step 3 | Optional runtime activation; private authenticated POSIX IPC; bounded framing; GUI-thread dispatch; native signal revisions; polling events; visible disconnect | Windows ACL/named-pipe runtime qualification; stale crash-discovery cleanup; full observation coverage |
 | Step 4 | New/open/save, handles, native snapshots, optional snapshot-only FPS override; source path/dirty/undo/assets tests | Old-format save, safe close, full checkpoints/recovery and malformed/missing-asset matrix |
 | Step 5 | Native bitmap stroke pipeline and history undo/redo; layer creation/select; keyframes; FPS; tool/color/view selection | Pressure/modifiers, full vector semantics, all layer/timeline edits and undo, bounded atomic batches/rollback |
 | Step 6 | Automated Mac subset of reference workflow and native PNG export | Entire alpha workflow, human-edit acceptance and native video/audio fixtures |
@@ -30,8 +30,8 @@ The native shared registry currently advertises 19 implemented development
 operations; it deliberately excludes pending operations. Contracts document that
 layer creation and FPS edits lack undo. The coverage register is mechanically
 complete only for its stated scan patterns, semantically incomplete, and is not
-a declaration of full Pencil2D coverage. Windows bridge activation and transport
-fail explicitly until ACL/pipe qualification is implemented. Source builds on
+a declaration of full Pencil2D coverage. Windows discovery ACL checks and deadline-bounded named-pipe transport are
+implemented; their runtime qualification is pending CI. Invalid ACLs fail closed. Source builds on
 other platforms do not establish native bridge runtime acceptance.
 
 MCP tools share the command service with CLI. Native frame previews use the

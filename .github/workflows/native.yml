@@ -53,6 +53,9 @@ jobs:
           cache: true
       - uses: ilammy/msvc-dev-cmd@v1
         if: runner.os == 'Windows'
+      - name: Windows media validator
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg --yes --no-progress
       - name: Unchanged upstream build and tests, then bridge build and tests
         shell: bash
         env:
@@ -82,8 +85,8 @@ jobs:
           assert expected == json.load(open('src/stanlee/operations.json'))
           assert expected == json.load(open('native-bridge/app/data/automation-operations.json'))
           PY
-      - name: Native MCP integration on POSIX
-        if: runner.os != 'Windows' && matrix.qt == '6.5.3'
+      - name: Native MCP integration
+        if: matrix.qt == '6.5.3'
         shell: bash
         env:
           QT_QPA_PLATFORM: minimal
@@ -92,6 +95,8 @@ jobs:
           python -m pip install --no-deps -e .
           if [ "$RUNNER_OS" = macOS ]; then
             export STANLEE_TEST_APP="$GITHUB_WORKSPACE/native-bridge/build/app/Pencil2D-Stanlee.app/Contents/MacOS/pencil2d-stanlee"
+          elif [ "$RUNNER_OS" = Windows ]; then
+            export STANLEE_TEST_APP=$(find "$GITHUB_WORKSPACE/native-bridge/build/app" -name pencil2d-stanlee.exe -type f | head -1)
           else
             export STANLEE_TEST_APP="$GITHUB_WORKSPACE/native-bridge/build/app/pencil2d-stanlee"
           fi

@@ -17,6 +17,7 @@ from stanlee.errors import StanleeError
 from stanlee.server import create_server
 from stanlee.service import Service
 from stanlee.export import ExportOptions, export_saved
+from stanlee.workspace import private_directory
 
 pytestmark = pytest.mark.skipif(not os.environ.get("STANLEE_TEST_APP"), reason="Requires a built native Pencil2D–Stanlee executable")
 
@@ -26,7 +27,7 @@ def native():
     with tempfile.TemporaryDirectory(prefix="st-", dir="/private/tmp" if os.sys.platform == "darwin" else None) as folder:
         root = Path(folder)
         sessions = root/"sessions"
-        sessions.mkdir(mode=0o700)
+        private_directory(sessions)
         environment = os.environ.copy()
         environment.update(QT_QPA_PLATFORM="minimal", STANLEE_AUTOMATION="1", STANLEE_DISCOVERY_DIR=str(sessions),
                            STANLEE_WORKSPACES=str(root), STANLEE_SETTINGS_DIR=str(root/"settings"))

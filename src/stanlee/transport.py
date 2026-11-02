@@ -55,17 +55,24 @@ class Bridge:
         body = json.dumps(payload, allow_nan=False, separators=(",", ":")).encode()
         if len(body) > MAX_MESSAGE:
             raise StanleeError("message_too_large", "IPC request exceeds limit")
-        # Named-pipe qualification remains separate from the POSIX socket path.
-        if os.name == "nt":
-            raise StanleeError("platform_unqualified", "Windows pipe transport is not qualified yet")
         endpoint = Path(self.record["endpoint"])
-        if endpoint.parent != self.directory:
+        if os.name != "nt" and endpoint.parent != self.directory:
             raise TransportError("Socket endpoint must share the private discovery directory")
-        check_private(endpoint.parent, directory=True)
+        if os.name != "nt":
+            check_private(endpoint.parent, directory=True)
         try:
-            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+            if os.name == "nt":
+                from .windows import Pipe
+                connection = Pipe(self.record["endpoint"], self.timeout)
+            else:
+                connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
                 connection.settimeout(self.timeout)
-                connection.connect(str(endpoint))
+                try:
+                    connection.connect(str(endpoint))
+                except Exception:
+                    connection.close()
+                    raise
+            with connection:
                 connection.sendall(struct.pack(">I", len(body)) + body)
                 length = struct.unpack(">I", self._read(connection, 4))[0]
                 if not 0 < length <= MAX_MESSAGE:
