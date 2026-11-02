@@ -7,6 +7,8 @@ import pytest
 from stanlee.errors import StanleeError
 from stanlee.registry import OPERATIONS, validate
 from stanlee.workspace import Workspace, check_private
+from stanlee.service import Service
+import sys
 
 
 def test_registry_matches_packaged_contract():
@@ -47,3 +49,10 @@ def test_workspace_rejects_traversal_and_symlinks(tmp_path):
 def test_unknown_operation_is_explicitly_unsupported():
     with pytest.raises(StanleeError, match="unsupported_capability"):
         validate("QObject.invoke", {})
+
+
+def test_live_launch_rejects_an_executable_without_bridge_identity(tmp_path):
+    service = Service([str(tmp_path)], tmp_path/"sessions", executable=sys.executable)
+    with pytest.raises(StanleeError, match="unsupported_capability"):
+        service.launch()
+    assert service.children == []

@@ -13,8 +13,14 @@
       "build": "passed",
       "tests": "58 test cases; 768 assertions"
     },
-    "windows_x64": "unqualified",
-    "linux_x64": "unqualified"
+    "windows_x64": {
+      "build": "passed in Qt 5.15.2 and 6.5.3 CI",
+      "run": "https://github.com/splitintech/stanlee/actions/runs/41447495951"
+    },
+    "linux_x64": {
+      "build": "passed in Qt 5.15.2 and 6.5.3 CI",
+      "run": "https://github.com/splitintech/stanlee/actions/runs/41447495951"
+    }
   },
   "fork_branch": "stanlee/issue-fixes-1332-1942-1964",
   "bridge_base_revision": "540c16d2dba4abe9d43732aca6d17966035970f8",

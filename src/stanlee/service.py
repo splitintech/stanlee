@@ -57,6 +57,14 @@ class Service:
         environment.update(STANLEE_AUTOMATION="1", STANLEE_DISCOVERY_DIR=str(self.directory),
                            STANLEE_WORKSPACES=os.pathsep.join(map(str, self.workspace.roots)),
                            STANLEE_SETTINGS_DIR=str(profile))
+        probe_environment = {**environment, "QT_QPA_PLATFORM": "offscreen", "QT_STYLE_OVERRIDE": "Fusion"}
+        try:
+            probe = subprocess.run([str(self.executable), "--version"], env=probe_environment,
+                                   stdin=subprocess.DEVNULL, capture_output=True, timeout=10)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise StanleeError("application_probe_failed", "Could not inspect the configured native executable") from error
+        if probe.returncode or not probe.stdout.strip().startswith(b"Pencil2D-Stanlee "):
+            raise StanleeError("unsupported_capability", "Live launch requires a bridge-enabled Pencil2D–Stanlee build; stock Pencil2D is CLI-only")
         child = subprocess.Popen([str(self.executable)], env=environment, stdin=subprocess.DEVNULL,
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.children.append(child)

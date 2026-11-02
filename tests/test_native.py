@@ -207,3 +207,33 @@ def test_native_vector_stroke_uses_palette_and_native_undo(native):
     assert service.command(session, "frame.preview", {})["data"] == empty
     mutate(service, session, "history.redo", {})
     assert service.command(session, "frame.preview", {})["data"] == drawn
+
+
+def test_launches_a_separate_bridge_profile(native, monkeypatch):
+    service, session, root = native
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    monkeypatch.setenv("QT_STYLE_OVERRIDE", "Fusion")
+    launcher = Service([str(root)], service.directory, executable=os.environ["STANLEE_TEST_APP"])
+    launched = launcher.launch()
+    process = launcher.children[0]
+    try:
+        for _ in range(200):
+            if process.poll() is not None:
+                pytest.fail("Launched bridge process exited")
+            if len(launcher.sessions()) == 2:
+                break
+            time.sleep(.05)
+        assert len(launcher.sessions()) == 2
+        original = next(item for item in service.sessions() if item["session_id"] == session)
+        assert launched["pid"] != original["pid"]
+        attached = next(item["session_id"] for item in launcher.sessions() if item["pid"] == launched["pid"])
+        mutate(launcher, attached, "project.fps", {"fps": 18})
+        assert launcher.inspect(attached)["fps"] == 18
+        assert service.inspect(session)["fps"] == 12
+    finally:
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=5)

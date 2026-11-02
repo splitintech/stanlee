@@ -1,4 +1,5 @@
 import sys
+import subprocess
 import threading
 from pathlib import Path
 
@@ -35,6 +36,37 @@ def test_jobs_report_missing_inputs_as_failure_and_persist(tmp_path):
     assert result["state"] == "failed"
     reloaded = Jobs(service, jobs.directory)
     assert reloaded.get(job["job_id"])["state"] == "failed"
+
+
+def test_persistent_jobs_do_not_expand_workspace_grants(tmp_path):
+    first, second = tmp_path/"first", tmp_path/"second"
+    first.mkdir()
+    second.mkdir()
+    original = Service([str(first)], tmp_path/"sessions", executable=sys.executable)
+    job = original.jobs.submit(ExportOptions(str(first/"missing.pclx"), [str(first/"out.png")]))
+    original.jobs.threads[job["job_id"]].join(timeout=5)
+    restricted = Service([str(second)], tmp_path/"sessions", executable=sys.executable)
+    assert restricted.jobs.list() == []
+    with pytest.raises(StanleeError, match="workspace_denied"):
+        restricted.jobs.get(job["job_id"])
+    broader = Service([str(tmp_path)], tmp_path/"sessions", executable=sys.executable)
+    assert broader.jobs.get(job["job_id"])["state"] == "failed"
+
+
+def test_restart_reports_work_owned_by_an_exited_service_as_interrupted(tmp_path):
+    code = """
+import sys
+from pathlib import Path
+from stanlee.service import Service
+root = Path(sys.argv[1])
+service = Service([str(root)], root/'sessions')
+service.jobs._write('interruption-fixture', 'running', {'request': 'persisted before exit'})
+"""
+    subprocess.run([sys.executable, "-c", code, str(tmp_path)], check=True, timeout=10)
+    restarted = Service([str(tmp_path)], tmp_path/"sessions")
+    result = restarted.jobs.get("interruption-fixture")
+    assert result["state"] == "interrupted"
+    assert result["detail"] == {"request": "persisted before exit"}
 
 
 @pytest.mark.parametrize("cancel", [False, True])

@@ -2,15 +2,47 @@
 import json
 import os
 import socket
+import stat
 import struct
 import uuid
 from pathlib import Path
 
 from .errors import StanleeError, TransportError
 from .workspace import check_private
+from .processes import process_alive
 
 PROTOCOL_VERSION = 1
 MAX_MESSAGE = 4 * 1024 * 1024
+
+
+def _record(path: Path) -> dict:
+    check_private(path)
+    if path.stat().st_size > 16384:
+        raise ValueError("Oversized discovery record")
+    item = json.loads(path.read_text())
+    if (not isinstance(item, dict) or type(item.get("protocol_version")) is not int
+            or item["protocol_version"] != PROTOCOL_VERSION or not isinstance(item.get("session_id"), str)):
+        raise ValueError("Unsupported discovery record")
+    identity = str(uuid.UUID(item["session_id"]))
+    if identity != path.stem or type(item.get("pid")) is not int or not 0 < item["pid"] <= 0xFFFFFFFF:
+        raise ValueError("Invalid session identity")
+    if not isinstance(item.get("endpoint"), str) or not isinstance(item.get("token"), str):
+        raise ValueError("Invalid discovery endpoint or token")
+    return item
+
+
+def _remove_stale(path: Path, item: dict) -> None:
+    # Never follow an endpoint supplied by the record. Only this session's
+    # actual Unix socket may be removed; regular files and symlinks survive.
+    endpoint = path.with_suffix(".sock")
+    if os.name != "nt" and item["endpoint"] == str(endpoint):
+        try:
+            info = endpoint.lstat()
+            if stat.S_ISSOCK(info.st_mode) and info.st_uid == os.getuid():
+                endpoint.unlink()
+        except FileNotFoundError:
+            pass
+    path.unlink(missing_ok=True)
 
 
 def discovery(directory: Path) -> list[dict]:
@@ -19,14 +51,13 @@ def discovery(directory: Path) -> list[dict]:
     check_private(directory, directory=True)
     found = []
     for path in sorted(directory.glob("*.json")):
-        check_private(path)
         try:
-            if path.stat().st_size > 16384:
+            item = _record(path)
+            if process_alive(item["pid"]) is False:
+                _remove_stale(path, item)
                 continue
-            item = json.loads(path.read_text())
-            if item.get("protocol_version") == PROTOCOL_VERSION:
-                found.append({k: v for k, v in item.items() if k != "token"})
-        except (OSError, ValueError):
+            found.append({key: item[key] for key in ("protocol_version", "session_id", "endpoint", "pid")})
+        except (OSError, ValueError, KeyError, TypeError):
             continue
     return found
 
@@ -34,10 +65,10 @@ def discovery(directory: Path) -> list[dict]:
 class Bridge:
     def __init__(self, record: Path, *, timeout: float = 15):
         check_private(record.parent, directory=True)
-        check_private(record)
-        if record.stat().st_size > 16384:
-            raise TransportError("Oversized discovery record")
-        self.record = json.loads(record.read_text())
+        try:
+            self.record = _record(record)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            raise TransportError("Invalid native discovery record") from exc
         self.directory = record.parent.resolve()
         if self.record.get("protocol_version") != PROTOCOL_VERSION:
             raise StanleeError("protocol_mismatch", "Unsupported native bridge version")

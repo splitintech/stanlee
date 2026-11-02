@@ -12,6 +12,7 @@ from pathlib import Path
 from .errors import StanleeError
 from .export import ExportOptions, export_saved
 from .workspace import private_directory
+from .processes import process_alive
 
 
 class Jobs:
@@ -24,19 +25,14 @@ class Jobs:
         self.cancellations = {}
         self.threads = {}
         with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
             connection.execute("CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, state TEXT NOT NULL, owner INTEGER, updated REAL, detail TEXT)")
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(jobs)")}
+            if "roots" not in columns:
+                connection.execute("ALTER TABLE jobs ADD COLUMN roots TEXT NOT NULL DEFAULT '[]'")
             for job_id, owner in connection.execute("SELECT id, owner FROM jobs WHERE state IN ('queued','running')"):
-                if os.name == "nt":
-                    # os.kill(pid, 0) is not a portable Windows liveness probe.
-                    # Keep recovery explicitly unqualified instead of signalling
-                    # a process which this service does not own.
-                    continue
-                try:
-                    os.kill(owner, 0)
-                except ProcessLookupError:
+                if process_alive(owner) is False:
                     connection.execute("UPDATE jobs SET state='interrupted', updated=? WHERE id=?", (time.time(), job_id))
-                except PermissionError:
-                    pass
         if os.name != "nt":
             self.database.chmod(0o600)
 
@@ -51,8 +47,8 @@ class Jobs:
 
     def _write(self, job_id, state, detail):
         with self.lock, self._connection() as connection:
-            connection.execute("INSERT INTO jobs VALUES (?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state, updated=excluded.updated, detail=excluded.detail",
-                               (job_id, state, os.getpid(), time.time(), json.dumps(detail)))
+            connection.execute("INSERT INTO jobs (id,state,owner,updated,detail,roots) VALUES (?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state, updated=excluded.updated, detail=excluded.detail",
+                               (job_id, state, os.getpid(), time.time(), json.dumps(detail), json.dumps(list(map(str, self.service.workspace.roots)))))
 
     def submit(self, options: ExportOptions) -> dict:
         options.validate()
@@ -85,15 +81,31 @@ class Jobs:
 
     def get(self, job_id) -> dict:
         with self.lock, self._connection() as connection:
-            row = connection.execute("SELECT id,state,updated,detail FROM jobs WHERE id=?", (job_id,)).fetchone()
+            row = connection.execute("SELECT id,state,updated,detail,roots FROM jobs WHERE id=?", (job_id,)).fetchone()
         if row is None:
             raise StanleeError("invalid_job", "Unknown job ID")
+        return self._decode(row)
+
+    def _decode(self, row) -> dict:
+        roots = json.loads(row[4])
+        if not roots:
+            raise StanleeError("workspace_denied", "Legacy job has no recorded workspace authorization")
+        for root in roots:
+            self.service.workspace.path(root)
         return {"job_id": row[0], "state": row[1], "updated": row[2], "detail": json.loads(row[3])}
 
     def list(self) -> list[dict]:
+        visible = []
         with self.lock, self._connection() as connection:
-            ids = [row[0] for row in connection.execute("SELECT id FROM jobs ORDER BY updated DESC LIMIT 100")]
-        return [self.get(job_id) for job_id in ids]
+            for row in connection.execute("SELECT id,state,updated,detail,roots FROM jobs ORDER BY updated DESC"):
+                try:
+                    visible.append(self._decode(row))
+                except StanleeError as error:
+                    if error.code != "workspace_denied":
+                        raise
+                if len(visible) >= 100:
+                    break
+        return visible
 
     def cancel(self, job_id) -> dict:
         result = self.get(job_id)
