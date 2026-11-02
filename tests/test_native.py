@@ -60,6 +60,55 @@ def mutate(service, session, operation, arguments):
     return service.command(session, operation, arguments, state["revision"], state["document_id"])
 
 
+def test_checkpoint_recovery_preserves_source_and_failure_preserves_active_document(native):
+    service, session, root = native
+    mutate(service, session, "tool.select", {"type": 7})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": 0}, {"x": 20, "y": 0}]})
+    source = root/"original.pclx"
+    mutate(service, session, "document.save", {"path": str(source)})
+    source_bytes = source.read_bytes()
+    mutate(service, session, "project.fps", {"fps": 24})
+    checkpoint = root/"checkpoint.pclx"
+    before = service.inspect(session)
+    result = mutate(service, session, "document.checkpoint", {"path": str(checkpoint)})
+    after = service.inspect(session)
+    assert after["event_sequence"] == before["event_sequence"] + 1
+    assert {key: value for key, value in after.items() if key != "event_sequence"} == {
+        key: value for key, value in before.items() if key != "event_sequence"}
+    assert result["source_path"] == str(source)
+    assert result["source_dirty"] is True
+    mutate(service, session, "project.fps", {"fps": 18})
+    corrupt = root/"corrupt.pclx"
+    corrupt.write_bytes(b"not a native archive")
+    before_failure = service.inspect(session)
+    with pytest.raises(StanleeError, match="invalid_document"):
+        mutate(service, session, "document.recover", {"path": str(corrupt), "discard": True})
+    assert service.inspect(session) == before_failure
+    with pytest.raises(StanleeError, match="discard_required"):
+        mutate(service, session, "document.recover", {"path": str(checkpoint)})
+    result = mutate(service, session, "document.recover", {"path": str(checkpoint), "source_path": str(source), "discard": True})
+    assert result["document_id"] != before_failure["document_id"]
+    assert result["fps"] == 24 and result["path"] == str(source) and result["dirty"]
+    assert source.read_bytes() == source_bytes
+    with pytest.raises(StanleeError, match="invalid_document"):
+        service.command(session, "project.fps", {"fps": 30}, result["revision"], before_failure["document_id"])
+
+
+def test_revocation_returns_its_response_then_removes_discovery(native):
+    service, session, root = native
+    bridge = service._bridge(session)
+    result = mutate(service, session, "session.disconnect", {})
+    assert result["state"] == "disconnected"
+    for _ in range(100):
+        if not service.sessions():
+            break
+        time.sleep(.02)
+    assert service.sessions() == []
+    assert not (service.directory/(session+".json")).exists()
+    with pytest.raises(StanleeError):
+        bridge.call("document.inspect")
+
+
 def test_native_authentication_revision_and_workspace_boundaries(native):
     service, session, root = native
     assert "token" not in service.sessions()[0]
