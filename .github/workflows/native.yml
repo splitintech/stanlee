@@ -64,6 +64,9 @@ jobs:
       - name: Windows media validator
         if: runner.os == 'Windows'
         run: choco install ffmpeg --yes --no-progress
+      - name: macOS media validator
+        if: runner.os == 'macOS' && matrix.qt == '6.5.3'
+        run: brew install ffmpeg
       - name: Unchanged upstream build and tests, then bridge build and tests
         if: runner.os != 'Windows'
         shell: bash
@@ -118,6 +121,10 @@ jobs:
           assert expected == json.load(open('src/stanlee/operations.json'))
           assert expected == json.load(open('native-bridge/app/data/automation-operations.json'))
           PY
+      - uses: actions/setup-python@v6
+        if: matrix.qt == '6.5.3'
+        with:
+          python-version: '3.12'
       - name: Native MCP integration
         if: matrix.qt == '6.5.3'
         shell: bash

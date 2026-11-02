@@ -25,7 +25,7 @@ pytestmark = pytest.mark.skipif(not os.environ.get("STANLEE_TEST_APP"), reason="
 @pytest.fixture
 def native():
     with tempfile.TemporaryDirectory(prefix="st-", dir="/private/tmp" if os.sys.platform == "darwin" else None) as folder:
-        root = Path(folder)
+        root = Path(folder).resolve()
         sessions = root/"sessions"
         private_directory(sessions)
         environment = os.environ.copy()
@@ -84,6 +84,20 @@ def test_native_authentication_revision_and_workspace_boundaries(native):
     with pytest.raises(StanleeError, match="invalid_arguments"):
         service._bridge(session).call("project.fps", {"fps": 24, "unknown": 1},
                                      expected_revision=current["revision"], document_id=current["document_id"])
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+        short_path = ctypes.WinDLL("kernel32", use_last_error=True).GetShortPathNameW
+        short_path.argtypes = [wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD]
+        short_path.restype = wintypes.DWORD
+        buffer = ctypes.create_unicode_buffer(32768)
+        count = short_path(str(root), buffer, len(buffer))
+        if 0 < count < len(buffer):
+            alias = str(Path(buffer.value)/"short-path-snapshot.pclx")
+            current = service.inspect(session)
+            service._bridge(session).call("document.snapshot", {"path": alias},
+                expected_revision=current["revision"], document_id=current["document_id"])
+            assert (root/"short-path-snapshot.pclx").is_file()
 
 
 def test_native_drawing_save_reopen_and_undo(native):
@@ -120,13 +134,22 @@ def test_native_drawing_save_reopen_and_undo(native):
     mutate(service, session, "document.save", {"path": str(path)})
     assert path.read_bytes().startswith(b"PK")
     assert not service.inspect(session)["dirty"]
+    original_bytes = path.read_bytes()
+    alias = root/"original-hardlink.pclx"
+    try:
+        os.link(path, alias)
+    except OSError:
+        alias = path
+    with pytest.raises(StanleeError, match="invalid_path"):
+        mutate(service, session, "document.snapshot", {"path": str(alias), "overwrite": True})
+    assert path.read_bytes() == original_bytes
     old = service.inspect(session)
     mutate(service, session, "document.new", {"discard": True})
     mutate(service, session, "document.open", {"path": str(path), "discard": True})
     state = service.inspect(session)
     assert state["fps"] == 24
     assert state["document_id"] != old["document_id"]
-    assert state["path"] == str(path)
+    assert Path(state["path"]).resolve() == path.resolve()
     assert service.command(session, "frame.preview", {"frame": 1})["data"] == painted["data"]
     result = export_saved(Path(os.environ["STANLEE_TEST_APP"]), service.workspace,
                          ExportOptions(str(path), [str(root/"animation.png")], width=320, height=240, start=1, end="3", transparency=True))
