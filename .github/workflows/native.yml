@@ -1,0 +1,98 @@
+name: Native baseline and bridge
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, qt: '5.15.2', arch: gcc_64, modules: ''}
+          - {os: ubuntu-latest, qt: '6.5.3', arch: gcc_64, modules: 'qtmultimedia'}
+          - {os: macos-15-intel, qt: '5.15.2', arch: clang_64, modules: ''}
+          - {os: macos-14, qt: '6.5.3', arch: clang_64, modules: 'qtmultimedia'}
+          - {os: windows-2022, qt: '5.15.2', arch: win64_msvc2019_64, modules: ''}
+          - {os: windows-2022, qt: '6.5.3', arch: win64_msvc2019_64, modules: 'qtmultimedia'}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Read immutable native revisions
+        id: revisions
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          manifest = json.load(open('build-manifest.json'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('base=' + manifest['upstream_revision'] + '\n')
+              output.write('fork=' + manifest['fork_revision'] + '\n')
+          PY
+      - uses: actions/checkout@v7
+        with:
+          repository: splitintech/pencil
+          ref: ${{ steps.revisions.outputs.base }}
+          path: native-baseline
+      - uses: actions/checkout@v7
+        with:
+          repository: splitintech/pencil
+          ref: ${{ steps.revisions.outputs.fork }}
+          path: native-bridge
+      - name: Linux dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libegl1 libxkbcommon-x11-0 libxcb-cursor0 libpulse0 ffmpeg
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ matrix.qt }}
+          arch: ${{ matrix.arch }}
+          modules: ${{ matrix.modules }}
+          cache: true
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+      - name: Unchanged upstream build and tests, then bridge build and tests
+        shell: bash
+        env:
+          QT_QPA_PLATFORM: minimal
+        run: |
+          for tree in native-baseline native-bridge; do
+            mkdir "$tree/build"
+            if [ "$tree" = native-bridge ]; then bridge=1; else bridge=0; fi
+            (cd "$tree" && qmake -o build CONFIG-=debug_and_release CONFIG+=release STANLEE_AUTOMATION="$bridge")
+            if [ "$RUNNER_OS" = Windows ]; then
+              (cd "$tree/build" && nmake)
+              testbin=$(find "$tree/build/tests" -name tests.exe -type f | head -1)
+            else
+              make -C "$tree/build" -j4
+              testbin="$tree/build/tests/tests"
+            fi
+            test -n "$testbin"
+            "$testbin"
+          done
+      - name: Check upstream capability drift and shared registry
+        shell: bash
+        run: |
+          python scripts/inventory.py native-baseline --check
+          python - <<'PY'
+          import json
+          expected = json.load(open('contracts/operations.json'))
+          assert expected == json.load(open('src/stanlee/operations.json'))
+          assert expected == json.load(open('native-bridge/app/data/automation-operations.json'))
+          PY
+      - name: Native MCP integration on POSIX
+        if: runner.os != 'Windows' && matrix.qt == '6.5.3'
+        shell: bash
+        env:
+          QT_QPA_PLATFORM: minimal
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install --no-deps -e .
+          if [ "$RUNNER_OS" = macOS ]; then
+            export STANLEE_TEST_APP="$GITHUB_WORKSPACE/native-bridge/build/app/Pencil2D-Stanlee.app/Contents/MacOS/pencil2d-stanlee"
+          else
+            export STANLEE_TEST_APP="$GITHUB_WORKSPACE/native-bridge/build/app/pencil2d-stanlee"
+          fi
+          python -m pytest

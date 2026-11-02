@@ -3,7 +3,7 @@
   "upstream_repository": "https://github.com/pencil2d/pencil",
   "upstream_revision": "408563a37068daf7f1b4c6a9291daef039be8cb5",
   "fork_repository": "https://github.com/splitintech/pencil",
-  "fork_revision": "408563a37068daf7f1b4c6a9291daef039be8cb5",
+  "fork_revision": "c229b0ad16723a6bb03346ea0ce5844f932d1920",
   "bridge_protocol": 1,
   "mcp_sdk": "2.3.0",
   "python_development": "3.12.15",
@@ -15,5 +15,6 @@
     },
     "windows_x64": "unqualified",
     "linux_x64": "unqualified"
-  }
+  },
+  "fork_branch": "stanlee/automation-bridge"
 }

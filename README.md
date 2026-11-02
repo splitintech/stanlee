@@ -18,11 +18,16 @@ Python 3.11+ is required; development uses Python 3.12 and official MCP SDK 2.3.
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock
 .venv/bin/python -m pip install --no-deps -e .
-stanlee --help
+.venv/bin/stanlee --help
 ```
 
 Pencil2D source and application changes live in
 [splitintech/pencil](https://github.com/splitintech/pencil). Builds start from
 upstream revision `408563a37068daf7f1b4c6a9291daef039be8cb5`.
+
+The development command set supports authenticated sessions, native inspection,
+layers, keyframes, strokes, undo/redo, previews, save/reopen, independent snapshots
+and validated saved/snapshot export jobs. Full editor coverage is unfinished.
+See [current status](docs/STATUS.md) and [setup](docs/SETUP.md).
 
 GPL-2.0-only. See [LICENSE](LICENSE) and [dependency notices](NOTICE).
