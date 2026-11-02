@@ -75,7 +75,7 @@ def test_checkpoint_recovery_preserves_source_and_failure_preserves_active_docum
     assert after["event_sequence"] == before["event_sequence"] + 1
     assert {key: value for key, value in after.items() if key != "event_sequence"} == {
         key: value for key, value in before.items() if key != "event_sequence"}
-    assert result["source_path"] == str(source)
+    assert Path(result["source_path"]) == source
     assert result["source_dirty"] is True
     mutate(service, session, "project.fps", {"fps": 18})
     corrupt = root/"corrupt.pclx"
@@ -88,7 +88,7 @@ def test_checkpoint_recovery_preserves_source_and_failure_preserves_active_docum
         mutate(service, session, "document.recover", {"path": str(checkpoint)})
     result = mutate(service, session, "document.recover", {"path": str(checkpoint), "source_path": str(source), "discard": True})
     assert result["document_id"] != before_failure["document_id"]
-    assert result["fps"] == 24 and result["path"] == str(source) and result["dirty"]
+    assert result["fps"] == 24 and Path(result["path"]) == source and result["dirty"]
     assert source.read_bytes() == source_bytes
     with pytest.raises(StanleeError, match="invalid_document"):
         service.command(session, "project.fps", {"fps": 30}, result["revision"], before_failure["document_id"])
