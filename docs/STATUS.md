@@ -9,8 +9,8 @@ waived or converted into unsupported upstream limitations.
 | Step 0 | Approved plan and project context persisted before code work | Complete |
 | Step 1 | Public repositories; unchanged pinned upstream passes local Mac tests and the three-platform Qt 5/6 CI matrix; locked Python dependencies; per-process native settings isolation | Reproducible distributed application packages |
 | Step 2 | 124 main-window actions; 2,159 discovered UI/API entries; drift checker | Semantic review, full mappings, dialog/tool controls, per-capability acceptance |
-| Step 3 | Optional activation; private authenticated Unix sockets/Windows named pipes; bounded framing; GUI-thread dispatch; native revisions/events; visible and API revocation; stale-process discovery cleanup | Final-revision platform qualification; full observation coverage |
-| Step 4 | New/open/save, immutable checkpoints/snapshots, explicit recovery, snapshot-only FPS override; source preservation and corrupt recovery tests | Old-format save, safe close and full recovery and file-format matrix |
+| Step 3 | Optional activation; private authenticated Unix sockets/Windows named pipes; bounded framing; GUI-thread dispatch; native revisions/events; visible and API revocation; stale-process discovery cleanup | Full observation coverage |
+| Step 4 | New/open/save, immutable checkpoints/snapshots, explicit recovery, snapshot-only FPS override; source preservation and corrupt recovery tests | Old-format save, safe close and the full recovery/file-format matrix |
 | Step 5 | Native pressure/modifier stroke pipeline, dynamic tool properties and history undo/redo; layer creation/select; keyframes; FPS; tool/color/view selection | Full vector semantics, all layer/timeline edits and undo, bounded atomic batches/rollback |
 | Step 6 | Automated Mac subset of reference workflow and native PNG export | Entire alpha workflow, human-edit acceptance and native video/audio fixtures |
 | Step 7 | Independent issue fixes submitted upstream with attribution and tests; links in NATIVE_FIXES.md | Complete alpha before the separate automation-bridge proposal/design engagement |
@@ -31,8 +31,8 @@ operations; it deliberately excludes pending operations. Contracts document that
 layer creation and FPS edits lack undo. The coverage register is mechanically
 complete only for its stated scan patterns, semantically incomplete, and is not
 a declaration of full Pencil2D coverage. Windows discovery ACL checks and deadline-bounded named-pipe transport are
-implemented and passed the earlier native matrix. The prior complete matrix covers profiles, checkpoints/recovery and revocation.
-The final asset-integrity change requires its own matrix result.
+implemented and passed the complete native matrix, including profiles,
+checkpoints/recovery, revocation and independent snapshot assets.
 Invalid ACLs fail closed. Source builds alone do not establish runtime acceptance.
 
 Snapshots load bitmap backing files into the copy, reject missing/corrupt data,
@@ -62,9 +62,11 @@ acceptance is claimed.
 
 Source `ecf70ac` passed the complete [Python/packaging matrix](https://github.com/splitintech/stanlee/actions/runs/41458637568)
 and [native Qt/platform matrix](https://github.com/splitintech/stanlee/actions/runs/41458637297).
-The subsequent snapshot asset-integrity pin `da97b1f` is tracked separately in
+The subsequent snapshot asset-integrity pin `da97b1f` also passed all six
 [Python/packaging](https://github.com/splitintech/stanlee/actions/runs/41460361462)
-and [native qualification](https://github.com/splitintech/stanlee/actions/runs/41460361576).
+and all six [native configurations](https://github.com/splitintech/stanlee/actions/runs/41460361576).
+Later documentation and source-archive metadata changes do not change that
+qualified runtime/native code.
 An installed-wheel test independently completed SDK stdio → native pressure stroke
 and preview → isolated FPS snapshot → decoded 320×240 transparent PNG export.
 
