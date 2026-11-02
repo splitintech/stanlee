@@ -25,6 +25,12 @@ Pencil2D source and application changes live in
 [splitintech/pencil](https://github.com/splitintech/pencil). Builds start from
 upstream revision `408563a37068daf7f1b4c6a9291daef039be8cb5`.
 
+The pinned native build includes fixes for stroke frame ownership (#1332),
+hidden-layer edits (#1942), and download verification (#1964). Review the
+[bundled patches](patches/pencil2d/README.md) and
+[project context](docs/PROJECT_CONTEXT.md) for source revisions, upstream requests,
+and validation limits.
+
 The development command set supports authenticated sessions, native inspection,
 layers, keyframes, strokes, undo/redo, previews, save/reopen, independent snapshots
 and validated saved/snapshot export jobs. Full editor coverage is unfinished.

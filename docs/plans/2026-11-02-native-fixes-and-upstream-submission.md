@@ -1,0 +1,8 @@
+# Integrate Pencil2D fixes into Stanlee and request upstream merges
+
+- The user now authorizes publishing the fixes and submitting upstream merge requests, superseding the earlier working-alpha outreach timing for issues #1332, #1942 and #1964.
+- Read current Stanlee and Pencil2D branch state, contribution rules, issue discussions, PR templates and overlapping PR #1989. Preserve unrelated working changes with isolated checkouts and exact commit/file scope.
+- Integrate the three tested native fix branches with the current bridge-enabled Pencil2D revision, resolve overlaps, and qualify native editor/bridge behavior. Pin the resulting native revision in Stanlee so normal builds include the fixes. Include reviewable patch artifacts and a sanitized project-specific context/validation record in the public Stanlee repository; never publish the private company snapshot.
+- Validate patch reproducibility, native regressions, Stanlee unit/integration tests and build/workflow references. Publish the resulting native and Stanlee changes and read back remote refs.
+- Submit focused upstream pull requests through splitintech using Pencil2D conventions. Preserve the existing hidden-layer contributor's authorship, disclose overlap with #1989, and request review through the existing PR where a duplicate would violate project guidance. Do not claim maintainer merge acceptance or close upstream issues ourselves.
+- Record exact commits, repository links, contribution-rule evidence, test results and any remaining platform/release limits in company-context/notes/live and the public project context.

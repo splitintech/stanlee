@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "upstream_repository": "https://github.com/pencil2d/pencil",
+  "upstream_revision": "408563a37068daf7f1b4c6a9291daef039be8cb5",
+  "fixes_revision": "7c0cdc1974c1a9725b32c0e77125818e5d84c106",
+  "fixed_tree": "95ad978ed4fcd735b118c389afb90a1738e39b2c",
+  "patch": "patches/pencil2d/fixes.patch",
+  "sha256": "1eab17987c5cd26f00bea2b9015d6dca2a69e0dfc5f8bfefaadc8bcef692fdf0",
+  "issues": [
+    {
+      "number": 1332,
+      "branch": "fix/stroke-frame-1332",
+      "revision": "08fef9ec4e1b38db7e8d2d79ce5baaf0e9770066",
+      "upstream_pr": "https://github.com/pencil2d/pencil/pull/2038"
+    },
+    {
+      "number": 1942,
+      "branch": "fix/hidden-layers-1942",
+      "revision": "98a8d5734d9ce73355660708c5c9415e93f49bd7",
+      "upstream_pr": "https://github.com/pencil2d/pencil/pull/1989#issuecomment-6577811329",
+      "related_pr": "https://github.com/pencil2d/pencil/pull/1989",
+      "original_author": "Jouvens-Corantin",
+      "original_revision": "80605afe21d1317024c7a17c2a5292a05a3683c4"
+    },
+    {
+      "number": 1964,
+      "branch": "fix/download-verification-1964",
+      "revision": "87e75cba538609c1d00a6ad946730d36e8af139e",
+      "upstream_pr": "https://github.com/pencil2d/pencil/pull/2039",
+      "submission_branch": "contribute/download-verification-1964",
+      "submission_revision": "c496f359066d0e24c94feb1e4c6b01cd3f367807"
+    }
+  ]
+}

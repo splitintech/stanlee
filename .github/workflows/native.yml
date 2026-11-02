@@ -50,6 +50,9 @@ jobs:
           repository: splitintech/pencil
           ref: ${{ steps.revisions.outputs.fork }}
           path: native-bridge
+          fetch-depth: 0
+      - name: Verify bundled fixes and native ancestry
+        run: python scripts/verify_native_fixes.py --native native-bridge
       - name: Linux dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libegl1 libxkbcommon-x11-0 libxcb-cursor0 libpulse0 ffmpeg

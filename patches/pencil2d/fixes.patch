@@ -1,0 +1,1537 @@
+diff --git a/.github/actions/install-dependencies/action.yml b/.github/actions/install-dependencies/action.yml
+index 03df547f2accddb9773dfc5e7ea373a2e8f4737d..3ca147b8f51753a7d1cf1adf77d999b67039a6d2 100644
+--- a/.github/actions/install-dependencies/action.yml
++++ b/.github/actions/install-dependencies/action.yml
+@@ -1,4 +1,5 @@
+ name: Install dependencies
++description: Install compiler, Qt, and packaging dependencies for the target platform
+ inputs:
+   arch:
+     description: Architecture
+diff --git a/.github/actions/setup-environment/action.yml b/.github/actions/setup-environment/action.yml
+index c4617c5490490b43ea062503ab5c3d36276f5f9e..1f092e0dee0bad97d0068068c8ebf5b6784bc21e 100644
+--- a/.github/actions/setup-environment/action.yml
++++ b/.github/actions/setup-environment/action.yml
+@@ -1,4 +1,5 @@
+ name: Set up environment
++description: Configure the platform build environment and application version
+ inputs:
+   arch:
+     description: Architecture
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 962a75cb6eaaac302c30851ddf55be53f74578c3..32a1db453ebed6fa584e9ad35f2c62e2aaa48067 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -16,6 +16,19 @@ on:
+       - '**.ps1'
+   workflow_dispatch:
+ jobs:
++  verification-tests:
++    name: Download verification / ${{ matrix.os }}
++    runs-on: ${{ matrix.os }}
++    strategy:
++      matrix:
++        os: [ubuntu-latest, macos-latest, windows-latest]
++    steps:
++      - uses: actions/checkout@v7
++      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
++        with:
++          python-version: '3.12'
++      - run: python -m unittest discover -s util/tests -v
++
+   build:
+     strategy:
+       fail-fast: false
+@@ -101,8 +114,9 @@ jobs:
+       - name: Build Pencil2D
+         run: ${{runner.os != 'Windows' && '${BUILD_CMD} make -C build' || 'cd build; nmake'}}
+ 
++      # Use portable widget rendering and clipboard support on headless runners.
+       - name: Run tests
+-        run: ${{runner.os == 'Linux' && '${BUILD_CMD}' || ''}} env QT_QPA_PLATFORM=minimal build/tests/tests
++        run: ${{runner.os == 'Linux' && '${BUILD_CMD}' || ''}} env QT_QPA_PLATFORM=offscreen QT_STYLE_OVERRIDE=Fusion build/tests/tests
+ 
+       - name: Create package
+         id: package
+@@ -155,6 +169,23 @@ jobs:
+             echo "package3=${files[2]}" >> $GITHUB_OUTPUT
+           fi
+ 
++      # Hash the final bytes, including any signing/notarization above.
++      - name: Set up Python for download verification
++        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
++        with:
++          python-version: '3.12'
++      - name: Create package checksums
++        shell: bash
++        env:
++          PACKAGE1: ${{ steps.resolve.outputs.package1 }}
++          PACKAGE2: ${{ steps.resolve.outputs.package2 }}
++          PACKAGE3: ${{ steps.resolve.outputs.package3 }}
++        run: |
++          packages=("$PACKAGE1")
++          if [ -n "$PACKAGE2" ]; then packages+=("$PACKAGE2"); fi
++          if [ -n "$PACKAGE3" ]; then packages+=("$PACKAGE3"); fi
++          python util/download_verification.py create "${packages[@]}"
++
+       - name: Upload package one
+         uses: actions/upload-artifact@v7
+         with:
+@@ -172,6 +203,26 @@ jobs:
+         with:
+           path: ${{steps.resolve.outputs.package3}}
+           archive: false
++      - name: Upload checksum one
++        uses: actions/upload-artifact@v7
++        with:
++          path: ${{ steps.resolve.outputs.package1 }}.sha256
++          archive: false
++          if-no-files-found: error
++      - name: Upload checksum two
++        if: steps.resolve.outputs.package2
++        uses: actions/upload-artifact@v7
++        with:
++          path: ${{ steps.resolve.outputs.package2 }}.sha256
++          archive: false
++          if-no-files-found: error
++      - name: Upload checksum three
++        if: steps.resolve.outputs.package3
++        uses: actions/upload-artifact@v7
++        with:
++          path: ${{ steps.resolve.outputs.package3 }}.sha256
++          archive: false
++          if-no-files-found: error
+       - name: Generate summary
+         shell: bash
+         run: >
+@@ -182,3 +233,47 @@ jobs:
+       - name: Stop container (Linux)
+         if: runner.os == 'Linux'
+         run: docker stop "ci_${{github.sha}}"
++
++  provenance:
++    name: Authenticate final downloads
++    needs: [build, verification-tests]
++    # Never grant OIDC credentials to pull-request builds. The build jobs above
++    # stay read-only; this job only downloads and attests completed artifacts.
++    if: >-
++      github.event_name != 'pull_request' &&
++      (github.ref == 'refs/heads/master' ||
++       startsWith(github.ref, 'refs/heads/release/') ||
++       startsWith(github.ref, 'refs/tags/'))
++    runs-on: ubuntu-latest
++    permissions:
++      contents: read
++      actions: read
++      id-token: write
++      attestations: write
++    steps:
++      - uses: actions/checkout@v7
++      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
++        with:
++          python-version: '3.12'
++      - name: Download final packages and checksum sidecars
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
++        with:
++          path: verification
++          merge-multiple: true
++      - name: Check downloaded package integrity
++        run: python util/download_verification.py verify verification/*.sha256
++      - name: Attest final packages and checksum sidecars
++        id: provenance
++        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
++        with:
++          subject-path: verification/*
++      - name: Name the portable attestation bundle
++        env:
++          BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
++        run: cp "$BUNDLE" pencil2d-provenance.sigstore.json
++      - name: Upload portable attestation bundle
++        uses: actions/upload-artifact@v7
++        with:
++          path: pencil2d-provenance.sigstore.json
++          archive: false
++          if-no-files-found: error
+diff --git a/.gitignore b/.gitignore
+index b166f49b4798fcdf1b8e7434dbaa1a123fb6e193..94b010e8fef107ad4584c5e07813ec03e496e0de 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -90,3 +90,6 @@ CMakeCache.txt
+ compile_commands.json
+ cmake-build-*/
+ 
++
++# Python download verification utilities
++__pycache__/
+diff --git a/README.md b/README.md
+index f25674a7364bfcd30a0a3c92ba46c3c39ba770bd..d9faea0ed10334054173cb16432433cfc22f6a88 100644
+--- a/README.md
++++ b/README.md
+@@ -18,6 +18,8 @@ _User Showcase Reel 2022_
+ 
+ Download Pencil2D from the [Official Website][p2d-download] or [Github releases][gh-release].
+ 
++See [download verification](docs/download-verification.md) for checksum and build provenance checks on builds that publish them.
++
+ [p2d-download]: https://www.pencil2d.org/download/
+ [gh-release]: https://github.com/pencil2d/pencil/releases
+ 
+diff --git a/app/src/actioncommands.cpp b/app/src/actioncommands.cpp
+index 4d2e762db659abe65204701e1b143494967233cc..c76f90531dd5808e9bef3aabeb4586c0d544a1e0 100644
+--- a/app/src/actioncommands.cpp
++++ b/app/src/actioncommands.cpp
+@@ -696,6 +696,7 @@ Status ActionCommands::addNewKey()
+ 
+ void ActionCommands::exposeSelectedFrames(int offset)
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     Layer* currentLayer = mEditor->layers()->currentLayer();
+ 
+     bool hasSelectedFrames = currentLayer->hasAnySelectedFrames();
+@@ -732,6 +733,7 @@ void ActionCommands::subtractExposureFromSelectedFrames()
+ 
+ Status ActionCommands::insertKeyFrameAtCurrentPosition()
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return Status::SAFE; }
+     Layer* currentLayer = mEditor->layers()->currentLayer();
+     int currentPosition = mEditor->currentFrame();
+ 
+@@ -741,6 +743,7 @@ Status ActionCommands::insertKeyFrameAtCurrentPosition()
+ 
+ void ActionCommands::removeSelectedFrames()
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     Layer* currentLayer = mEditor->layers()->currentLayer();
+ 
+     if (!currentLayer->hasAnySelectedFrames()) { return; }
+@@ -764,6 +767,7 @@ void ActionCommands::removeSelectedFrames()
+ 
+ void ActionCommands::reverseSelectedFrames()
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     Layer* currentLayer = mEditor->layers()->currentLayer();
+ 
+     if (!currentLayer->reverseOrderOfSelection()) {
+@@ -806,11 +810,7 @@ void ActionCommands::duplicateKey()
+ {
+     Layer* layer = mEditor->layers()->currentLayer();
+     if (layer == nullptr) return;
+-    if (!layer->visible())
+-    {
+-        mEditor->getScribbleArea()->showLayerNotVisibleWarning();
+-        return;
+-    }
++    if (!mEditor->canEditLayer(layer)) { return; }
+ 
+     KeyFrame* key = layer->getKeyFrameAt(mEditor->currentFrame());
+     if (key == nullptr) return;
+@@ -844,12 +844,13 @@ void ActionCommands::duplicateKey()
+ void ActionCommands::moveFrameForward()
+ {
+     Layer* layer = mEditor->layers()->currentLayer();
+-    if (layer)
++    if (layer == nullptr) { return; }
++
++    if (!mEditor->canEditLayer(layer)) { return; }
++
++    if (layer->moveKeyFrame(mEditor->currentFrame(), 1))
+     {
+-        if (layer->moveKeyFrame(mEditor->currentFrame(), 1))
+-        {
+-            mEditor->scrubForward();
+-        }
++        mEditor->scrubForward();
+     }
+     mEditor->layers()->notifyAnimationLengthChanged();
+     emit mEditor->framesModified();
+@@ -858,12 +859,13 @@ void ActionCommands::moveFrameForward()
+ void ActionCommands::moveFrameBackward()
+ {
+     Layer* layer = mEditor->layers()->currentLayer();
+-    if (layer)
++    if (layer == nullptr) { return; }
++
++    if (!mEditor->canEditLayer(layer)) { return; }
++
++    if (layer->moveKeyFrame(mEditor->currentFrame(), -1))
+     {
+-        if (layer->moveKeyFrame(mEditor->currentFrame(), -1))
+-        {
+-            mEditor->scrubBackward();
+-        }
++        mEditor->scrubBackward();
+     }
+     emit mEditor->framesModified();
+ }
+diff --git a/app/src/timelinecells.cpp b/app/src/timelinecells.cpp
+index 8cb57985fa5eaa61c52e8aba491b8e3e1f9950f3..1330389b89bbe1bf04feab3d4e116f072f550dd7 100644
+--- a/app/src/timelinecells.cpp
++++ b/app/src/timelinecells.cpp
+@@ -892,6 +892,13 @@ void TimeLineCells::mousePressEvent(QMouseEvent* event)
+                     }
+ 
+                     Layer *currentLayer = mEditor->object()->getLayer(layerNumber);
++                    if (!mEditor->canEditLayer(currentLayer))
++                    {
++                        mCanMoveFrame = false;
++                        mCanBoxSelect = false;
++                        mClickSelecting = true;
++                        break;
++                    }
+ 
+                     // Check if we are using the alt key
+                     if (event->modifiers() == Qt::AltModifier)
+@@ -1021,6 +1028,8 @@ void TimeLineCells::mouseMoveEvent(QMouseEvent* event)
+                     {
+                         Layer *currentLayer = mEditor->object()->getLayer(mStartLayerNumber);
+ 
++                        if (!currentLayer->visible()) { return; }
++
+                         // Check if the frame we clicked was selected
+                         if (mCanMoveFrame) {
+ 
+@@ -1061,7 +1070,7 @@ void TimeLineCells::mouseReleaseEvent(QMouseEvent* event)
+         Layer* currentLayer = mEditor->layers()->getLayer(mCurrentLayerNumber);
+         Q_ASSERT(currentLayer);
+ 
+-        if (mMovingFrames)
++        if (mMovingFrames && mEditor->canEditLayer(currentLayer))
+         {
+             int posUnderCursor = getFrameNumber(mMousePressX);
+             int offset = frameNumber - posUnderCursor;
+@@ -1079,7 +1088,7 @@ void TimeLineCells::mouseReleaseEvent(QMouseEvent* event)
+             emit mEditor->framesModified();
+             updateContent();
+         }
+-        else if (!mTimeLine->scrubbing && !mMovingFrames && !mClickSelecting && !mBoxSelecting)
++        else if (currentLayer->visible() && !mTimeLine->scrubbing && !mMovingFrames && !mClickSelecting && !mBoxSelecting)
+         {
+             // De-selecting if we didn't move, scrub nor select anything
+             bool multipleSelection = (event->modifiers() == Qt::ControlModifier);
+@@ -1144,7 +1153,10 @@ void TimeLineCells::mouseDoubleClickEvent(QMouseEvent* event)
+ 
+             // The release event will toggle the frame on again, so we make sure it gets
+             // deselected now instead.
+-            layer->setFrameSelected(frameNumber, true);
++            if (mEditor->canEditLayer(layer))
++            {
++                layer->setFrameSelected(frameNumber, true);
++            }
+         }
+         else if (mType == TIMELINE_CELL_TYPE::Layers && event->pos().x() >= 15)
+         {
+diff --git a/core_lib/src/interface/editor.cpp b/core_lib/src/interface/editor.cpp
+index b04503e4f07fd5199f766013af6d16ddafe14c8d..00529ddc232bcc86eaa7ea6efc2dd77fef54bb39 100644
+--- a/core_lib/src/interface/editor.cpp
++++ b/core_lib/src/interface/editor.cpp
+@@ -48,6 +48,7 @@ GNU General Public License for more details.
+ #include "undoredomanager.h"
+ 
+ #include "scribblearea.h"
++#include "pointerevent.h"
+ 
+ Editor::Editor(QObject* parent) : QObject(parent)
+ {
+@@ -160,7 +161,14 @@ void Editor::onCurrentLayerWillChange(int index)
+     Q_UNUSED(index)
+ 
+     if (select() && select()->somethingSelected()) {
+-        static_cast<MoveTool*>(tools()->getTool(MOVE))->applyTransformationAndDeselect();
++        if (canEditLayer(layers()->currentLayer(), false))
++        {
++            static_cast<MoveTool*>(tools()->getTool(MOVE))->applyTransformationAndDeselect();
++        }
++        else
++        {
++            deselectAll();
++        }
+     }
+ }
+ 
+@@ -205,6 +213,7 @@ void Editor::copy()
+ 
+ void Editor::copyAndCut()
+ {
++    if (!canEditLayer(layers()->currentLayer())) { return; }
+     copy();
+ 
+     Layer* currentLayer = layers()->currentLayer();
+@@ -227,6 +236,7 @@ void Editor::copyAndCut()
+ void Editor::pasteFromPreviousFrame()
+ {
+     Layer* currentLayer = layers()->currentLayer();
++    if (!canEditLayer(currentLayer)) { return; }
+     int prevFrame = currentLayer->getPreviousKeyFramePosition(mFrame);
+     if (!currentLayer->keyExists(mFrame) || prevFrame == mFrame)
+     {
+@@ -257,6 +267,7 @@ void Editor::pasteFromPreviousFrame()
+ 
+ void Editor::pasteToCanvas(BitmapImage* bitmapImage, int frameNumber)
+ {
++    if (!canEditLayer(layers()->currentLayer())) { return; }
+     Layer* currentLayer = layers()->currentLayer();
+ 
+     Q_ASSERT(currentLayer->type() == Layer::BITMAP);
+@@ -287,6 +298,7 @@ void Editor::pasteToCanvas(BitmapImage* bitmapImage, int frameNumber)
+ 
+ void Editor::pasteToCanvas(VectorImage* vectorImage, int frameNumber)
+ {
++    if (!canEditLayer(layers()->currentLayer())) { return; }
+     Layer* currentLayer = layers()->currentLayer();
+ 
+     Q_ASSERT(currentLayer->type() == Layer::VECTOR);
+@@ -301,6 +313,7 @@ void Editor::pasteToCanvas(VectorImage* vectorImage, int frameNumber)
+ 
+ void Editor::pasteToFrames()
+ {
++    if (!canEditLayer(layers()->currentLayer())) { return; }
+     auto clipboardFrames = clipboards()->getClipboardFrames();
+     Q_ASSERT(!clipboardFrames.empty());
+     Layer* currentLayer = layers()->currentLayer();
+@@ -342,6 +355,7 @@ void Editor::pasteToFrames()
+ void Editor::paste()
+ {
+     Layer* currentLayer = layers()->currentLayer();
++    if (!canEditLayer(currentLayer)) { return; }
+ 
+     Q_ASSERT(currentLayer != nullptr);
+ 
+@@ -370,6 +384,7 @@ void Editor::paste()
+ 
+ void Editor::flipSelection(bool flipVertical)
+ {
++    if (!canEditLayer(layers()->currentLayer())) { return; }
+     if (flipVertical) {
+         backup(tr("Flip selection vertically"));
+     } else {
+@@ -380,6 +395,7 @@ void Editor::flipSelection(bool flipVertical)
+ 
+ void Editor::repositionImage(QPoint transform, int frame)
+ {
++    if (!canEditLayer(layers()->currentLayer())) { return; }
+     if (layers()->currentLayer()->type() == Layer::BITMAP)
+     {
+         scrubTo(frame);
+@@ -796,6 +812,9 @@ void Editor::selectAll() const
+     Layer* layer = layers()->currentLayer();
+ 
+     QRectF rect;
++
++    if (!canEditLayer(layer)) { return; }
++
+     if (layer->type() == Layer::BITMAP)
+     {
+         // Selects the drawn area (bigger or smaller than the screen). It may be more accurate to select all this way
+@@ -857,8 +876,21 @@ void Editor::setCurrentLayerIndex(int i)
+ 
+ void Editor::scrubTo(int frame)
+ {
++    frame = qMax(1, frame);
++    std::unique_ptr<PointerEvent> stroke;
++    if (frame != mFrame && mScribbleArea)
++    {
++        stroke = mScribbleArea->finishStrokeForFrameChange();
++    }
+     if (select() && select()->somethingSelected()) {
+-        static_cast<MoveTool*>(tools()->getTool(MOVE))->applyTransformationAndDeselect();
++        if (canEditLayer(layers()->currentLayer(), false))
++        {
++            static_cast<MoveTool*>(tools()->getTool(MOVE))->applyTransformationAndDeselect();
++        }
++        else
++        {
++            deselectAll();
++        }
+     }
+ 
+     if (frame < 1) { frame = 1; }
+@@ -873,6 +905,10 @@ void Editor::scrubTo(int frame)
+     }
+     mObject->updateActiveFrames(frame);
+     emit scrubbed(frame);
++    if (stroke)
++    {
++        mScribbleArea->resumeStrokeAfterFrameChange(stroke.get());
++    }
+ }
+ 
+ void Editor::scrubForward()
+@@ -906,11 +942,7 @@ KeyFrame* Editor::addKeyFrame(const int layerNumber, int frameIndex)
+     Layer* layer = mObject->getLayer(layerNumber);
+     Q_ASSERT(layer);
+ 
+-    if (!layer->visible())
+-    {
+-        mScribbleArea->showLayerNotVisibleWarning();
+-        return nullptr;
+-    }
++    if (!canEditLayer(layer)) { return nullptr; }
+ 
+     // Find next available space for a keyframe (where either no key exists or there is an empty sound key)
+     while (layer->keyExists(frameIndex))
+@@ -946,11 +978,7 @@ void Editor::removeKey()
+     Layer* layer = layers()->currentLayer();
+     Q_ASSERT(layer != nullptr);
+ 
+-    if (!layer->visible())
+-    {
+-        mScribbleArea->showLayerNotVisibleWarning();
+-        return;
+-    }
++    if (!canEditLayer(layer)) { return; }
+ 
+     if (!layer->keyExistsWhichCovers(currentFrame()))
+     {
+@@ -991,7 +1019,18 @@ void Editor::scrubPreviousKeyFrame()
+ void Editor::switchVisibilityOfLayer(int layerNumber)
+ {
+     Layer* layer = mObject->getLayer(layerNumber);
+-    if (layer != nullptr) layer->switchVisibility();
++    if (layer == nullptr) { return; }
++    if (layer->visible())
++    {
++        if (layerNumber == currentLayerIndex())
++        {
++            static_cast<MoveTool*>(tools()->getTool(MOVE))->applyTransformationAndDeselect();
++            deselectAll();
++        }
++        layer->deselectAll();
++    }
++    layer->switchVisibility();
++
+     mScribbleArea->onLayerChanged();
+ 
+     emit updateTimeLine();
+@@ -1027,6 +1066,17 @@ void Editor::prepareSave()
+     }
+ }
+ 
++bool Editor::canEditLayer(const Layer* layer, bool showWarning) const
++{
++    if (layer == nullptr) { return false; }
++    if (layer->visible()) { return true; }
++    if (showWarning && mScribbleArea)
++    {
++        mScribbleArea->showLayerNotVisibleWarning();
++    }
++    return false;
++}
++
+ void Editor::clearCurrentFrame()
+ {
+     mScribbleArea->clearImage();
+diff --git a/core_lib/src/interface/editor.h b/core_lib/src/interface/editor.h
+index 340433d9a7edb2918c3a4c91fab829050b67d304..1c6ad86d9df23cf40e5ab498b72171dcf7c5fc19 100644
+--- a/core_lib/src/interface/editor.h
++++ b/core_lib/src/interface/editor.h
+@@ -171,6 +171,9 @@ public: //slots
+ 
+     void setModified(int layerNumber, int frameNumber);
+ 
++    /// Guard interactive edits without restricting model operations such as undo/load.
++    bool canEditLayer(const Layer* layer, bool showWarning = true) const;
++
+     void clearCurrentFrame();
+ 
+     Status importImage(const QString& filePath, ImportImageConfig importConfig);
+diff --git a/core_lib/src/interface/scribblearea.cpp b/core_lib/src/interface/scribblearea.cpp
+index 50df4b1a15a261e3c4477e757dda33adfada5948..0b6c0761560ef8d7b352a4f59dc6899aeebccdd5 100644
+--- a/core_lib/src/interface/scribblearea.cpp
++++ b/core_lib/src/interface/scribblearea.cpp
+@@ -26,6 +26,7 @@ GNU General Public License for more details.
+ #include "basetool.h"
+ #include "transformtool.h"
+ #include "pointerevent.h"
++#include "stroketool.h"
+ #include "beziercurve.h"
+ #include "object.h"
+ #include "editor.h"
+@@ -424,6 +425,10 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event)
+ 
+ void ScribbleArea::keyEventForSelection(QKeyEvent* event)
+ {
++    bool modifiesSelection = event->key() == Qt::Key_Left || event->key() == Qt::Key_Right
++        || event->key() == Qt::Key_Up || event->key() == Qt::Key_Down
++        || event->key() == Qt::Key_Return || event->key() == Qt::Key_Backspace;
++    if (modifiesSelection && !mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     auto selectMan = mEditor->select();
+     switch (event->key())
+     {
+@@ -649,6 +654,7 @@ void ScribbleArea::tabletEvent(QTabletEvent *e)
+ 
+ void ScribbleArea::pointerPressEvent(PointerEvent* event)
+ {
++    mLastStrokeEvent.reset();
+     bool isCameraLayer = mEditor->layers()->currentLayer()->type() == Layer::CAMERA;
+     if ((currentTool()->type() != HAND || isCameraLayer) && (event->button() != Qt::RightButton) && (event->button() != Qt::MiddleButton || isCameraLayer))
+     {
+@@ -670,21 +676,55 @@ void ScribbleArea::pointerPressEvent(PointerEvent* event)
+     } else if (event->button() == Qt::LeftButton)
+     {
+         currentTool()->pointerPressEvent(event);
++        auto strokeTool = qobject_cast<StrokeTool*>(currentTool());
++        if (strokeTool && strokeTool->isStrokeInProgress())
++        {
++            mLastStrokeEvent.reset(new PointerEvent(*event, event->eventType()));
++        }
+     }
+ }
+ 
+ void ScribbleArea::pointerMoveEvent(PointerEvent* event)
+ {
+     currentTool()->pointerMoveEvent(event);
++    if (mLastStrokeEvent && (event->buttons() & Qt::LeftButton)
++        && event->inputType() == mLastStrokeEvent->inputType())
++    {
++        mLastStrokeEvent.reset(new PointerEvent(*event, event->eventType()));
++    }
+ }
+ 
+ void ScribbleArea::pointerReleaseEvent(PointerEvent* event)
+ {
+     currentTool()->pointerReleaseEvent(event);
++    if (mLastStrokeEvent && event->inputType() == mLastStrokeEvent->inputType())
++    {
++        mLastStrokeEvent.reset();
++    }
+ 
+     editor()->tools()->tryClearTemporaryTool(event->button());
+ }
+ 
++std::unique_ptr<PointerEvent> ScribbleArea::finishStrokeForFrameChange()
++{
++    auto strokeTool = qobject_cast<StrokeTool*>(currentTool());
++    if (!mLastStrokeEvent || !strokeTool || !strokeTool->isStrokeInProgress())
++    {
++        return nullptr;
++    }
++
++    std::unique_ptr<PointerEvent> resume(new PointerEvent(*mLastStrokeEvent, PointerEvent::Press));
++    PointerEvent release(*mLastStrokeEvent, PointerEvent::Release);
++    mLastStrokeEvent.reset();
++    strokeTool->pointerReleaseEvent(&release);
++    return resume;
++}
++
++void ScribbleArea::resumeStrokeAfterFrameChange(PointerEvent* event)
++{
++    pointerPressEvent(event);
++}
++
+ void ScribbleArea::handleDoubleClick()
+ {
+     mDoubleClickMillis += 100;
+@@ -1225,6 +1265,7 @@ void ScribbleArea::endStroke()
+ 
+ void ScribbleArea::flipSelection(bool flipVertical)
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     mEditor->select()->flipSelection(flipVertical);
+ }
+ 
+@@ -1344,6 +1385,7 @@ QPointF ScribbleArea::getCentralPoint()
+ 
+ void ScribbleArea::applyTransformedSelection()
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     mCanvasPainter.ignoreTransformedSelection();
+ 
+     Layer* layer = mEditor->layers()->currentLayer();
+@@ -1454,6 +1496,7 @@ BaseTool* ScribbleArea::currentTool() const
+ 
+ void ScribbleArea::deleteSelection()
+ {
++    if (!mEditor->canEditLayer(mEditor->layers()->currentLayer())) { return; }
+     auto selectMan = mEditor->select();
+     if (selectMan->somethingSelected())      // there is something selected
+     {
+@@ -1486,6 +1529,8 @@ void ScribbleArea::clearImage()
+     Layer* layer = mEditor->layers()->currentLayer();
+     if (layer == nullptr) { return; }
+ 
++    if (!mEditor->canEditLayer(layer)) { return; }
++
+     if (layer->type() == Layer::VECTOR)
+     {
+         mEditor->backup(tr("Clear Image", "Undo step text"));
+diff --git a/core_lib/src/interface/scribblearea.h b/core_lib/src/interface/scribblearea.h
+index 211e35aad7f2e7ae7ef99328808d68a169af2c18..1b06f5033ac1376ce0a9a29ff70d271db43a84bc 100644
+--- a/core_lib/src/interface/scribblearea.h
++++ b/core_lib/src/interface/scribblearea.h
+@@ -18,6 +18,7 @@ GNU General Public License for more details.
+ 
+ #ifndef SCRIBBLEAREA_H
+ #define SCRIBBLEAREA_H
++#include <memory>
+ 
+ #include <cstdint>
+ #include <ctime>
+@@ -113,6 +114,10 @@ public:
+ 
+     void endStroke();
+ 
++    /// Commit the current freehand stroke before the editor changes frames.
++    std::unique_ptr<PointerEvent> finishStrokeForFrameChange();
++    void resumeStrokeAfterFrameChange(PointerEvent* event);
++
+     void flipSelection(bool flipVertical);
+ 
+     BaseTool* currentTool() const;
+@@ -141,7 +146,7 @@ public slots:
+     void updateToolCursor();
+     void paletteColorChanged(QColor);
+ 
+-    void showLayerNotVisibleWarning();
++    virtual void showLayerNotVisibleWarning();
+     void onTileUpdated(TiledBuffer* tiledBuffer, Tile* tile);
+     void onTileCreated(TiledBuffer* tiledBuffer, Tile* tile);
+ 
+@@ -228,6 +233,7 @@ private:
+     void tabletReleaseEventFired();
+     bool mMouseInUse = false;
+     bool mTabletInUse = false;
++    std::unique_ptr<PointerEvent> mLastStrokeEvent;
+     qreal mDevicePixelRatio = 1.;
+ 
+     // Double click handling for tablet input
+diff --git a/core_lib/src/tool/stroketool.cpp b/core_lib/src/tool/stroketool.cpp
+index 5ee760b6d47ddffbeceaf91580b4e098e0a93d49..9ddde13fa239d374ceb782d8114c1a3278b6596d 100644
+--- a/core_lib/src/tool/stroketool.cpp
++++ b/core_lib/src/tool/stroketool.cpp
+@@ -174,6 +174,7 @@ void StrokeTool::startStroke(PointerEvent::InputType inputType)
+ 
+     mCurrentInputType = inputType;
+     mUndoSaveStateId = mEditor->undoRedo()->createState(UndoRedoRecordType::KEYFRAME_MODIFY);
++    mStrokeInProgress = true;
+ 
+     disableCoalescing();
+ }
+@@ -204,6 +205,7 @@ bool StrokeTool::emptyFrameActionEnabled()
+ 
+ void StrokeTool::endStroke()
+ {
++    mStrokeInProgress = false;
+     mInterpolator.interpolateEnd();
+     mStrokePressures << mInterpolator.getPressure();
+     mStrokePoints.clear();
+diff --git a/core_lib/src/tool/stroketool.h b/core_lib/src/tool/stroketool.h
+index 6ce2561608cf89ff4ae85010c0e1e2d9d24041d8..808b853753fd2de5f8332315061bbe869c62d194 100644
+--- a/core_lib/src/tool/stroketool.h
++++ b/core_lib/src/tool/stroketool.h
+@@ -52,6 +52,7 @@ public:
+ 
+     void loadSettings() override;
+     bool isActive() const override { return mInterpolator.isActive(); }
++    bool isStrokeInProgress() const { return mStrokeInProgress; }
+ 
+     bool keyPressEvent(QKeyEvent* event) override;
+     void pointerPressEvent(PointerEvent* event) override;
+@@ -134,6 +135,7 @@ private:
+     RadialOffsetTool mWidthSizingTool;
+     RadialOffsetTool mFeatherSizingTool;
+     SAVESTATE_ID mUndoSaveStateId = 0;
++    bool mStrokeInProgress = false;
+ };
+ 
+ #endif // STROKETOOL_H
+diff --git a/core_lib/src/util/pointerevent.cpp b/core_lib/src/util/pointerevent.cpp
+index 1baacfbb0cd888b3dc8edead2ae0b3d4daf769f9..9d5e25355dd7c078d0edc09bd41fe47e48c2b25d 100644
+--- a/core_lib/src/util/pointerevent.cpp
++++ b/core_lib/src/util/pointerevent.cpp
+@@ -16,6 +16,41 @@ PointerEvent::~PointerEvent()
+ {
+ }
+ 
++PointerEvent::PointerEvent(const PointerEvent& event, Type type)
++    : mType(type), mCanvasPos(event.mCanvasPos)
++{
++    if (event.mMouseEvent)
++    {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        mOwnedMouseEvent.reset(event.mMouseEvent->clone());
++#else
++        const QMouseEvent* source = event.mMouseEvent;
++        mOwnedMouseEvent.reset(new QMouseEvent(source->type(), source->localPos(),
++            source->windowPos(), source->screenPos(), source->button(),
++            source->buttons(), source->modifiers(), source->source()));
++        mOwnedMouseEvent->setTimestamp(source->timestamp());
++#endif
++        mMouseEvent = mOwnedMouseEvent.get();
++    }
++    else if (event.mTabletEvent)
++    {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        mOwnedTabletEvent.reset(event.mTabletEvent->clone());
++#else
++        // Qt 5 event copies can share private data deleted by each destructor.
++        // Construct an independent event instead of using the implicit copy.
++        const QTabletEvent* source = event.mTabletEvent;
++        mOwnedTabletEvent.reset(new QTabletEvent(source->type(), source->posF(),
++            source->globalPosF(), source->device(), source->pointerType(),
++            source->pressure(), source->xTilt(), source->yTilt(),
++            source->tangentialPressure(), source->rotation(), source->z(),
++            source->modifiers(), source->uniqueId(), source->button(), source->buttons()));
++        mOwnedTabletEvent->setTimestamp(source->timestamp());
++#endif
++        mTabletEvent = mOwnedTabletEvent.get();
++    }
++}
++
+ QPointF PointerEvent::canvasPos() const
+ {
+     return mCanvasPos;
+@@ -37,6 +72,7 @@ QPointF PointerEvent::viewportPos() const
+ 
+ Qt::MouseButton PointerEvent::button() const
+ {
++    if (mType == Press || mType == Release) { return Qt::LeftButton; }
+     if (mMouseEvent)
+     {
+         return mMouseEvent->button();
+@@ -53,6 +89,8 @@ Qt::MouseButton PointerEvent::button() const
+ 
+ Qt::MouseButtons PointerEvent::buttons() const
+ {
++    if (mType == Press) { return Qt::LeftButton; }
++    if (mType == Release) { return Qt::NoButton; }
+     if (mMouseEvent)
+     {
+         return mMouseEvent->buttons();
+@@ -204,6 +242,7 @@ bool PointerEvent::isAccepted()
+ 
+ PointerEvent::Type PointerEvent::eventType() const
+ {
++    if (mType != Unmapped) { return mType; }
+     if (mMouseEvent)
+     {
+         switch (mMouseEvent->type())
+diff --git a/core_lib/src/util/pointerevent.h b/core_lib/src/util/pointerevent.h
+index 22a3a5e393bcaacedc1a2fa11dc3a013b7830ef5..92b42d66ba395f513c5898084e7a1aaa55457118 100644
+--- a/core_lib/src/util/pointerevent.h
++++ b/core_lib/src/util/pointerevent.h
+@@ -3,6 +3,7 @@
+ 
+ #include <QTabletEvent>
+ #include <QMouseEvent>
++#include <memory>
+ 
+ class PointerEvent
+ {
+@@ -23,6 +24,8 @@ public:
+ 
+     PointerEvent(QMouseEvent* event, const QPointF& canvasPos);
+     PointerEvent(QTabletEvent* event, const QPointF& canvasPos);
++    /// Own a snapshot of a pointer event, optionally changing its logical type.
++    PointerEvent(const PointerEvent& event, Type type);
+     ~PointerEvent();
+ 
+     /**
+@@ -90,6 +93,9 @@ public:
+ #endif
+ 
+ private:
++    std::unique_ptr<QMouseEvent> mOwnedMouseEvent;
++    std::unique_ptr<QTabletEvent> mOwnedTabletEvent;
++    Type mType = Unmapped;
+     QTabletEvent* mTabletEvent = nullptr;
+     QMouseEvent* mMouseEvent = nullptr;
+     QPointF mCanvasPos;
+diff --git a/docs/download-verification.md b/docs/download-verification.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..0ac50cbede97890e904ca6cfbf622b5992abe19a
+--- /dev/null
++++ b/docs/download-verification.md
+@@ -0,0 +1,102 @@
++# Verify a Pencil2D download
++
++CI builds containing this change publish a `<package>.sha256` file alongside
++each final application package. Successful builds from `master`, `release/*`,
++and tags also publish GitHub build attestations and a portable
++`pencil2d-provenance.sigstore.json` bundle. Pull request and ordinary feature
++branch builds have checksums only.
++
++Older downloads do not gain attestations retroactively. If no attestation is
++available, verification has not succeeded. Choose a build that publishes one,
++or use an independently authenticated installation method.
++
++## Check the downloaded bytes
++
++Download the package and its matching `.sha256` from the same completed
++GitHub Actions run. Keep both files in the same directory with their original
++filenames. The package checksum covers the final archive, installer, DMG, or
++AppImage after CI signing and notarization, wherever those are configured.
++
++Using Python 3 and this repository's verification utility:
++
++```sh
++python3 util/download_verification.py verify /path/to/package.AppImage.sha256
++```
++
++On Windows, use `python` instead of `python3`. The utility returns a nonzero
++exit code for a changed or missing file and rejects malformed checksum files.
++
++Alternatively, in the download directory:
++
++```sh
++# Linux
++sha256sum --check package.AppImage.sha256
++# macOS
++shasum -a 256 --check package.zip.sha256
++```
++
++PowerShell users can compare `(Get-FileHash .\package.zip -Algorithm SHA256).Hash`
++with the first 64 characters of `package.zip.sha256`.
++
++A checksum alone detects changed bytes relative to that checksum file. It
++does not authenticate the publisher: an attacker could replace both files.
++
++## Authenticate the build
++
++Install a current [GitHub CLI](https://cli.github.com/) and verify the actual
++package, using the repository and workflow identity you expect. For an official
++tagged release, replace `vX.Y.Z` and the package path:
++
++```sh
++gh attestation verify ./package.AppImage \
++  --repo pencil2d/pencil \
++  --signer-workflow pencil2d/pencil/.github/workflows/ci.yml \
++  --source-ref refs/tags/vX.Y.Z \
++  --deny-self-hosted-runners
++```
++
++For an official nightly, use `--source-ref refs/heads/master` and also pass
++`--source-digest FULL_COMMIT_SHA` for the expected commit from that build's
++GitHub run. Binding the expected commit prevents accepting a different valid
++build. Use a published `refs/heads/release/...` ref when verifying a release
++branch build.
++
++For a third-party fork, use that fork's repository and signer-workflow identity,
++together with its expected ref and commit. A fork attestation identifies the
++fork; it does not establish endorsement by Pencil2D.
++
++For verification using a downloaded bundle, add:
++
++```sh
++--bundle ./pencil2d-provenance.sigstore.json
++```
++
++Keep the repository, workflow, ref, and commit checks when using a bundle.
++Online verification also checks the current repository identity; bundle-only
++verification cannot detect later repository/owner renames or name reuse.
++Fully offline use additionally needs a trusted root prepared according to the
++[GitHub CLI verification documentation](https://cli.github.com/manual/gh_attestation_verify).
++
++Attestations authenticate the bytes and their GitHub Actions origin. They do
++not establish that the source or dependencies are defect-free, or that builds
++are reproducible. Existing platform code signing and notarization remain
++additional checks.
++
++## Publishing releases
++
++Copy the exact final packages, matching `.sha256` files, and provenance bundle
++from the same successful trusted CI run to the GitHub release/download page.
++Do not rebuild, recompress, or sign those packages after hashing/attestation.
++If a package changes, publish a new checksum and a new authenticated build;
++the old attestation cannot authenticate changed bytes.
++
++The workflow does not create releases or modify the separate download service.
++Maintainers publishing through those surfaces must expose the verification
++files as well. Manual signing of Windows releases after CI changes the bytes
++and requires a fresh checksum; CI provenance for the earlier unsigned package
++does not verify that manually modified package.
++
++The provenance job receives OIDC and attestation permissions only for trusted
++push/manual runs on the listed refs. Build and pull request jobs retain
++read-only permissions. See GitHub's
++[artifact attestation guide](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations).
+diff --git a/tests/src/test_hiddenlayerediting.cpp b/tests/src/test_hiddenlayerediting.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..22e03d5a2fdc6943881329d315d6ce376caa36e8
+--- /dev/null
++++ b/tests/src/test_hiddenlayerediting.cpp
+@@ -0,0 +1,155 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include "catch.hpp"
++
++#include <QApplication>
++#include <QClipboard>
++#include <QKeyEvent>
++#include <QSettings>
++#include <QTemporaryDir>
++#include "bitmapimage.h"
++#include "clipboardmanager.h"
++#include "editor.h"
++#include "layerbitmap.h"
++#include "object.h"
++#include "scribblearea.h"
++#include "selectionmanager.h"
++#include "undoredomanager.h"
++
++namespace {
++struct HiddenLayerSettings
++{
++    QTemporaryDir directory;
++    QSettings::Format previous = QSettings::defaultFormat();
++    HiddenLayerSettings()
++    {
++        QSettings::setDefaultFormat(QSettings::IniFormat);
++        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, directory.path());
++    }
++    ~HiddenLayerSettings() { QSettings::setDefaultFormat(previous); }
++};
++
++class HiddenLayerCanvas : public ScribbleArea
++{
++public:
++    HiddenLayerCanvas() : ScribbleArea(nullptr) {}
++    void showLayerNotVisibleWarning() override { ++warnings; }
++    int warnings = 0;
++};
++
++struct HiddenLayerFixture
++{
++    HiddenLayerSettings settings;
++    Editor editor;
++    HiddenLayerCanvas canvas;
++    LayerBitmap* layer;
++
++    HiddenLayerFixture()
++    {
++        editor.setScribbleArea(&canvas);
++        editor.init();
++        Object* object = new Object;
++        object->init();
++        layer = object->addNewBitmapLayer();
++        layer->addNewKeyFrameAt(2);
++        BitmapImage image(QRect(10, 10, 20, 20), Qt::red);
++        layer->getBitmapImageAtFrame(1)->paste(&image);
++        editor.setObject(object);
++        canvas.setEditor(&editor);
++        canvas.init();
++        editor.select()->setSelection(image.bounds());
++        editor.clipboards()->copyBitmapImage(&image, image.bounds());
++    }
++
++    template<typename Action> void expectWarning(Action action)
++    {
++        int previousWarnings = canvas.warnings;
++        action();
++        REQUIRE(canvas.warnings == previousWarnings + 1);
++    }
++};
++}
++
++TEST_CASE("Hidden layers reject canvas and clipboard edits before side effects", "[1942]")
++{
++    HiddenLayerFixture fixture;
++    fixture.layer->setVisible(false); // Also exercise a stale selection from before hiding.
++    BitmapImage before = *fixture.layer->getBitmapImageAtFrame(1);
++    auto selection = fixture.editor.select()->selectionTransform();
++    auto bounds = fixture.editor.select()->mySelectionRect();
++    QApplication::clipboard()->setText("clipboard sentinel");
++    bool modified = false;
++    QObject::connect(&fixture.editor, &Editor::frameModified, [&] { modified = true; });
++
++    SECTION("clear") { fixture.expectWarning([&] { fixture.editor.clearCurrentFrame(); }); }
++    SECTION("select all") { fixture.expectWarning([&] { fixture.editor.selectAll(); }); }
++    SECTION("delete selection") { fixture.expectWarning([&] { fixture.canvas.deleteSelection(); }); }
++    SECTION("cut selection") { fixture.expectWarning([&] { fixture.editor.copyAndCut(); }); }
++    SECTION("flip horizontally") { fixture.expectWarning([&] { fixture.editor.flipSelection(false); }); }
++    SECTION("flip vertically") { fixture.expectWarning([&] { fixture.editor.flipSelection(true); }); }
++    SECTION("paste") { fixture.expectWarning([&] { fixture.editor.paste(); }); }
++    SECTION("paste previous") { fixture.expectWarning([&] { fixture.editor.pasteFromPreviousFrame(); }); }
++    SECTION("apply transform") { fixture.expectWarning([&] { fixture.canvas.applyTransformedSelection(); }); }
++    SECTION("arrow key")
++    {
++        QKeyEvent event(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
++        fixture.expectWarning([&] { fixture.canvas.keyEventForSelection(&event); });
++    }
++    SECTION("remove frame") { fixture.expectWarning([&] { fixture.editor.removeKey(); }); }
++    SECTION("add frame") { fixture.expectWarning([&] { REQUIRE(fixture.editor.addNewKey() == nullptr); }); }
++
++    REQUIRE(*fixture.layer->getBitmapImageAtFrame(1)->image() == *before.image());
++    REQUIRE(fixture.layer->getBitmapImageAtFrame(1)->bounds() == before.bounds());
++    REQUIRE(fixture.editor.select()->selectionTransform() == selection);
++    REQUIRE(fixture.editor.select()->mySelectionRect() == bounds);
++    REQUIRE(QApplication::clipboard()->text() == "clipboard sentinel");
++    REQUIRE_FALSE(modified);
++    REQUIRE_FALSE(fixture.editor.undoRedo()->hasUnsavedChanges());
++}
++
++TEST_CASE("Cutting hidden selected frames does not change the clipboard or timeline", "[1942]")
++{
++    HiddenLayerFixture fixture;
++    fixture.editor.deselectAll();
++    fixture.layer->setFrameSelected(1, true);
++    fixture.layer->setFrameSelected(2, true);
++    fixture.layer->setVisible(false);
++    QApplication::clipboard()->setText("frame clipboard sentinel");
++    fixture.expectWarning([&] { fixture.editor.copyAndCut(); });
++    REQUIRE(fixture.layer->keyExists(1));
++    REQUIRE(fixture.layer->keyExists(2));
++    REQUIRE(QApplication::clipboard()->text() == "frame clipboard sentinel");
++}
++
++TEST_CASE("Hiding clears only the affected layer's selection", "[1942]")
++{
++    HiddenLayerFixture fixture;
++    auto other = fixture.editor.object()->addNewBitmapLayer();
++    other->setFrameSelected(1, true);
++    fixture.editor.switchVisibilityOfLayer(1);
++    REQUIRE_FALSE(other->visible());
++    REQUIRE_FALSE(other->hasAnySelectedFrames());
++    REQUIRE(fixture.editor.select()->somethingSelected());
++
++    fixture.editor.switchVisibilityOfLayer(0);
++    REQUIRE_FALSE(fixture.layer->visible());
++    REQUIRE_FALSE(fixture.editor.select()->somethingSelected());
++    fixture.editor.switchVisibilityOfLayer(0);
++    REQUIRE(fixture.layer->visible());
++    fixture.editor.selectAll();
++    REQUIRE(fixture.editor.select()->somethingSelected());
++    fixture.editor.clearCurrentFrame();
++    REQUIRE(fixture.layer->getBitmapImageAtFrame(1)->bounds().isEmpty());
++}
++
++TEST_CASE("Hidden-layer data model remains available to undo and loading", "[1942]")
++{
++    HiddenLayerFixture fixture;
++    fixture.layer->setVisible(false);
++    REQUIRE_FALSE(fixture.editor.canEditLayer(fixture.layer, false));
++    REQUIRE(fixture.layer->moveKeyFrame(2, 1));
++    REQUIRE(fixture.layer->keyExists(3));
++    fixture.editor.scrubTo(3);
++    REQUIRE(fixture.editor.currentFrame() == 3);
++    fixture.layer->setVisible(true);
++    REQUIRE(fixture.editor.canEditLayer(fixture.layer, false));
++}
+diff --git a/tests/src/test_strokescrubbing.cpp b/tests/src/test_strokescrubbing.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa1d516079c45fd6235acbd12d9f510be0148cfe
+--- /dev/null
++++ b/tests/src/test_strokescrubbing.cpp
+@@ -0,0 +1,211 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include "catch.hpp"
++
++#include <QAction>
++#include <QDir>
++#include <QSettings>
++#include <QTemporaryDir>
++#include "bitmapimage.h"
++#include "editor.h"
++#include "layerbitmap.h"
++#include "layervector.h"
++#include "object.h"
++#include "pointerevent.h"
++#include "preferencemanager.h"
++#include "scribblearea.h"
++#include "stroketool.h"
++#include "toolmanager.h"
++#include "undoredomanager.h"
++#include "vectorimage.h"
++#include "viewmanager.h"
++
++namespace {
++// ToolManager saves settings on destruction. Keep test preferences isolated.
++struct TestSettings
++{
++    QTemporaryDir directory;
++    QSettings::Format previous = QSettings::defaultFormat();
++    TestSettings()
++    {
++        QSettings::setDefaultFormat(QSettings::IniFormat);
++        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, directory.path());
++    }
++    ~TestSettings() { QSettings::setDefaultFormat(previous); }
++};
++
++class StrokeCanvas : public ScribbleArea
++{
++public:
++    StrokeCanvas() : ScribbleArea(nullptr) {}
++    using ScribbleArea::pointerPressEvent;
++    using ScribbleArea::pointerMoveEvent;
++    using ScribbleArea::pointerReleaseEvent;
++};
++
++struct StrokeFixture
++{
++    TestSettings settings;
++    Editor editor;
++    StrokeCanvas canvas;
++
++    explicit StrokeFixture(bool vector = false, bool newUndo = true)
++    {
++        editor.setScribbleArea(&canvas);
++        editor.init();
++        editor.preference()->set(SETTING::NEW_UNDO_REDO_SYSTEM_ON, newUndo);
++        editor.undoRedo()->init();
++        Object* object = new Object;
++        object->init();
++        Layer* layer = vector ? static_cast<Layer*>(object->addNewVectorLayer())
++                              : static_cast<Layer*>(object->addNewBitmapLayer());
++        layer->addNewKeyFrameAt(2);
++        layer->addNewKeyFrameAt(3);
++        editor.setObject(object);
++        canvas.setEditor(&editor);
++        canvas.init();
++        editor.tools()->setCurrentTool(PEN);
++        auto tool = static_cast<StrokeTool*>(editor.tools()->currentTool());
++        tool->setStablizationLevel(StabilizationLevel::NONE);
++        tool->setPressureEnabled(false);
++    }
++
++    void mouse(QEvent::Type type, QPointF point)
++    {
++        Qt::MouseButton button = type == QEvent::MouseMove ? Qt::NoButton : Qt::LeftButton;
++        Qt::MouseButtons buttons = type == QEvent::MouseButtonRelease ? Qt::NoButton : Qt::LeftButton;
++        QMouseEvent native(type, point, point, button, buttons, Qt::NoModifier);
++        PointerEvent event(&native, editor.view()->mapScreenToCanvas(point));
++        dispatch(event);
++    }
++
++    void dispatch(PointerEvent& event)
++    {
++        switch (event.eventType())
++        {
++        case PointerEvent::Press: canvas.pointerPressEvent(&event); break;
++        case PointerEvent::Move: canvas.pointerMoveEvent(&event); break;
++        case PointerEvent::Release: canvas.pointerReleaseEvent(&event); break;
++        default: FAIL("Unexpected pointer event");
++        }
++    }
++
++    bool empty(int frame)
++    {
++        auto layer = static_cast<LayerBitmap*>(editor.object()->getLayer(0));
++        return layer->getBitmapImageAtFrame(frame)->bounds().isEmpty();
++    }
++};
++}
++
++TEST_CASE("Scrubbing splits a mouse stroke into independently undoable frames", "[stroke][1332]")
++{
++    bool newUndo = GENERATE(false, true);
++    StrokeFixture fixture(false, newUndo);
++    fixture.editor.scrubTo(2);
++    fixture.mouse(QEvent::MouseButtonPress, { 10, 10 });
++    fixture.mouse(QEvent::MouseMove, { 30, 10 });
++    fixture.editor.scrubTo(1);
++    REQUIRE_FALSE(fixture.empty(2));
++    REQUIRE(fixture.empty(1));
++
++    fixture.mouse(QEvent::MouseMove, { 60, 10 });
++    fixture.editor.scrubTo(3);
++    REQUIRE_FALSE(fixture.empty(1));
++    fixture.mouse(QEvent::MouseMove, { 90, 10 });
++    fixture.mouse(QEvent::MouseButtonRelease, { 90, 10 });
++    REQUIRE_FALSE(fixture.empty(3));
++
++    std::unique_ptr<QAction> undo(fixture.editor.undoRedo()->createUndoAction(nullptr, QIcon()));
++    std::unique_ptr<QAction> redo(fixture.editor.undoRedo()->createRedoAction(nullptr, QIcon()));
++    fixture.editor.undoRedo()->updateUndoAction(undo.get());
++    undo->trigger();
++    REQUIRE(fixture.empty(3));
++    REQUIRE_FALSE(fixture.empty(1));
++    REQUIRE_FALSE(fixture.empty(2));
++    if (!newUndo)
++    {
++        // The legacy stack also keeps checkpoints when changing frames.
++        for (int i = 0; i < 8 && (!fixture.empty(1) || !fixture.empty(2)); ++i)
++        {
++            fixture.editor.undoRedo()->updateUndoAction(undo.get());
++            REQUIRE(undo->isEnabled());
++            undo->trigger();
++        }
++        REQUIRE(fixture.empty(1));
++        REQUIRE(fixture.empty(2));
++        return;
++    }
++    fixture.editor.undoRedo()->updateUndoAction(undo.get());
++    undo->trigger();
++    REQUIRE(fixture.empty(1));
++    REQUIRE_FALSE(fixture.empty(2));
++    fixture.editor.undoRedo()->updateUndoAction(undo.get());
++    undo->trigger();
++    REQUIRE(fixture.empty(2));
++    fixture.editor.undoRedo()->updateRedoAction(redo.get());
++    redo->trigger();
++    REQUIRE_FALSE(fixture.empty(2));
++    REQUIRE(fixture.empty(1));
++}
++
++TEST_CASE("Scrubbing to the same frame does not split a stroke", "[stroke][1332]")
++{
++    StrokeFixture fixture;
++    fixture.mouse(QEvent::MouseButtonPress, { 10, 10 });
++    fixture.mouse(QEvent::MouseMove, { 30, 10 });
++    fixture.editor.scrubTo(0); // clamps to the current frame
++    REQUIRE(fixture.empty(1)); // the stroke is still buffered
++    fixture.mouse(QEvent::MouseButtonRelease, { 30, 10 });
++    REQUIRE_FALSE(fixture.empty(1));
++}
++
++TEST_CASE("Vector strokes remain on their original frame when scrubbing", "[stroke][1332]")
++{
++    StrokeFixture fixture(true);
++    auto layer = static_cast<LayerVector*>(fixture.editor.object()->getLayer(0));
++    fixture.editor.scrubTo(2);
++    fixture.mouse(QEvent::MouseButtonPress, { 10, 10 });
++    fixture.mouse(QEvent::MouseMove, { 30, 10 });
++    fixture.editor.scrubTo(1);
++    REQUIRE_FALSE(layer->getVectorImageAtFrame(2)->isEmpty());
++    REQUIRE(layer->getVectorImageAtFrame(1)->isEmpty());
++    fixture.mouse(QEvent::MouseMove, { 60, 10 });
++    fixture.mouse(QEvent::MouseButtonRelease, { 60, 10 });
++    REQUIRE_FALSE(layer->getVectorImageAtFrame(1)->isEmpty());
++}
++
++TEST_CASE("Pointer snapshots preserve tablet pressure and device identity", "[stroke][1332]")
++{
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QPointingDevice device("Test tablet", 12, QInputDevice::DeviceType::Stylus,
++        QPointingDevice::PointerType::Pen, QInputDevice::Capability::Position | QInputDevice::Capability::Pressure,
++        1, 3);
++    QTabletEvent native(QEvent::TabletMove, &device, { 20, 30 }, { 120, 130 },
++        0.75, 10, 20, 0.1, 45, 0, Qt::NoModifier, Qt::NoButton, Qt::LeftButton);
++#else
++    QTabletEvent native(QEvent::TabletMove, { 20, 30 }, { 120, 130 },
++        QTabletEvent::Stylus, QTabletEvent::Pen, 0.75, 10, 20, 0.1, 45, 0,
++        Qt::NoModifier, 12, Qt::NoButton, Qt::LeftButton);
++#endif
++    PointerEvent original(&native, { 2, 3 });
++    PointerEvent release(original, PointerEvent::Release);
++    PointerEvent press(original, PointerEvent::Press);
++    REQUIRE(release.inputType() == PointerEvent::Tablet);
++    REQUIRE(release.pressure() == Approx(0.75));
++    REQUIRE(release.viewportPos() == QPointF(20, 30));
++    REQUIRE(release.canvasPos() == QPointF(2, 3));
++    REQUIRE(release.device() == original.device());
++    REQUIRE(release.pointerType() == original.pointerType());
++    REQUIRE(release.button() == Qt::LeftButton);
++    REQUIRE(release.buttons() == Qt::NoButton);
++    REQUIRE(press.buttons() == Qt::LeftButton);
++
++    StrokeFixture fixture;
++    fixture.editor.scrubTo(2);
++    fixture.dispatch(press);
++    fixture.dispatch(original);
++    fixture.editor.scrubTo(1);
++    REQUIRE_FALSE(fixture.empty(2));
++    fixture.dispatch(release);
++    REQUIRE_FALSE(fixture.empty(1));
++}
+diff --git a/tests/tests.cmake b/tests/tests.cmake
+index fe3f00e210f90ca2dc992cfb1548ffc0ac4ec134..ee233810d3e5a57865f0e606f835fddb039c8ced 100644
+--- a/tests/tests.cmake
++++ b/tests/tests.cmake
+@@ -22,6 +22,8 @@ set(TEST_SOURCES
+     ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_propertyinfo.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_qminiz.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_toolsettings.cpp
++    ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_strokescrubbing.cpp
++    ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_hiddenlayerediting.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_vectorimage.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_viewmanager.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_util.cpp
+diff --git a/tests/tests.pro b/tests/tests.pro
+index 8c8c3fabbcab4fb0e307643d5e7c65ecc9ac6eef..0bc352e2cabb62dab86b4c86e1e31d5f277f90b6 100644
+--- a/tests/tests.pro
++++ b/tests/tests.pro
+@@ -45,6 +45,8 @@ SOURCES += \
+     src/test_propertyinfo.cpp \
+     src/test_qminiz.cpp \
+     src/test_toolsettings.cpp \
++    src/test_strokescrubbing.cpp \
++    src/test_hiddenlayerediting.cpp \
+     src/test_vectorimage.cpp \
+     src/test_viewmanager.cpp \
+     src/test_util.cpp
+diff --git a/util/download_verification.py b/util/download_verification.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..7bc714c00828fd5f73eb5b236abea84ddd8d04e9
+--- /dev/null
++++ b/util/download_verification.py
+@@ -0,0 +1,80 @@
++#!/usr/bin/env python3
++"""Create/check portable SHA-256 sidecars for final Pencil2D packages.
++
++Checksums detect changed bytes. Authenticate downloads separately with the
++GitHub build attestation (see docs/download-verification.md).
++"""
++# SPDX-License-Identifier: GPL-2.0-only
++import argparse
++import hashlib
++import re
++import sys
++from pathlib import Path
++
++
++def safe_name(name):
++    if not name or name in (".", "..") or any(c in name for c in "/\\\r\n\0"):
++        raise ValueError("Unsafe package filename")
++    return name
++
++
++def digest(path):
++    if path.is_symlink() or not path.is_file():
++        raise ValueError(f"Not a regular package file: {path}")
++    result = hashlib.sha256()
++    with path.open("rb") as stream:
++        for block in iter(lambda: stream.read(1024 * 1024), b""):
++            result.update(block)
++    return result.hexdigest()
++
++
++def create(path):
++    name = safe_name(path.name)
++    checksum = digest(path)
++    sidecar = path.with_name(name + ".sha256")
++    if sidecar.is_symlink():
++        raise ValueError(f"Refusing to overwrite a symbolic link: {sidecar}")
++    # Binary mode prevents Windows newline translation. Compatible with sha256sum.
++    sidecar.write_bytes(f"{checksum} *{name}\n".encode("utf-8"))
++    return sidecar
++
++
++def verify(sidecar):
++    if sidecar.is_symlink():
++        raise ValueError(f"Not a regular checksum file: {sidecar}")
++    with sidecar.open("rb") as stream:
++        data = stream.read(4097)
++    if len(data) > 4096:
++        raise ValueError("Checksum file is too large")
++    match = re.fullmatch(r"([0-9a-f]{64}) [ *]([^\r\n]+)\n?", data.decode("utf-8"))
++    if not match:
++        raise ValueError("Expected exactly one SHA-256 checksum record")
++    checksum, name = match.groups()
++    name = safe_name(name)
++    if sidecar.name != name + ".sha256":
++        raise ValueError("Checksum filename does not match the package filename")
++    package = sidecar.with_name(name)
++    if digest(package) != checksum:
++        raise ValueError(f"SHA-256 mismatch: {package}")
++    return package
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("command", choices=("create", "verify"))
++    parser.add_argument("files", nargs="+", type=Path)
++    args = parser.parse_args(argv)
++    try:
++        for path in args.files:
++            if args.command == "create":
++                print(create(path))
++            else:
++                print(f"OK: {verify(path)}")
++    except (OSError, ValueError, UnicodeError) as error:
++        print(f"Verification failed: {error}", file=sys.stderr)
++        return 1
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/util/tests/test_download_verification.py b/util/tests/test_download_verification.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..71fdb5ff137f9908b918029ab0caafa3046cf50d
+--- /dev/null
++++ b/util/tests/test_download_verification.py
+@@ -0,0 +1,95 @@
++# SPDX-License-Identifier: GPL-2.0-only
++import importlib.util
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++SCRIPT = Path(__file__).resolve().parents[1] / "download_verification.py"
++spec = importlib.util.spec_from_file_location("download_verification", SCRIPT)
++verification = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(verification)
++
++
++class DownloadVerificationTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.package = self.root / "pencil2d mac é.zip"
++        self.package.write_bytes(b"final signed package\0\xff")
++        self.sidecar = verification.create(self.package)
++
++    def test_round_trip_and_deterministic_standard_format(self):
++        self.assertEqual(verification.verify(self.sidecar), self.package)
++        original = self.sidecar.read_bytes()
++        verification.create(self.package)
++        self.assertEqual(self.sidecar.read_bytes(), original)
++        self.assertRegex(original, rb"^[0-9a-f]{64} \*pencil2d mac .*\.zip\n$")
++        self.assertNotIn(b"\r", original)
++
++    def test_tampered_package_and_checksum_fail(self):
++        original = self.package.read_bytes()
++        self.package.write_bytes(original + b"tampered")
++        with self.assertRaisesRegex(ValueError, "mismatch"):
++            verification.verify(self.sidecar)
++        self.package.write_bytes(original)
++        self.sidecar.write_bytes(b"0" * 64 + b" *" + self.package.name.encode() + b"\n")
++        with self.assertRaisesRegex(ValueError, "mismatch"):
++            verification.verify(self.sidecar)
++
++    def test_missing_file_fails(self):
++        self.package.unlink()
++        with self.assertRaises(ValueError):
++            verification.verify(self.sidecar)
++
++    def test_multiple_records_and_bad_encodings_fail(self):
++        record = self.sidecar.read_bytes()
++        for data in (record + record, b"invalid", b"\xff", b"x" * 4097):
++            with self.subTest(data=data[:30]):
++                self.sidecar.write_bytes(data)
++                with self.assertRaises((ValueError, UnicodeError)):
++                    verification.verify(self.sidecar)
++
++    def test_paths_and_ambiguous_filenames_are_rejected(self):
++        for name in ("../outside", "/outside", "C:\\outside", ".", "..", "a\nb", "a\rb", "a\0b"):
++            with self.subTest(name=name):
++                with self.assertRaises(ValueError):
++                    verification.safe_name(name)
++        original = self.sidecar.read_bytes()
++        renamed = self.root / "different.sha256"
++        renamed.write_bytes(original)
++        with self.assertRaisesRegex(ValueError, "filename"):
++            verification.verify(renamed)
++
++    def test_symlinks_are_rejected(self):
++        link = self.root / "link.zip"
++        try:
++            link.symlink_to(self.package)
++        except OSError:
++            self.skipTest("Creating symlinks is unavailable")
++        with self.assertRaises(ValueError):
++            verification.create(link)
++        self.sidecar.unlink()
++        self.sidecar.symlink_to(self.package)
++        with self.assertRaises(ValueError):
++            verification.create(self.package)
++
++    def test_empty_package_can_be_verified(self):
++        self.package.write_bytes(b"")
++        verification.create(self.package)
++        self.assertEqual(verification.verify(self.sidecar), self.package)
++
++    def test_cli_nonzero_on_tampering_and_missing_inputs(self):
++        result = subprocess.run([sys.executable, str(SCRIPT), "verify", str(self.sidecar)], capture_output=True)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.package.write_bytes(b"corrupt")
++        result = subprocess.run([sys.executable, str(SCRIPT), "verify", str(self.sidecar)], capture_output=True)
++        self.assertNotEqual(result.returncode, 0)
++        result = subprocess.run([sys.executable, str(SCRIPT), "verify"], capture_output=True)
++        self.assertNotEqual(result.returncode, 0)
++
++
++if __name__ == "__main__":
++    unittest.main()

@@ -13,7 +13,7 @@ waived or converted into unsupported upstream limitations.
 | Step 4 | New/open/save, handles, native snapshots, optional snapshot-only FPS override; source path/dirty/undo/assets tests | Old-format save, safe close, full checkpoints/recovery and malformed/missing-asset matrix |
 | Step 5 | Native pressure/modifier stroke pipeline, dynamic tool properties and history undo/redo; layer creation/select; keyframes; FPS; tool/color/view selection | Full vector semantics, all layer/timeline edits and undo, bounded atomic batches/rollback |
 | Step 6 | Automated Mac subset of reference workflow and native PNG export | Entire alpha workflow, human-edit acceptance and native video/audio fixtures |
-| Step 7 | No upstream outreach performed | Complete alpha first, then proposal/design engagement |
+| Step 7 | Independent issue fixes submitted upstream with attribution and tests; links in NATIVE_FIXES.md | Complete alpha before the separate automation-bridge proposal/design engagement |
 | Step 8 | Remaining surface explicitly inventoried | Advanced timeline, vectors, cameras, audio, palettes, preferences and other editor capabilities |
 | Step 9 | Saved/snapshot native CLI jobs, repeated exports and native aliases, ranges, dimensions, camera arguments; decode/dimension/frame-count/PNG-alpha validation | Full format/codec/audio/content/timing and GUI import/export coverage; native warning localization |
 | Step 10 | Persistent job IDs/status; cancellation/deadlines; isolated profiles; owned process groups; staged outputs; one worker per service | Crash supervision, cross-process concurrency, restart/PID-reuse proof, Windows recovery and whole-sequence publication rollback |
@@ -21,9 +21,9 @@ waived or converted into unsupported upstream limitations.
 | Step 12 | GPL notices, build manifest, Python wheel/sdist build and CI definitions | Clean-machine binary packaging, source/provenance bundle, stable signing/notarization, PyPI ownership/publication, upgrades/rollback/uninstall |
 
 Native source integration is on `splitintech/pencil` branch
-`stanlee/automation-bridge`, pinned by this repository's build manifest. Normal
-fork `master` remains upstream code. New C++ tests pass with **787 assertions in
-59 cases** locally. 28 Python/native integration and CLI tests pass locally (one Windows-only test skipped on Mac); the
+`stanlee/issue-fixes-1332-1942-1964`, pinned by this repository's build manifest. Normal
+fork `master` remains upstream code. The integrated native suite passes **942 assertions in
+67 cases** locally. 28 Python/native integration and CLI tests pass locally (one Windows-only test skipped on Mac); the
 latest CI results must be read separately from this local evidence.
 
 The native shared registry currently advertises 23 implemented development
@@ -43,3 +43,7 @@ Stanlee checks outputs independently. Unsupported transparency fails before work
 Private discovery tokens and company documents are excluded from source and
 artifacts. No alpha/stable tag, PyPI publication, signed binary or upstream
 acceptance is claimed.
+
+The native pin now includes issues #1332, #1942 and #1964. Reproducible patch
+replay, upstream request links and qualification limits are recorded in
+[NATIVE_FIXES.md](NATIVE_FIXES.md) and [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).

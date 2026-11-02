@@ -3,13 +3,16 @@
 Use the exact fork revision in `build-manifest.json`. Native build instructions:
 
 ```sh
-git clone https://github.com/splitintech/pencil.git
-cd pencil
-git checkout stanlee/automation-bridge
+# Run from the Stanlee repository root.
+stanlee_native_revision=$(python3 -c 'import json; print(json.load(open("build-manifest.json"))["fork_revision"])')
+git clone https://github.com/splitintech/pencil.git ../pencil-stanlee
+git -C ../pencil-stanlee checkout --detach "$stanlee_native_revision"
+python3 scripts/verify_native_fixes.py --native ../pencil-stanlee
+cd ../pencil-stanlee
 mkdir build
-qmake -o build STANLEE_AUTOMATION=1 CONFIG-=debug_and_release CONFIG+=release
+qmake -o build/Makefile STANLEE_AUTOMATION=1 CONFIG-=debug_and_release CONFIG+=release
 make -C build -j4
-QT_QPA_PLATFORM=minimal build/tests/tests
+QT_QPA_PLATFORM=offscreen QT_STYLE_OVERRIDE=Fusion build/tests/tests
 ```
 
 For reproducibility, check out the manifest's exact commit after cloning. The

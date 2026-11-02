@@ -15,3 +15,9 @@ availability. This repository does not relicense those dependencies.
 requirements.lock records the exact Python environment. Application release
 manifests must additionally enumerate linked Qt and encoder dependencies and
 include the corresponding notices and source obligations before publication.
+
+The bundled Pencil2D native fix patch includes Jouvens-Corantin's original
+hidden-layer contribution from pencil2d/pencil#1989, preserved with its original
+authorship in the native Git history. Additional fixes and tests are by
+SplitIn contributors. Source revisions and review links are recorded in
+patches/pencil2d/manifest.json.
