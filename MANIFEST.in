@@ -5,3 +5,4 @@ recursive-include scripts *.py
 recursive-include tests *.py
 recursive-include .github *.yml
 recursive-include patches *.patch *.json *.md
+include .gitattributes
