@@ -63,6 +63,11 @@ def mutate(service, session, operation, arguments):
 def test_native_authentication_revision_and_workspace_boundaries(native):
     service, session, root = native
     assert "token" not in service.sessions()[0]
+    narrow = root/"narrow-workspace"
+    narrow.mkdir()
+    narrower_service = Service([str(narrow)], service.directory)
+    with pytest.raises(StanleeError, match="workspace_denied"):
+        narrower_service.inspect(session)
     bridge = service._bridge(session)
     bridge.record["token"] = "invalid"
     with pytest.raises(StanleeError, match="unauthorized"):

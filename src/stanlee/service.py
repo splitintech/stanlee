@@ -37,7 +37,16 @@ class Service:
         # Resolve only an enumerated session; never interpret an ID as a path.
         if session_id not in {item["session_id"] for item in self.sessions()}:
             raise StanleeError("invalid_session", "Session was not discovered or has exited")
-        return Bridge(self.directory / f"{session_id}.json")
+        bridge = Bridge(self.directory / f"{session_id}.json")
+        capabilities = bridge.call("session.capabilities")
+        native_roots = capabilities.get("workspaces", [])
+        if not native_roots:
+            raise StanleeError("workspace_denied", "Native session has no explicit workspace grant")
+        for root in native_roots:
+            # Sharing a discovery directory must not let a more narrowly
+            # configured MCP server attach to a broader editor grant.
+            self.workspace.path(root, exists=True)
+        return bridge
 
     def launch(self) -> dict:
         if not self.executable:
