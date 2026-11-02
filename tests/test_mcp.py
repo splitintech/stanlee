@@ -13,6 +13,12 @@ def test_official_sdk_negotiates_tools_resources_prompts_and_errors(tmp_path):
         async with Client(create_server(service)) as client:
             tools = await client.list_tools()
             assert "command" in {tool.name for tool in tools.tools}
+            by_name = {tool.name: tool for tool in tools.tools}
+            for name in ("sessions", "inspect_document", "preview", "diagnostics", "job_status"):
+                assert by_name[name].annotations.read_only_hint is True
+            for name in ("command", "export_saved_project", "export_document"):
+                assert by_name[name].annotations.read_only_hint is False
+                assert by_name[name].annotations.destructive_hint is True
             result = await client.call_tool("sessions", {})
             assert not result.is_error
             resources = await client.list_resources()
