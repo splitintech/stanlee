@@ -1,7 +1,7 @@
 """Native saved-project exports with staged outputs and media validation.
 
-Unsaved-document snapshots and FPS overrides are intentionally unavailable until
-their native state-preservation tests pass. No fabricated native flags are used.
+Unsaved-document snapshots and FPS overrides are prepared by the shared service.
+No fabricated native flags are used.
 """
 import hashlib
 import json
@@ -12,12 +12,12 @@ import subprocess
 import tempfile
 import threading
 import time
-import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
 from .errors import StanleeError
 from .workspace import Workspace
+from .publication import publish_outputs
 
 MOVIES = {".mp4", ".avi", ".gif", ".webm", ".apng"}
 IMAGES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp"}
@@ -184,22 +184,6 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
                 publish.append((file, target, metadata))
         if cancelled.is_set():
             raise StanleeError("cancelled", "Cancelled before publication")
-        # Copy to same-filesystem hidden staging files before publication. Each
-        # individual file publishes atomically; multi-file rollback is pending.
-        result = []
-        for file, target, metadata in publish:
-            workspace.path(str(target))
-            staging = target.with_name(".stanlee-"+uuid.uuid4().hex+target.suffix)
-            try:
-                shutil.copyfile(file, staging)
-                if options.overwrite:
-                    os.replace(staging, target)
-                else:
-                    # Atomic no-clobber publication on supported local filesystems.
-                    os.link(staging, target)
-                    staging.unlink()
-            finally:
-                staging.unlink(missing_ok=True)
-            result.append({"path": str(target), **metadata})
+        result = publish_outputs(publish, workspace, overwrite=options.overwrite, cancelled=cancelled)
         return {"outputs": result, "input": str(source), "state": "succeeded",
                 "validation": "decoded_media_dimensions_and_explicit_range; audio_and_content_acceptance_pending"}
