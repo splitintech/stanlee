@@ -32,6 +32,11 @@ def record(directory, pid, **extra):
                                    endpoint=str(path.with_suffix(".sock")), token="secret", **extra)))
     if os.name != "nt":
         path.chmod(0o600)
+    else:
+        # Elevated Windows runners default new files to Administrators ownership.
+        # Native discovery explicitly assigns the current user as owner too.
+        from stanlee.windows import protect_new_directory
+        protect_new_directory(path)
     return path
 
 
