@@ -23,10 +23,10 @@ waived or converted into unsupported upstream limitations.
 Native source integration is on `splitintech/pencil` branch
 `stanlee/automation-bridge`, pinned by this repository's build manifest. Normal
 fork `master` remains upstream code. New C++ tests pass with **787 assertions in
-59 cases** locally. Python/native integration and CLI tests pass locally; the
+59 cases** locally. 27 Python/native integration and CLI tests pass locally (one Windows-only test skipped on Mac); the
 latest CI results must be read separately from this local evidence.
 
-The native shared registry currently advertises 21 implemented development
+The native shared registry currently advertises 23 implemented development
 operations; it deliberately excludes pending operations. Contracts document that
 layer creation and FPS edits lack undo. The coverage register is mechanically
 complete only for its stated scan patterns, semantically incomplete, and is not

@@ -157,3 +157,24 @@ def test_native_tool_properties_validate_before_applying(native):
     with pytest.raises(StanleeError, match="invalid_arguments"):
         mutate(service, session, "tool.configure", {"values": {width["name"]: width["maximum"]+1}})
     assert service.command(session, "tool.inspect", {})["properties"] == changed["properties"]
+
+
+def test_native_vector_stroke_uses_palette_and_native_undo(native):
+    service, session, root = native
+    mutate(service, session, "layer.create", {"type": "vector", "name": "Vector artwork"})
+    index = next(layer["index"] for layer in service.inspect(session)["layers"] if layer["type"] == 2)
+    mutate(service, session, "layer.select", {"index": index})
+    mutate(service, session, "tool.select", {"type": 7})
+    with pytest.raises(StanleeError, match="unsupported_capability"):
+        mutate(service, session, "color.set", {"color": "#ff0000"})
+    palette = service.command(session, "palette.inspect", {})
+    assert palette["colors"]
+    mutate(service, session, "color.select_index", {"index": 0})
+    empty = service.command(session, "frame.preview", {})["data"]
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": -20, "pressure": .5}, {"x": 0, "y": 20, "pressure": 1}, {"x": 20, "y": -20, "pressure": .5}]})
+    drawn = service.command(session, "frame.preview", {})["data"]
+    assert drawn != empty
+    mutate(service, session, "history.undo", {})
+    assert service.command(session, "frame.preview", {})["data"] == empty
+    mutate(service, session, "history.redo", {})
+    assert service.command(session, "frame.preview", {})["data"] == drawn

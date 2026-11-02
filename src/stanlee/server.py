@@ -27,7 +27,7 @@ def create_server(service: Service) -> MCPServer:
     server = MCPServer("Stanlee", version=__version__, subscriptions=False, lifespan=lifespan,
         instructions="Inspect before editing. Use the returned document_id and revision on every mutation. "
         "On stale_revision, inspect again and reconcile the human's changes. Only advertised native operations are available. "
-        "This development build is not a qualified alpha; pressure, atomic batches, recovery workflows and full editor coverage are pending.")
+        "This development build is not a qualified alpha; atomic batches, recovery workflows and full editor coverage are pending.")
 
     async def run(function, *args, **kwargs):
         try:
@@ -135,6 +135,10 @@ def create_server(service: Service) -> MCPServer:
     async def timeline_resource(session_id: str) -> str:
         state = await run(service.inspect, session_id)
         return json.dumps({key: state[key] for key in ("frame", "fps", "layers", "revision")})
+
+    @server.resource("stanlee://palettes/{session_id}", mime_type="application/json")
+    async def palette_resource(session_id: str) -> str:
+        return json.dumps(await run(service.command, session_id, "palette.inspect", {}))
 
     @server.prompt()
     def inspect_animation() -> str:
