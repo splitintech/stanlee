@@ -194,7 +194,8 @@ class Pipe:
 
     def recv(self, size: int) -> bytes:
         buffer = ctypes.create_string_buffer(size)
-        return buffer.raw[:self._io(buffer, size)]
+        count = self._io(buffer, size)
+        return buffer.raw[:count]
 
     def __enter__(self):
         return self
