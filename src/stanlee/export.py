@@ -128,7 +128,8 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
             output_directory.mkdir()
             staged.append(output_directory/destination.name)
         environment = os.environ.copy()
-        environment.update(STANLEE_AUTOMATION="0", STANLEE_SETTINGS_DIR=str(temporary/"settings"), QT_QPA_PLATFORM="minimal")
+        environment.update(STANLEE_AUTOMATION="0", STANLEE_SETTINGS_DIR=str(temporary/"settings"),
+                           QT_QPA_PLATFORM=os.environ.get("STANLEE_QPA_PLATFORM", "offscreen"), QT_STYLE_OVERRIDE="Fusion")
         environment.pop("STANLEE_DISCOVERY_DIR", None)
         environment.pop("STANLEE_WORKSPACES", None)
         log_path = temporary/"native.log"

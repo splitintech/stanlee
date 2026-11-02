@@ -2,6 +2,9 @@ name: Native baseline and bridge
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   native:
     strategy:
@@ -60,7 +63,8 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         env:
-          QT_QPA_PLATFORM: minimal
+          QT_QPA_PLATFORM: offscreen
+          QT_STYLE_OVERRIDE: Fusion
         run: |
           for tree in native-baseline native-bridge; do
             mkdir "$tree/build"
@@ -80,7 +84,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         env:
-          QT_QPA_PLATFORM: minimal
+          QT_QPA_PLATFORM: offscreen
+          QT_STYLE_OVERRIDE: Fusion
         run: |
           foreach ($tree in @('native-baseline', 'native-bridge')) {
             New-Item -ItemType Directory -Path "$tree/build" | Out-Null
@@ -112,7 +117,8 @@ jobs:
         if: matrix.qt == '6.5.3'
         shell: bash
         env:
-          QT_QPA_PLATFORM: minimal
+          QT_QPA_PLATFORM: offscreen
+          QT_STYLE_OVERRIDE: Fusion
         run: |
           python -m pip install -r requirements.lock
           python -m pip install --no-deps -e .

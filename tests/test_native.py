@@ -29,7 +29,8 @@ def native():
         sessions = root/"sessions"
         private_directory(sessions)
         environment = os.environ.copy()
-        environment.update(QT_QPA_PLATFORM="minimal", STANLEE_AUTOMATION="1", STANLEE_DISCOVERY_DIR=str(sessions),
+        environment.update(QT_QPA_PLATFORM=os.environ.get("STANLEE_QPA_PLATFORM", "offscreen"), QT_STYLE_OVERRIDE="Fusion",
+                           STANLEE_AUTOMATION="1", STANLEE_DISCOVERY_DIR=str(sessions),
                            STANLEE_WORKSPACES=str(root), STANLEE_SETTINGS_DIR=str(root/"settings"))
         log = (root/"native.log").open("w")
         process = subprocess.Popen([os.environ["STANLEE_TEST_APP"]], env=environment, stdin=subprocess.DEVNULL, stdout=log, stderr=log)
