@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "upstream_repository": "https://github.com/pencil2d/pencil",
+  "upstream_revision": "408563a37068daf7f1b4c6a9291daef039be8cb5",
+  "fork_repository": "https://github.com/splitintech/pencil",
+  "fork_revision": "408563a37068daf7f1b4c6a9291daef039be8cb5",
+  "bridge_protocol": 1,
+  "mcp_sdk": "2.3.0",
+  "python_development": "3.12.15",
+  "qt_development": "6.12.0",
+  "baseline_evidence": {
+    "macos_arm64": {
+      "build": "passed",
+      "tests": "58 test cases; 768 assertions"
+    },
+    "windows_x64": "unqualified",
+    "linux_x64": "unqualified"
+  }
+}

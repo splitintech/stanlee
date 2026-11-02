@@ -1,0 +1,17 @@
+Stanlee
+Copyright (C) 2026 SplitIn contributors
+New Stanlee code is licensed GPL-2.0-only, without warranty.
+
+Pencil2D is a separate GPL-2.0 application by the Pencil2D contributors,
+including Patrick Corrieri, Pascal Naidon and Matthew Chiawen Chang.
+Its full history, copyright notices and bundled dependency notices are retained
+in https://github.com/splitintech/pencil. The GPL text here is reproduced from
+the pinned upstream Pencil2D LICENSE.TXT.
+
+MCP Python SDK 2.3.0 is MIT licensed. Qt has module-specific LGPL/GPL/commercial
+terms; use only appropriately licensed modules and preserve their notices in
+application distributions. FFmpeg has build-specific licensing and codec
+availability. This repository does not relicense those dependencies.
+requirements.lock records the exact Python environment. Application release
+manifests must additionally enumerate linked Qt and encoder dependencies and
+include the corresponding notices and source obligations before publication.

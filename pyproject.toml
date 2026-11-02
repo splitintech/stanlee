@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools==81.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stanlee-mcp"
+version = "0.1.0.dev0"
+description = "Pencil2D native automation through MCP and CLI"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-2.0-only"
+authors = [{name = "SplitIn", email = "153407779+splitintech@users.noreply.github.com"}]
+dependencies = ["mcp==2.3.0"]
+
+[project.urls]
+Repository = "https://github.com/splitintech/stanlee"
+Issues = "https://github.com/splitintech/stanlee/issues"
+
+[project.scripts]
+stanlee = "stanlee.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+stanlee = ["*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
