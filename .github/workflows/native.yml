@@ -57,6 +57,7 @@ jobs:
         if: runner.os == 'Windows'
         run: choco install ffmpeg --yes --no-progress
       - name: Unchanged upstream build and tests, then bridge build and tests
+        if: runner.os != 'Windows'
         shell: bash
         env:
           QT_QPA_PLATFORM: minimal
@@ -75,6 +76,28 @@ jobs:
             test -n "$testbin"
             "$testbin"
           done
+      - name: Windows unchanged upstream and bridge builds and tests
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: minimal
+        run: |
+          foreach ($tree in @('native-baseline', 'native-bridge')) {
+            New-Item -ItemType Directory -Path "$tree/build" | Out-Null
+            $bridge = if ($tree -eq 'native-bridge') { '1' } else { '0' }
+            Push-Location $tree
+            & qmake -o build 'CONFIG-=debug_and_release' 'CONFIG+=release' "STANLEE_AUTOMATION=$bridge"
+            if ($LASTEXITCODE -ne 0) { throw 'qmake failed' }
+            Push-Location build
+            & nmake
+            if ($LASTEXITCODE -ne 0) { throw 'native build failed' }
+            $testbin = Get-ChildItem tests -Recurse -Filter tests.exe | Select-Object -First 1
+            if (-not $testbin) { throw 'native tests executable missing' }
+            & $testbin.FullName
+            if ($LASTEXITCODE -ne 0) { throw 'native tests failed' }
+            Pop-Location
+            Pop-Location
+          }
       - name: Check upstream capability drift and shared registry
         shell: bash
         run: |

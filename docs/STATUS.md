@@ -11,7 +11,7 @@ waived or converted into unsupported upstream limitations.
 | Step 2 | 124 main-window actions; 2,159 discovered UI/API entries; drift checker | Semantic review, full mappings, dialog/tool controls, per-capability acceptance |
 | Step 3 | Optional runtime activation; private authenticated POSIX IPC; bounded framing; GUI-thread dispatch; native signal revisions; polling events; visible disconnect | Windows ACL/named-pipe runtime qualification; stale crash-discovery cleanup; full observation coverage |
 | Step 4 | New/open/save, handles, native snapshots, optional snapshot-only FPS override; source path/dirty/undo/assets tests | Old-format save, safe close, full checkpoints/recovery and malformed/missing-asset matrix |
-| Step 5 | Native bitmap stroke pipeline and history undo/redo; layer creation/select; keyframes; FPS; tool/color/view selection | Pressure/modifiers, full vector semantics, all layer/timeline edits and undo, bounded atomic batches/rollback |
+| Step 5 | Native pressure/modifier stroke pipeline, dynamic tool properties and history undo/redo; layer creation/select; keyframes; FPS; tool/color/view selection | Full vector semantics, all layer/timeline edits and undo, bounded atomic batches/rollback |
 | Step 6 | Automated Mac subset of reference workflow and native PNG export | Entire alpha workflow, human-edit acceptance and native video/audio fixtures |
 | Step 7 | No upstream outreach performed | Complete alpha first, then proposal/design engagement |
 | Step 8 | Remaining surface explicitly inventoried | Advanced timeline, vectors, cameras, audio, palettes, preferences and other editor capabilities |
@@ -26,7 +26,7 @@ fork `master` remains upstream code. New C++ tests pass with **787 assertions in
 59 cases** locally. Python/native integration and CLI tests pass locally; the
 latest CI results must be read separately from this local evidence.
 
-The native shared registry currently advertises 19 implemented development
+The native shared registry currently advertises 21 implemented development
 operations; it deliberately excludes pending operations. Contracts document that
 layer creation and FPS edits lack undo. The coverage register is mechanically
 complete only for its stated scan patterns, semantically incomplete, and is not

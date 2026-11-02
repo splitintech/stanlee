@@ -88,7 +88,7 @@ def test_native_drawing_save_reopen_and_undo(native):
     mutate(service, session, "layer.select", {"index": 1})
     mutate(service, session, "tool.select", {"type": 7})
     mutate(service, session, "color.set", {"color": "#ee7828"})
-    mutate(service, session, "canvas.stroke", {"points": [{"x": -30, "y": -20}, {"x": 0, "y": 30}, {"x": 30, "y": -20}]})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -30, "y": -20, "pressure": .2}, {"x": 0, "y": 30, "pressure": 1}, {"x": 30, "y": -20, "pressure": .2}]})
     painted = service.command(session, "frame.preview", {})
     assert base64.b64decode(painted["data"]).startswith(b"\x89PNG\r\n\x1a\n")
     before_snapshot = service.inspect(session)
@@ -143,3 +143,17 @@ def test_official_mcp_to_native_edit_and_image(native):
             assert not preview.is_error
             assert any(item.type == "image" for item in preview.content)
     asyncio.run(scenario())
+
+
+def test_native_tool_properties_validate_before_applying(native):
+    service, session, root = native
+    mutate(service, session, "tool.select", {"type": 7})
+    tool = service.command(session, "tool.inspect", {})
+    width = next(p for p in tool["properties"] if "width" in p["name"].lower() and p["type"] in {"integer", "number"} and p["enabled"])
+    chosen = max(width["minimum"], min(width["maximum"], 12))
+    mutate(service, session, "tool.configure", {"values": {width["name"]: chosen}})
+    changed = service.command(session, "tool.inspect", {})
+    assert next(p["value"] for p in changed["properties"] if p["name"] == width["name"]) == chosen
+    with pytest.raises(StanleeError, match="invalid_arguments"):
+        mutate(service, session, "tool.configure", {"values": {width["name"]: width["maximum"]+1}})
+    assert service.command(session, "tool.inspect", {})["properties"] == changed["properties"]

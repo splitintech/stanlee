@@ -21,8 +21,8 @@ def test_fps_rejects_invalid_arguments(arguments):
         validate("project.fps", arguments)
 
 
-def test_strokes_reject_pressure_and_nonfinite_coordinates():
-    for point in ({"x": math.nan, "y": 0}, {"x": 0, "y": 0, "pressure": 0.5}):
+def test_strokes_reject_invalid_pressure_and_nonfinite_coordinates():
+    for point in ({"x": math.nan, "y": 0}, {"x": 0, "y": 0, "pressure": 1.5}):
         with pytest.raises(StanleeError):
             validate("canvas.stroke", {"points": [point, {"x": 10, "y": 10}]})
 

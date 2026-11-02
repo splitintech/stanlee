@@ -22,6 +22,7 @@ def libraries():
     bind(security, "OpenProcessToken", w.BOOL, [w.HANDLE, w.DWORD, ctypes.POINTER(w.HANDLE)])
     bind(security, "GetTokenInformation", w.BOOL, [w.HANDLE, ctypes.c_int, ctypes.c_void_p, w.DWORD, ctypes.POINTER(w.DWORD)])
     bind(security, "ConvertSidToStringSidW", w.BOOL, [ctypes.c_void_p, ctypes.POINTER(w.LPWSTR)])
+    bind(security, "ConvertStringSidToSidW", w.BOOL, [w.LPCWSTR, ctypes.POINTER(ctypes.c_void_p)])
     bind(security, "GetNamedSecurityInfoW", w.DWORD, [w.LPCWSTR, ctypes.c_int, w.DWORD,
         ctypes.POINTER(ctypes.c_void_p), ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p), ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p)])
     bind(security, "ConvertSecurityDescriptorToStringSecurityDescriptorW", w.BOOL,
@@ -63,6 +64,17 @@ def current_sid(kernel, security):
         kernel.CloseHandle(token)
 
 
+def canonical_sid(kernel, security, value):
+    """Normalize SDDL aliases such as LA, SY and BA before comparing trustees."""
+    sid = ctypes.c_void_p()
+    if not security.ConvertStringSidToSidW(value, ctypes.byref(sid)):
+        raise StanleeError("unsafe_discovery", "Could not resolve Windows ACL trustee")
+    try:
+        return sid_string(kernel, security, sid)
+    finally:
+        kernel.LocalFree(sid)
+
+
 def check_private(path):
     kernel, security = libraries()
     owner, acl, descriptor = ctypes.c_void_p(), ctypes.c_void_p(), ctypes.c_void_p()
@@ -84,9 +96,10 @@ def check_private(path):
             if len(fields) != 6 or fields[0] not in {"A", "D"}:
                 raise StanleeError("unsafe_discovery", "Unsupported Windows discovery ACL")
             if fields[0] == "A":
-                if fields[5] not in {user, "SY", "BA"}:
+                trustee = canonical_sid(kernel, security, fields[5])
+                if trustee not in {user, "S-1-5-18", "S-1-5-32-544"}:
                     raise StanleeError("unsafe_discovery", "Discovery grants access to other Windows users")
-                allowed_user |= fields[5] == user
+                allowed_user |= trustee == user
         if not allowed_user:
             raise StanleeError("unsafe_discovery", "Discovery lacks a private current-user grant")
     finally:
