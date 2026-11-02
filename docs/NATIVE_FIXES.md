@@ -29,8 +29,8 @@ message-box loops; production warning presentation retains its existing body.
 
 The build manifest pins the current bridge plus all three fixes. The merge
 preserves independent snapshot support and the shared editor modifiability
-check. The integrated Qt 6.12 macOS build passes **67 native cases / 942 assertions**.
-Stanlee passes **28 Python, CLI, and real MCP/native tests**, with one Windows-only
+check. The integrated Qt 6.12 macOS build passes **69 native cases / 990 assertions**.
+Stanlee passes **40 Python, CLI, and real MCP/native tests**, with one Windows-only
 test skipped on macOS. The complete application builds, including its optional
 bridge. Patch replay reproduces the exact standalone fixes tree and ancestry
 checks confirm that the immutable pin includes both bridge and fixes.

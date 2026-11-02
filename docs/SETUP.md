@@ -54,15 +54,26 @@ camera, dimensions, start/end including `last`/`last-sound`, transparency, expli
 overwrite and timeout. Only formats in the pinned native parser are accepted;
 transparency is currently qualified for PNG sequences. Native warnings fail the
 job and staged outputs must decode before publication. Multi-file publication is
-atomic per file; whole-sequence publication rollback remains pending.
+atomic per file. A later failure rolls earlier outputs back. External changes
+prevent destructive rollback and produce `publication_recovery_required` with
+retained backup paths. Output directories are locked during publication. Process
+death can leave `.stanlee-publication.lock` and backup files; crash recovery is
+unfinished, so inspect the owning process and retained files before recovery.
 
 MCP `export_document` creates an independent native snapshot of unsaved state,
 then submits an export job. Its optional FPS override changes only that snapshot.
 Snapshots are retained in the first workspace's private `.stanlee-snapshots`
-directory for recovery. Poll `job_status`; `cancel_job` affects only workers owned
+directory for recovery. `document.checkpoint` also saves an explicit native
+checkpoint without changing active state. `document.recover` accepts that path,
+optional `source_path`, and explicit `discard` for dirty active content. It replaces
+the document, invalidates prior handles/history, and marks recovered content dirty.
+Poll `job_status`; `cancel_job` affects only workers owned
 by the running service. Jobs persist locally under the discovery directory's
 parent. Windows interruption recovery and global cross-process concurrency are
-not yet qualified. Abrupt parent-process death can require manual worker cleanup;
+not yet fully qualified. Job metadata is visible only when the server's grants
+include every recorded originating workspace. Confirmed dead session records
+are cleaned without signalling processes; regular files at socket paths survive.
+Abrupt parent-process death can require manual worker cleanup;
 restart evidence is not a claim that worker supervision is complete.
 
 ## Client configuration
@@ -71,8 +82,17 @@ restart evidence is not a claim that worker supervision is complete.
 prints an argument vector for the official `codex mcp add` command. It does not
 execute it or overwrite configuration. This follows the [official Codex MCP
 documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli). The local
-command syntax was inspected with Codex CLI 0.164.0-alpha.11.1; interactive client
-acceptance is pending.
+command syntax and a real native subset workflow were tested with Codex CLI
+0.164.0-alpha.11.1. See the [recorded evidence](evidence/2026-11-02-codex-cli.json).
+
+Read tools publish MCP read-only annotations. The generic native command and
+export tools retain destructive annotations because they can discard content or
+overwrite files. The noninteractive Codex test used the official per-tool
+`mcp_servers.stanlee.tools.<tool>.approval_mode` configuration for its already
+authorized disposable workspace, supplied only to that invocation. The
+[official configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+documents these controls. Configuration generation preserves the client's own
+approval choices.
 
 For Cursor or Claude Desktop, choose `--client cursor` or
 `--client claude-desktop`. Pass `--existing /absolute/config.json` to produce a
@@ -81,6 +101,6 @@ Stanlee entry produces a conflict. Inspect the generated result before saving it
 to the client's documented configuration location. See [Cursor's documentation](https://cursor.com/docs/mcp)
 and the [official local-server guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers).
 
-Generated stdio configuration is tested by starting the installed Python module
-through the official SDK client. This does not establish signed-in Codex, Cursor
-or Claude Desktop qualification.
+Generated stdio configuration is also tested by starting the installed Python
+module through the official SDK client. The Codex evidence covers its recorded
+subset only. Cursor and Claude Desktop qualification remain pending.

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-02",
+  "client": "Codex CLI",
+  "client_version": "0.164.0-alpha.11.1",
+  "authentication": "existing ChatGPT login",
+  "platform": "macOS arm64",
+  "source_revision": "da97b1f3b73e57145551ddebf90df8659b23d346",
+  "native_revision": "31066bf9261dc4f755fc64ccebf57a0ddc779fa8",
+  "package_version": "0.1.0.dev0",
+  "wheel_sha256": "e2ae089b4c7a883dd544928bea7b94a8c42a0dbb008ac33379e2de6ef50cc068",
+  "configuration": "ephemeral command-line MCP configuration; per-tool editing/export approval only for the disposable granted workspace; no persistent user configuration changes",
+  "completed_checks": [
+    "session discovery",
+    "document inspection",
+    "operations resource discovery and reading",
+    "native pressure stroke",
+    "PNG image preview",
+    "native save",
+    "explicit new-document discard",
+    "native reopen with new handle",
+    "snapshot export job",
+    "decoded 320x240 RGBA PNG",
+    "stale revision rejection preserving state",
+    "decoded native output contains a nonempty stroke and transparent background"
+  ],
+  "mcp_calls": 15,
+  "expected_error": "stale_revision",
+  "export": {
+    "name": "client0001.png",
+    "width": 320,
+    "height": 240,
+    "frames": 1,
+    "frame_rate": "25/1",
+    "duration": null,
+    "audio_streams": 0,
+    "codec": "png",
+    "pixel_format": "rgba",
+    "bytes": 596,
+    "sha256": "d0f8ef2ec4dfde5404abef3870aa7f15fbad31e92256dc88de4a93141601ef3d",
+    "nontransparent_pixels": 141,
+    "nontransparent_bounds": [
+      149,
+      114,
+      166,
+      130
+    ],
+    "alpha_max": 255
+  },
+  "preserved_state": {
+    "fps": 12,
+    "revision": 15,
+    "dirty": false
+  },
+  "limitations": [
+    "subset workflow only; not the complete alpha reference workflow",
+    "no live human edit injection",
+    "Cursor and Claude Desktop acceptance pending",
+    "no close/recovery client qualification",
+    "no claim of complete content or audio equivalence"
+  ]
+}

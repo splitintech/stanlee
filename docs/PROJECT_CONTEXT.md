@@ -78,8 +78,8 @@ hosted native build/test/package configurations: Linux Qt 5/6, Windows Qt 5
 x86/x64 and Qt 6 x64, and macOS Qt 6 universal. The legacy macOS Intel/Qt 5
 workflow timed out in Homebrew dependency setup before application compilation.
 These results do not qualify the entire Stanlee bridge on those platforms.
-The newly integrated local macOS build separately passes 67 native cases /
-942 assertions and 28 Stanlee Python/CLI/MCP/native tests (one Windows-only skip).
+The newly integrated local macOS build separately passes 69 native cases /
+990 assertions and 40 Stanlee Python/CLI/MCP/native tests (one Windows-only skip).
 
 A real hosted package and its sidecar verified successfully; controlled byte
 tampering was rejected. Checksums alone do not authenticate a publisher.
