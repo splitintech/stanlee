@@ -641,3 +641,96 @@ def test_native_bitmap_invalid_geometry_and_batch_restore_pixels(native):
             {'operation':'bitmap.copy','arguments':{'index':1,'frame':1,'target_index':1,'target_frame':99}}]})
     assert inspect()['points']==original['points']
     assert inspect()['bounds']==original['bounds']
+
+
+def test_native_cli_rejects_invalid_exports_with_failure_exit(native):
+    service, session, root = native
+    source = root/'cli-reference.pclx'
+    mutate(service, session, 'document.save', {'path': str(source)})
+    environment = os.environ.copy()
+    environment.update(STANLEE_AUTOMATION='0', STANLEE_SETTINGS_DIR=str(root/'cli-settings'),
+                       QT_QPA_PLATFORM='offscreen', QT_STYLE_OVERRIDE='Fusion', LANG='fr_FR.UTF-8')
+    environment.pop('STANLEE_DISCOVERY_DIR', None)
+    environment.pop('STANLEE_WORKSPACES', None)
+    cases = [
+        ('missing-camera.png', ['--camera', 'Missing camera']),
+        ('unsupported.invalid', []),
+        ('missing/image.png', []),
+        ('missing/movie.mp4', []),
+        ('width.png', ['--width', '0']),
+        ('negative-width.png', ['--width', '-1']),
+        ('height.png', ['--height', 'not-a-number']),
+        ('empty-height.png', ['--height', '']),
+        ('start.png', ['--start', '0']),
+        ('range.png', ['--start', '2', '--end', '1']),
+        ('end.png', ['--end', '-3']),
+        ('overflow.png', ['--width', '2147483648']),
+        ('area.png', ['--width', '20000', '--height', '20000']),
+        ('alpha.mp4', ['--transparency']),
+    ]
+    before = source.read_bytes()
+    for index, (output, options) in enumerate(cases):
+        destination = root/f'case-{index}'/output
+        destination.parent.parent.mkdir(exist_ok=True)
+        # For the explicit missing-parent cases, leave that directory absent.
+        if not output.startswith('missing/'):
+            destination.parent.mkdir(exist_ok=True)
+        result = subprocess.run([os.environ['STANLEE_TEST_APP'], str(source), '--export', str(destination),
+                                 '--start', '1', '--end', '1', *options], env=environment,
+                                capture_output=True, timeout=30)
+        assert result.returncode != 0, (options, result.stdout, result.stderr)
+        assert not list(destination.parent.glob(destination.stem+'*'))
+    assert source.read_bytes() == before
+    # Repeated camera labels are legal document state, but cannot identify one
+    # camera in a name-only CLI request. Do not silently choose one of them.
+    mutate(service, session, 'layer.create', {'type': 'camera', 'name': 'Camera Layer'})
+    mutate(service, session, 'document.save', {'path': str(source), 'overwrite': True})
+    destination = root/'ambiguous.png'
+    result = subprocess.run([os.environ['STANLEE_TEST_APP'], str(source), '--export', str(destination),
+                             '--camera', 'Camera Layer', '--end', '1'], env=environment,
+                            capture_output=True, timeout=30)
+    assert result.returncode != 0, (result.stdout, result.stderr)
+    assert not list(root.glob('ambiguous*'))
+    with pytest.raises(StanleeError, match='native_failure'):
+        export_saved(Path(os.environ['STANLEE_TEST_APP']), service.workspace,
+                     ExportOptions(str(source), [str(root/'unpublished.png')], camera='Camera Layer', end='1'))
+    assert not list(root.glob('unpublished*'))
+
+
+def test_native_movie_matches_selected_camera_image_composition(native):
+    import shutil
+    service, session, root = native
+    application = Path(os.environ['STANLEE_TEST_APP'])
+    encoder = application.parent/'plugins'/('ffmpeg.exe' if os.name == 'nt' else 'ffmpeg')
+    if not encoder.is_file():
+        if os.sys.platform in {'darwin', 'win32'} or not shutil.which('ffmpeg'):
+            pytest.skip('Native movie encoder not deployed beside this source build')
+        encoder = Path(shutil.which('ffmpeg'))
+    mutate(service, session, 'camera.configure', {'index': 0, 'width': 320, 'height': 240})
+    mutate(service, session, 'import.image', {'index': 1, 'frame': 1, 'path': str(bitmap_fixture(root)), 'position': 4})
+    mutate(service, session, 'bitmap.transform', {'index': 1, 'frame': 1, 'matrix': [40, 0, 0, 40, 0, 0]})
+    created = mutate(service, session, 'layer.create', {'type': 'camera', 'name': 'Translated camera'})
+    camera = created['layer_index']
+    mutate(service, session, 'camera.configure', {'index': camera, 'width': 320, 'height': 240})
+    mutate(service, session, 'camera.key', {'index': camera, 'frame': 1, 'x': 90, 'y': 35, 'scale': 1, 'rotation': 0, 'overwrite': True})
+    source = root/'camera-composition.pclx'
+    mutate(service, session, 'document.save', {'path': str(source)})
+    before = source.read_bytes()
+    def export(name, camera_name):
+        result = export_saved(application, service.workspace, ExportOptions(str(source), [str(root/name)],
+            camera=camera_name, width=320, height=240, end='1'))
+        return Path(result['outputs'][0]['path'])
+    expected = export('translated.png', 'Translated camera')
+    other = export('default.png', 'Camera Layer')
+    movie = export('translated.mp4', 'Translated camera')
+    def decode(path):
+        result = subprocess.run([str(encoder), '-v', 'error', '-i', str(path), '-frames:v', '1',
+            '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True, timeout=30, check=True)
+        assert len(result.stdout) == 320*240*3
+        return result.stdout
+    png, wrong, encoded = map(decode, (expected, other, movie))
+    def difference(a, b):
+        return sum(abs(x-y) for x, y in zip(a, b))/len(a)
+    assert difference(png, wrong) > 5, 'Fixture cameras must produce materially different content'
+    assert difference(png, encoded) < 3, 'Movie must retain the selected native camera composition'
+    assert source.read_bytes() == before

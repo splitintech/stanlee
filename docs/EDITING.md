@@ -166,3 +166,17 @@ Exact-pixel fixtures cover independent imported bytes, reflection, region moveme
 cut/paste, atomic rollback, opacity, single/multiple-key paper processing, threshold
 zero, undo and save/reopen. These are automated local capability tests; the complete
 platform/client and performance matrix remains a release requirement.
+
+
+## Native export failure and camera selection
+
+The pinned native CLI returns failure for failed image/movie exports, unsupported
+explicit extensions, missing/ambiguous explicit camera names and invalid numeric
+options/ranges. Extensionless exports retain PNG behavior. Explicit CLI movie
+transparency fails; Stanlee continues to qualify transparency only for PNG.
+
+Movie descriptors carry a camera layer ID from CLI or GUI selection. Duplicate
+labels therefore do not replace a GUI-selected camera with another layer. Name
+fallback remains for legacy descriptors without an ID. Automated CLI fixtures
+compare selected-camera movie/image composition; the complete GUI dialog workflow
+remains a separate acceptance gate.

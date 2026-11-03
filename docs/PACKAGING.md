@@ -30,8 +30,8 @@ No alpha/stable or PyPI publication is performed by this workflow.
 Before distributing packages as qualified releases, complete the dependency notice
 and corresponding-source audit, full native format/codec/reference fixtures,
 clean-machine OS qualification, upgrades/rollback/uninstall, real client matrix
-and signed final-byte acceptance. Those remain explicit gates. Current Homebrew,
-Ubuntu and Chocolatey encoder toolchains are not yet reproducible locked inputs.
+and signed final-byte acceptance. Those remain explicit gates. Ubuntu and Chocolatey encoder toolchains remain unlocked. The Mac encoder uses
+the source lock described below; full reproducibility qualification remains open.
 
 ## Signing and qualification
 
@@ -80,3 +80,19 @@ The fixture also tests native AVI/WebM audio and GIF/APNG frame counts. GIF fram
 delays have centisecond quantization, APNG may omit a container duration field, and
 AVI can retain audio padding beyond the last video frame. Exact four-frame video
 counts remain required. Full format/codec/content acceptance is still unfinished.
+
+
+## Verified downloadable checkpoint
+
+[Run 41668969493](https://github.com/splitintech/stanlee/actions/runs/41668969493)
+completed all architecture builds, universal merging, acceptance on both Mac CPUs
+and provenance. Download experimental artifacts:
+
+- [Mac universal](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13248644365)
+- [Windows x64](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247382526)
+- [Linux x64](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247082723)
+- [MCP wheel/source](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247905713)
+
+These expire after 14 days and use native `5b25d9495c01`, before the latest
+export-integrity changes. [Exact source identities and archive hashes](evidence/2026-11-03-cross-platform-packages.json)
+are retained separately. A newer source pin requires its own qualification.
