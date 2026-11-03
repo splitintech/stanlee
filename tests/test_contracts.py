@@ -51,6 +51,13 @@ def test_unknown_operation_is_explicitly_unsupported():
         validate("QObject.invoke", {})
 
 
+@pytest.mark.parametrize("operation,arguments", [("document.save", {"path": "/tmp/a.pclx"}),
+    ("tool.configure", {"values": {"width": 1}}), ("history.undo", {}), ("edit.batch", {"operations": []})])
+def test_atomic_batches_exclude_files_settings_history_and_nesting(operation, arguments):
+    with pytest.raises(StanleeError, match="unsupported_atomic_operation"):
+        validate("edit.batch", {"operations": [{"operation": operation, "arguments": arguments}]})
+
+
 def test_live_launch_rejects_an_executable_without_bridge_identity(tmp_path):
     service = Service([str(tmp_path)], tmp_path/"sessions", executable=sys.executable)
     with pytest.raises(StanleeError, match="unsupported_capability"):

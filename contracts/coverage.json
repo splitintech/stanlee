@@ -2585,19 +2585,52 @@
       "label": "",
       "family": "layers",
       "fingerprint": "866c52c7623c000b076c802b3d3a7b759240f436179ae6b678f1ffa00a5f39c5",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Current document/revision; explicit layer/key selection",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::chooseOpacitySpinBox#1",
@@ -2607,19 +2640,52 @@
       "label": "",
       "family": "layers",
       "fingerprint": "7aa39741657df7208b08cff8708fef09590d258319917c6f7d1f1b8019391bf5",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Current document/revision; explicit layer/key selection",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::rbActiveKeyframe#1",
@@ -2629,19 +2695,52 @@
       "label": "Active keyframe",
       "family": "layers",
       "fingerprint": "a9ffa41a94f4ed752f361cc9ff539e3084b274d2df11f0ac7a58cae005c7323f",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit frames: one active key, selected exact keys, or every key on the chosen bitmap/vector layer",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::rbSelectedKeyframes#1",
@@ -2651,19 +2750,52 @@
       "label": "Selected keyframe(s)",
       "family": "layers",
       "fingerprint": "914be3ae1c3d4a4ebc31086be83de59ebc12c4548bbde26337e3b86de39caee3",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit frames: one active key, selected exact keys, or every key on the chosen bitmap/vector layer",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::rbActiveLayer#1",
@@ -2673,19 +2805,52 @@
       "label": "Layer",
       "family": "layers",
       "fingerprint": "448ba3dead1da8843d1c6347970163015f189a51d5aa6fa1a20b7d27849076a9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit frames: one active key, selected exact keys, or every key on the chosen bitmap/vector layer",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::btnFadeIn#1",
@@ -3069,19 +3234,26 @@
       "label": "Undo",
       "family": "history",
       "fingerprint": "f70b5442a86939ad7c8a1273b1d3654be0c10c7835778a3c23acd63df5480a51",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "history.undo",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_history",
+      "inputs": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionRedo#1",
@@ -3091,19 +3263,26 @@
       "label": "Redo",
       "family": "history",
       "fingerprint": "1f184c769f8f55956ce4f68350bfc572a8f5e2b661050314f805c1b7a9e76032",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "history.redo",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_history",
+      "inputs": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCut#1",
@@ -3597,19 +3776,34 @@
       "label": "Add Frame",
       "family": "timeline",
       "fingerprint": "8559f25fd20f2d06922728abbffff48509249f33c2f0e689f463c7f5955739fd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.add_key",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "frame": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "frame"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionDuplicate_Frame#1",
@@ -3619,19 +3813,46 @@
       "label": "Duplicate Frame",
       "family": "timeline",
       "fingerprint": "e186449faf7a050419b864d41dda9f515b6710758d236a11994cc21fdeb5f5fc",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.duplicate_key",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "from": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "to": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "index",
+          "from",
+          "to"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionRemove_Frame#1",
@@ -3641,19 +3862,46 @@
       "label": "Remove Frame",
       "family": "timeline",
       "fingerprint": "f0c97c4ff88d4ebc4c6e6f99b7604eb3083b0ba73b509bf3fa898a36bbd17275",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.remove_keys",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "index",
+          "frames"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionMove#1",
@@ -3905,19 +4153,43 @@
       "label": "New Bitmap Layer",
       "family": "layers",
       "fingerprint": "0f832fac51d64ec48d4884b177aad699a988f6bffa47ffaf4149242c36674fc6",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNew_Vector_Layer#1",
@@ -3927,19 +4199,43 @@
       "label": "New Vector Layer",
       "family": "layers",
       "fingerprint": "9a59ccc16608985b6666230127773af227a51f14238794b35db6ee5e9f2414fc",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNew_Sound_Layer#1",
@@ -3949,19 +4245,43 @@
       "label": "New Sound Layer",
       "family": "layers",
       "fingerprint": "21e9663e467c4c8d86249b9e8493be48821762fc7c41de84f2bc43c5b212a98a",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNew_Camera_Layer#1",
@@ -3971,19 +4291,43 @@
       "label": "New Camera Layer",
       "family": "camera",
       "fingerprint": "f4cf66c70488672659ae32357bfdc84c2be23cfa8f3c0edf9e69ceedac627de7",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionDelete_Current_Layer#1",
@@ -3993,19 +4337,34 @@
       "label": "Delete Current Layer",
       "family": "layers",
       "fingerprint": "085c13ca8e335a30d8f24fe714209d3a2696d2521df9003832f4e6476e5975ac",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.delete",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "index"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionHelp#1",
@@ -4851,19 +5210,53 @@
       "label": "Layer / Keyframe opacity",
       "family": "layers",
       "fingerprint": "e8114d93195c5c053db73374b146852677f1a0d0e390334559b5d7320cd51670",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      },
+      "remaining": "Native fade-in/fade-out dialog actions remain pending; explicit uniform opacity is implemented."
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOpen_Temporary_Directory#1",
@@ -4983,19 +5376,52 @@
       "label": "Add Exposure",
       "family": "timeline",
       "fingerprint": "360de2d20febfbf381482cd3c462f08e090c977827b6f2fd2a28e8981ee38619",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.expose",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "delta": {
+            "type": "integer",
+            "minimum": -1000,
+            "maximum": 1000
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "delta"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSubtract_Frame_Exposure#1",
@@ -5005,19 +5431,52 @@
       "label": "Subtract Exposure",
       "family": "timeline",
       "fingerprint": "193c9d5f5dc48793e55aa13dca2b99b5399b1f4128043d4c0a8c05381c450781",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.expose",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "delta": {
+            "type": "integer",
+            "minimum": -1000,
+            "maximum": 1000
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "delta"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionReverse_Frames_Order#1",
@@ -5027,19 +5486,46 @@
       "label": "Reverse Frames Order",
       "family": "timeline",
       "fingerprint": "c113c174a99a412d2946b850bf7f02afb3f5356f18877adbbf38576ad21058dc",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.reverse",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "index",
+          "frames"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionRemove_Frames#1",
@@ -5049,19 +5535,46 @@
       "label": "Remove Frames",
       "family": "timeline",
       "fingerprint": "a9def7806e1ecf826b9a57e332addf94bc5a6bb5749efb0fa1d92a64650cb9ca",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.remove_keys",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "index",
+          "frames"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionStatusBar#1",
@@ -17457,19 +17970,34 @@
       "name": "mFpsBox = new QSpinBox(this);",
       "family": "application",
       "fingerprint": "3290e716e72f5aee1408892a5e5e05862253af7871c297cbab5a551cca536cac",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "project.fps",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_camera_animation_reset_preview_and_save_reopen"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Current document/revision; explicit layer/key selection",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "fps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 120
+          }
+        },
+        "required": [
+          "fps"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/src/timecontrols.cpp::timeSelectMenu->addAction(mNoTimecodeAction = new QAction(tr(\"No text\"), this));#1",

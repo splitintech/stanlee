@@ -60,6 +60,162 @@ def mutate(service, session, operation, arguments):
     return service.command(session, operation, arguments, state["revision"], state["document_id"])
 
 
+def test_native_batch_publishes_one_native_undo_unit(native):
+    service, session, root = native
+    mutate(service, session, "tool.select", {"type": 7})
+    before = service.inspect(session)
+    blank = service.command(session, "frame.preview", {})["data"]
+    steps = [
+        {"operation": "project.fps", "arguments": {"fps": 24}},
+        {"operation": "layer.create", "arguments": {"type": "bitmap", "name": "Batch artwork"}},
+        {"operation": "canvas.stroke", "arguments": {"points": [{"x": -20, "y": 0}, {"x": 20, "y": 20}]}},
+    ]
+    after = mutate(service, session, "edit.batch", {"operations": steps})
+    drawn = service.command(session, "frame.preview", {})["data"]
+    assert after["completed"] == 3 and after["fps"] == 24
+    assert len(after["layers"]) == len(before["layers"]) + 1 and drawn != blank
+    assert after["document_id"] == before["document_id"]
+    undone = mutate(service, session, "history.undo", {})
+    assert undone["fps"] == before["fps"] and undone["layers"] == before["layers"]
+    assert undone["document_id"] == before["document_id"]
+    assert service.command(session, "frame.preview", {})["data"] == blank
+    redone = mutate(service, session, "history.redo", {})
+    assert redone["layers"] == after["layers"] and redone["fps"] == 24
+    assert service.command(session, "frame.preview", {})["data"] == drawn
+
+
+def test_native_failed_batch_rolls_back_and_preserves_prior_redo(native):
+    service, session, root = native
+    mutate(service, session, "tool.select", {"type": 7})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": 0}, {"x": 20, "y": 20}]})
+    drawn = service.command(session, "frame.preview", {})["data"]
+    mutate(service, session, "history.undo", {})
+    before = service.inspect(session)
+    with pytest.raises(StanleeError, match="invalid_context"):
+        mutate(service, session, "edit.batch", {"operations": [
+            {"operation": "project.fps", "arguments": {"fps": 18}},
+            {"operation": "timeline.add_key", "arguments": {"frame": 1}},
+        ]})
+    after = service.inspect(session)
+    for key in ("document_id", "path", "dirty", "layers", "frame", "fps"):
+        assert after[key] == before[key]
+    mutate(service, session, "history.redo", {})
+    assert service.command(session, "frame.preview", {})["data"] == drawn
+    current = service.inspect(session)
+    with pytest.raises(StanleeError, match="unsupported_atomic_operation"):
+        service._bridge(session).call("edit.batch", {"operations": [
+            {"operation": "project.fps", "arguments": {"fps": 30}},
+            {"operation": "document.save", "arguments": {"path": str(root/"forbidden.pclx")}},
+        ]}, expected_revision=current["revision"], document_id=current["document_id"])
+    assert not (root/"forbidden.pclx").exists()
+    assert service.inspect(session)["fps"] == before["fps"]
+
+
+@pytest.mark.parametrize("operation,arguments", [
+    ("canvas.stroke", {"points": [{"x": 0, "y": 0, "pressure": 2}, {"x": 10, "y": 10}]}),
+    ("timeline.remove_keys", {"index": 1, "frames": [1, 1]}),
+    ("layer.create", {"type": "bitmap", "name": "x" * 257}),
+    ("camera.key", {"index": 0, "frame": 2, "x": 0, "y": 0, "scale": 1, "rotation": 0, "path_x": 1}),
+])
+def test_native_batch_validates_nested_contracts_before_any_edit(native, operation, arguments):
+    service, session, root = native
+    before = service.inspect(session)
+    with pytest.raises(StanleeError, match="invalid_arguments"):
+        service._bridge(session).call("edit.batch", {"operations": [
+            {"operation": "project.fps", "arguments": {"fps": 30}},
+            {"operation": operation, "arguments": arguments},
+        ]}, expected_revision=before["revision"], document_id=before["document_id"])
+    assert service.inspect(session) == before
+
+
+def test_native_layer_properties_order_duplication_opacity_and_deletion(native):
+    service, session, root = native
+    mutate(service, session, "layer.create", {"type": "bitmap", "name": "Source"})
+    mutate(service, session, "tool.select", {"type": 7})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": 0}, {"x": 20, "y": 20}]})
+    source = service.inspect(session)["layers"][2]
+    changed = mutate(service, session, "layer.update", {"index": 2, "name": "Hidden", "visible": False})
+    assert changed["layers"][2]["name"] == "Hidden" and not changed["layers"][2]["visible"]
+    restored = mutate(service, session, "history.undo", {})
+    assert restored["layers"][2] == source
+    copied = mutate(service, session, "layer.duplicate", {"index": 2, "name": "Copy"})
+    copy_id = copied["layers"][3]["layer_id"]
+    assert copy_id != source["layer_id"]
+    ordered = mutate(service, session, "layer.reorder", {"index": 3, "target": 1})
+    assert ordered["layers"][1]["layer_id"] == copy_id
+    mutate(service, session, "history.undo", {})
+    faded = mutate(service, session, "content.opacity", {"index": 3, "frames": [1], "opacity": .25})
+    assert faded["layers"][3]["frames"][0]["opacity"] == .25
+    removed = mutate(service, session, "layer.delete", {"index": 3})
+    assert len(removed["layers"]) == 3
+    restored = mutate(service, session, "history.undo", {})
+    assert restored["layers"][3]["layer_id"] == copy_id
+    assert restored["layers"][3]["frames"][0]["opacity"] == .25
+    with pytest.raises(StanleeError, match="invalid_context"):
+        mutate(service, session, "layer.delete", {"index": 0})
+
+
+def test_native_timeline_move_duplicate_exposure_reverse_and_remove(native):
+    service, session, root = native
+    mutate(service, session, "tool.select", {"type": 7})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": 0}, {"x": 20, "y": 20}]})
+    original = service.command(session, "frame.preview", {"frame": 1})["data"]
+    mutate(service, session, "timeline.duplicate_key", {"index": 1, "from": 1, "to": 3})
+    assert service.command(session, "frame.preview", {"frame": 3})["data"] == original
+    moved = mutate(service, session, "timeline.move_key", {"index": 1, "from": 3, "to": 5})
+    assert {frame["frame"] for frame in moved["layers"][1]["frames"]} == {1, 5}
+    exposed = mutate(service, session, "timeline.expose", {"index": 1, "frames": [1], "delta": 2})
+    assert {frame["frame"] for frame in exposed["layers"][1]["frames"]} == {1, 7}
+    mutate(service, session, "timeline.scrub", {"frame": 7})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": 20}, {"x": 20, "y": 0}]})
+    second = service.command(session, "frame.preview", {"frame": 7})["data"]
+    assert second != original
+    mutate(service, session, "timeline.reverse", {"index": 1, "frames": [1, 7]})
+    assert service.command(session, "frame.preview", {"frame": 1})["data"] == second
+    mutate(service, session, "history.undo", {})
+    assert service.command(session, "frame.preview", {"frame": 1})["data"] == original
+    removed = mutate(service, session, "timeline.remove_keys", {"index": 1, "frames": [7]})
+    assert [frame["frame"] for frame in removed["layers"][1]["frames"]] == [1]
+    restored = mutate(service, session, "history.undo", {})
+    assert {frame["frame"] for frame in restored["layers"][1]["frames"]} == {1, 7}
+    with pytest.raises(StanleeError, match="invalid_context"):
+        mutate(service, session, "timeline.remove_keys", {"index": 1, "frames": [1, 7]})
+    selected = mutate(service, session, "timeline.select_keys", {"index": 1, "frames": [1, 7]})
+    assert all(frame["selected"] for frame in selected["layers"][1]["frames"])
+
+
+def test_native_camera_animation_reset_preview_and_save_reopen(native):
+    service, session, root = native
+    mutate(service, session, "camera.configure", {"index": 0, "width": 320, "height": 240})
+    mutate(service, session, "layer.select", {"index": 1})
+    mutate(service, session, "tool.select", {"type": 7})
+    mutate(service, session, "canvas.stroke", {"points": [{"x": -20, "y": 0}, {"x": 20, "y": 20}]})
+    mutate(service, session, "camera.key", {"index": 0, "frame": 10, "x": 40, "y": 20,
+        "rotation": 10, "scale": 1.3, "easing": 17, "path_x": 15, "path_y": 5, "path_moved": True})
+    keys = service.inspect(session)["layers"][0]["frames"]
+    end = next(key for key in keys if key["frame"] == 10)
+    assert (end["x"], end["y"], end["rotation"], end["scale"], end["easing"]) == (40, 20, 10, 1.3, 17)
+    initial = service.command(session, "frame.preview", {"frame": 1, "camera_index": 0})
+    animated = service.command(session, "frame.preview", {"frame": 10, "camera_index": 0})
+    assert initial["width"] == 320 and initial["height"] == 240 and initial["data"] != animated["data"]
+    mutate(service, session, "camera.reset", {"index": 0, "frame": 1, "field": 6})
+    assert service.command(session, "frame.preview", {"frame": 10, "camera_index": 0})["data"] == initial["data"]
+    mutate(service, session, "history.undo", {})
+    assert service.command(session, "frame.preview", {"frame": 10, "camera_index": 0})["data"] == animated["data"]
+    mutate(service, session, "project.fps", {"fps": 24})
+    path = root/"animated-camera.pclx"
+    mutate(service, session, "document.save", {"path": str(path)})
+    old = service.inspect(session)
+    mutate(service, session, "document.new", {"discard": True})
+    mutate(service, session, "document.open", {"path": str(path)})
+    reopened = service.inspect(session)
+    assert reopened["fps"] == 24 and reopened["document_id"] != old["document_id"]
+    assert reopened["layers"][0]["width"] == 320
+    assert service.command(session, "frame.preview", {"frame": 10, "camera_index": 0})["data"] == animated["data"]
+    mutate(service, session, "timeline.move_key", {"index": 0, "from": 1, "to": 5})
+    mutate(service, session, "camera.reset", {"index": 0, "frame": 5, "field": 0})
+
+
 def test_checkpoint_recovery_preserves_source_and_failure_preserves_active_document(native):
     service, session, root = native
     mutate(service, session, "tool.select", {"type": 7})

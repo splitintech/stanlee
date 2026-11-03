@@ -28,7 +28,8 @@ def create_server(service: Service) -> MCPServer:
     server = MCPServer("Stanlee", version=__version__, subscriptions=False, lifespan=lifespan,
         instructions="Inspect before editing. Use the returned document_id and revision on every mutation. "
         "On stale_revision, inspect again and reconcile the human's changes. Only advertised native operations are available. "
-        "This development build is not a qualified alpha; atomic batches and full editor coverage are pending. "
+        "This development build is not a qualified alpha; full editor coverage is pending. "
+        "edit.batch accepts only advertised undoable document operations. Files, settings, history and nested batches are excluded. "
         "Checkpoints recover content as a new document, invalidating old handles and history.")
 
     async def run(function, *args, **kwargs):
@@ -62,9 +63,10 @@ def create_server(service: Service) -> MCPServer:
         return await run(service.command, session_id, operation, arguments, expected_revision, document_id)
 
     @server.tool(annotations=read)
-    async def preview(session_id: str, frame: int | None = None) -> Image:
+    async def preview(session_id: str, frame: int | None = None, camera_index: int | None = None) -> Image:
         """Render a PNG through native composition and camera transforms."""
-        result = await run(service.command, session_id, "frame.preview", {} if frame is None else {"frame": frame})
+        arguments = {key: value for key, value in {"frame": frame, "camera_index": camera_index}.items() if value is not None}
+        result = await run(service.command, session_id, "frame.preview", arguments)
         return Image(data=base64.b64decode(result["data"], validate=True), format="png")
 
     @server.tool(annotations=read)
@@ -155,7 +157,7 @@ def create_server(service: Service) -> MCPServer:
 
     @server.prompt()
     def repair_animation() -> str:
-        return "Inspect layers, timeline and preview. Diagnose the smallest repair. Preserve human changes, use current revisions, and use native undo for operations whose contract supports it. Use document.checkpoint before risky workflows. Recovery requires explicit discard and invalidates prior history and handles. Do not assume batch support."
+        return "Inspect layers, timeline and preview. Diagnose the smallest repair. Preserve human changes and use current revisions. Use document.checkpoint before risky workflows. Use edit.batch only for operations whose contract advertises native_document_transaction; file writes, settings and nested batches are excluded. Recovery requires explicit discard and invalidates prior history and handles."
 
     @server.prompt()
     def export_animation() -> str:
