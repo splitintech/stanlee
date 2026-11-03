@@ -61,7 +61,9 @@ def write_journal(path, data):
 
 
 def sync_file(path):
-    with path.open('rb') as stream:
+    # Windows FlushFileBuffers requires a writable handle, including when
+    # flushing bytes copied by another handle. These are our private stages.
+    with path.open('r+b') as stream:
         os.fsync(stream.fileno())
 
 
