@@ -177,7 +177,11 @@ def recover_publications(workspace, directories):
                     conflicts, retained = _rollback(entries, workspace)
                     state = 'rolled_back' if not conflicts else 'conflict'
                 if conflicts:
-                    data['phase'] = 'conflict'
+                    # A durable commit is irreversible during recovery. Keeping
+                    # this phase prevents a second recovery from rolling back
+                    # other committed files after an external edit was observed.
+                    if data['phase'] != 'complete':
+                        data['phase'] = 'conflict'
                     write_journal(journal, data)
                 _cleanup(journal, entries, retained, keep_journal=bool(conflicts))
                 results.append({'transaction_id':data['id'], 'state':state, 'outputs':conflicts,
@@ -232,6 +236,10 @@ def publish_outputs(outputs, workspace, *, overwrite, cancelled):
                     if fingerprint(target) != original or fingerprint(Path(backup))['sha256'] != original['sha256']:
                         raise StanleeError('output_conflict', 'Original output changed while preparing its backup')
                 entry['published'] = fingerprint(Path(name))
+                # The journal may live in another output directory. Persist
+                # stage/backup names here before a durable intent can replace
+                # this directory's original output.
+                sync_directory(target.parent)
                 entry['state'] = 'prepared'
                 write_journal(journal, data)
             data['phase'] = 'publishing'

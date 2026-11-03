@@ -82,7 +82,7 @@ AVI can retain audio padding beyond the last video frame. Exact four-frame video
 counts remain required. Full format/codec/content acceptance is still unfinished.
 
 
-## Verified downloadable checkpoint
+## Historical downloadable checkpoint
 
 [Run 41668969493](https://github.com/splitintech/stanlee/actions/runs/41668969493)
 completed all architecture builds, universal merging, acceptance on both Mac CPUs
@@ -93,8 +93,9 @@ and provenance. Download experimental artifacts:
 - [Linux x64](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247082723)
 - [MCP wheel/source](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247905713)
 
-These expire after 14 days and use native `5b25d9495c01`, before the latest
-export-integrity changes. [Exact source identities and archive hashes](evidence/2026-11-03-cross-platform-packages.json)
+These expire after 14 days and use native `5b25d9495c01`. They contain the
+subsequently fixed audio shutdown fault and precede export-integrity changes.
+Use a newer qualified checkpoint for audio-document work. [Exact source identities and archive hashes](evidence/2026-11-03-cross-platform-packages.json)
 are retained separately. A newer source pin requires its own qualification.
 
 

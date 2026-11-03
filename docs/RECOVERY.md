@@ -32,3 +32,26 @@ Kernel locks release on process death. Unlinking lock files while another proces
 holds an old descriptor would break mutual exclusion, so idle files are retained.
 A hard crash during initial staging can leave an empty orphan stage; recovery
 protects user outputs, but exhaustive orphan cleanup remains unqualified.
+
+
+## Multi-directory crash transitions
+
+The real-process matrix kills publication after journal preparation, stage/backup
+announcement and copying, intent, replacement, per-file publication, the durable
+commit and partial cleanup. Both overwrite and new-file modes use two distinct
+output directories. Recovery itself is killed after restoring/removing an output
+and then rerun to verify idempotence. POSIX original permission bits and unrelated
+files are preserved.
+
+A committed transaction keeps its durable `complete` phase when later external
+edits are observed. It returns a conflict and retains available backups/journal;
+repeated recovery never converts this commit into rollback of other committed
+files. Earlier source could downgrade that phase and subsequently restore/delete
+other committed outputs. The regression tests demonstrate and prevent both modes.
+Stage/backup directory entries are synced in each destination directory before
+publication intent, even when the transaction journal lives in another directory.
+
+The 42-case transition matrix passes locally. Cross-platform execution must be
+recorded independently. These process-death fixtures do not establish power-loss,
+filesystem-corruption, native editor crash or complete client/platform qualification.
+The initial unjournaled empty-orphan window described above remains open.

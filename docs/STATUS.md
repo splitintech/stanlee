@@ -15,8 +15,8 @@ review remains incomplete. Operation counts do not establish capability coverage
 
 ## Current local source
 
-`build-manifest.json` pins native `b7d1b77a60ee3cc48faa327483c31b602b37ce22`
-on the review integration branch. Local verification passes **77 Python/native
+`build-manifest.json` pins native `e7bc6f8387b0142fcb5d8b61cf12f03682d225c0`
+on the review integration branch. Local verification passes **119 Python/native
 integration, CLI, recovery and packaging tests**, with one Windows-only test skipped
 on Mac, plus **80 native cases / 1,183 assertions** through qmake and CMake.
 Both bridge-enabled and bridge-disabled CMake applications build on Mac.
@@ -38,9 +38,15 @@ is alive, with teardown metadata forwarding disconnected. A focused native lifet
 test failed with SIGBUS before the fix, then passed all eight assertions; the same
 saved audio document completed 30 consecutive clean CLI exports after the fix.
 [Normalized evidence](evidence/2026-11-03-audio-shutdown.json) records the source and
-verification boundaries. Current final package/platform acceptance is a separate gate.
+verification boundaries. A locally relocated archive at controller `256d8c9` passed installed-wheel SDK
+acceptance with all five movie formats after this fix. Its exact archive SHA-256 is
+`8904c19ad13aabda50c1737a5a337c29ac31f47cdef9132f494aced0c4125699`.
+It precedes the subsequent publication recovery change; final current-byte/platform
+acceptance is a separate gate.
 The application-version probe allows a bounded 30 seconds for first-load work;
 a cold extracted package previously exceeded its ten-second probe deadline.
+The lifetime regression uses physical child destruction because older Qt versions
+disconnect signal observers during shutdown; its buffer-alive assertion is retained.
 
 The native bridge uses opt-in activation, private authenticated local IPC,
 strict schemas, GUI-thread dispatch, document/revision checks, workspace grants,
@@ -54,8 +60,10 @@ Exports use saved documents or isolated snapshots, native rendering, bounded
 workers and validation before publication. Durable journals and kernel leases
 recover interrupted publications and preserve externally changed files and backup
 conflicts. Real-process crash fixtures cover replacement-before-journal-update,
-live-owner refusal and interrupted jobs. The full crash-point/platform matrix
-remains open. See [recovery](RECOVERY.md).
+live-owner refusal and interrupted jobs. The 42-case multi-directory process-death matrix covers durable preparation,
+replacement, commit/cleanup, interrupted recovery and repeated committed-conflict
+recovery. Committed decisions remain irreversible; each output directory is synced
+before intent. Full OS/power-loss/native/client crash qualification remains open. See [recovery](RECOVERY.md).
 
 ## Completed cross-platform package checkpoint
 
@@ -67,7 +75,9 @@ its Git tree equals review head `9521442bc37aa5773ea0e10c1955d1a694f01386`.
 Native pin: `5b25d9495c01580dc6ef8ce8a0e56636a60563b7`.
 [Normalized proof](evidence/2026-11-03-cross-platform-packages.json) retains both
 source identities, final archive hashes, six acceptance results and artifact IDs.
-These packages precede the current export-integrity change.
+These historical packages precede the export/audio/recovery corrections and are
+not current qualified builds. They contain the subsequently identified audio
+shutdown and repeated committed-conflict recovery faults.
 
 That checkpoint also passed all six [native Qt 5/6 platform configurations](https://github.com/splitintech/stanlee/actions/runs/41668969687)
 and the complete [Python 3.11/3.12 platform matrix](https://github.com/splitintech/stanlee/actions/runs/41668970222).
