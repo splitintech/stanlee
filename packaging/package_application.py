@@ -167,6 +167,8 @@ def main():
             executable=root/'pencil2d-stanlee.exe';shutil.copy2(args.application,executable)
             plugins=root/'plugins';plugins.mkdir();shutil.copy2(args.encoder,plugins/'ffmpeg.exe');shutil.copy2(validator,plugins/'ffprobe.exe')
             run(args.qt_bin/'windeployqt.exe','--release','--dir',root,executable)
+            (root/'platforms').mkdir(exist_ok=True)
+            shutil.copy2(args.qt_bin.parent/'plugins/platforms/qoffscreen.dll',root/'platforms/qoffscreen.dll')
         else:
             (root/'bin').mkdir();executable=root/'bin/pencil2d-stanlee';shutil.copy2(args.application,executable)
             plugins=root/'bin/plugins';plugins.mkdir();shutil.copy2(args.encoder,plugins/'ffmpeg');shutil.copy2(validator,plugins/'ffprobe')
