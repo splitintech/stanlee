@@ -73,7 +73,9 @@ service.jobs._write('interruption-fixture', 'running', {'request': 'persisted be
 
 
 @pytest.mark.parametrize("cancel", [False, True])
-def test_owned_worker_timeout_and_cancellation_never_publish(tmp_path, cancel):
+def test_owned_worker_timeout_and_cancellation_never_publish(tmp_path, cancel, monkeypatch):
+    import stanlee.export as exports
+    monkeypatch.setattr(exports.shutil, "which", lambda _: None)
     worker = tmp_path/"worker.py"
     worker.write_text("import time\ntime.sleep(30)\n")
     destination = tmp_path/"output.png"

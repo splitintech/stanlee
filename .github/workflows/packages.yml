@@ -181,7 +181,7 @@ jobs:
       - name: Accept universal final bytes on this architecture
         run: python packaging/accept_application.py --package dist/stanlee-experimental-*.tar.gz --target macos-universal-${{ matrix.arch }} --evidence acceptance-macos-universal-${{ matrix.arch }}.json
       - uses: actions/upload-artifact@v7
-        with: {name: experimental-acceptance-macos-universal-${{ matrix.arch }}, path: 'acceptance-*.json', if-no-files-found: error, retention-days: 14}
+        with: {name: 'experimental-acceptance-macos-universal-${{ matrix.arch }}', path: 'acceptance-*.json', if-no-files-found: error, retention-days: 14}
   publish:
     needs: [python, build, universal, universal-acceptance]
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.publish)

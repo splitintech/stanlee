@@ -128,8 +128,6 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
             raise StanleeError('encoder_missing','The native movie encoder is unavailable',{'expected_path':str(bundled)})
     bundled_probe = executable.parent/"plugins"/("ffprobe.exe" if os.name == "nt" else "ffprobe")
     probe = str(bundled_probe) if bundled_probe.is_file() else shutil.which("ffprobe")
-    if not probe:
-        raise StanleeError("validator_missing", "ffprobe is required to validate native output")
     cancelled = cancelled or threading.Event()
     with tempfile.TemporaryDirectory(prefix="stanlee-export-") as folder:
         temporary = Path(folder)
