@@ -68,7 +68,8 @@ The subsequent snapshot asset-integrity pin `da97b1f` also passed all six
 [Python/packaging](https://github.com/splitintech/stanlee/actions/runs/41460361462)
 and all six [native configurations](https://github.com/splitintech/stanlee/actions/runs/41460361576).
 Those results qualify the previous foundation. The new editor transaction/native
-pin requires a fresh platform matrix; local results above cover the new source.
+pin passed a fresh platform matrix as recorded below; local results above cover
+the same runtime/native source.
 An installed-wheel test independently completed SDK stdio → native pressure stroke
 and preview → isolated FPS snapshot → decoded 320×240 transparent PNG export.
 
@@ -96,3 +97,24 @@ bitmaps; preview and save normalize independent/native bitmap bounds consistentl
 Blank saved keys have explicit transparent backing data. A rotated/scaled camera
 preview now matches exactly after native save/reopen. Legacy documents with missing
 bitmap assets remain a qualification limit; missing assets fail snapshot preparation.
+
+Codex CLI 0.164.0-alpha.11.1 repeated the current editor workflow with **21
+successful MCP calls** and one expected stale-revision error. A five-step atomic
+batch changed FPS, drew a pressure stroke, duplicated a key and animated the
+camera. Undo and redo restored timing/keys without changing document identity.
+The client previewed frame 4, saved/new/reopened the project and exported a native
+320×240 RGBA PNG. Independent decoding verified nonempty content and transparency;
+before/after inspection proved stale-revision rejection preserved state.
+[Normalized evidence](evidence/2026-11-03-codex-editor.json) pins the source, native
+revision and installed wheel. This is still a subset of the full alpha workflow.
+The installed-wheel SDK stdio test separately passed the same batch/history/
+preview path and snapshot-only FPS export.
+
+Editor source `3e69f4b` passed all six [Python/packaging jobs](https://github.com/splitintech/stanlee/actions/runs/41634341848).
+All six [native Qt/platform configurations](https://github.com/splitintech/stanlee/actions/runs/41634341896)
+also passed, including real MCP integration on each Qt 6 platform. Subsequent
+documentation/evidence changes do not alter this qualified runtime/native code.
+
+The current native integration also builds successfully with CMake
+`STANLEE_AUTOMATION=OFF` on macOS arm64. This compile check preserves the optional
+bridge boundary; it is separate from normal-application runtime qualification.
