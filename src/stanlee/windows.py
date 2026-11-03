@@ -80,8 +80,12 @@ def check_private(path):
     owner, acl, descriptor = ctypes.c_void_p(), ctypes.c_void_p(), ctypes.c_void_p()
     result = security.GetNamedSecurityInfoW(str(path), 1, 0x00000005, ctypes.byref(owner), None,
                                             ctypes.byref(acl), None, ctypes.byref(descriptor))
+    if result in {2, 3}:  # ERROR_FILE_NOT_FOUND / ERROR_PATH_NOT_FOUND
+        # Native shutdown can remove a discovery record after its lstat check.
+        raise FileNotFoundError(2, "Windows discovery path disappeared", str(path))
     if result:
-        raise StanleeError("unsafe_discovery", "Could not inspect Windows discovery permissions")
+        raise StanleeError("unsafe_discovery", "Could not inspect Windows discovery permissions",
+                           {"winerror": int(result)})
     rendered = w.LPWSTR()
     try:
         user = current_sid(kernel, security)

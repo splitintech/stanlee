@@ -22,8 +22,8 @@ are not a product-completion percentage.
 ## Current local source
 
 `build-manifest.json` pins native `f862a26167d207145972864b91d704758ce104c6`
-on the review integration branch. Local verification passes **238 Python/native
-integration, CLI, recovery and packaging tests**, with one Windows-only test skipped
+on the review integration branch. Local verification passes **241 Python/native
+integration, CLI, recovery and packaging tests**, with two Windows-only tests skipped
 on Mac, plus **83 native cases / 1,210 assertions** through qmake and CMake.
 Both bridge-enabled and bridge-disabled CMake applications build on Mac.
 
@@ -44,6 +44,8 @@ package runs below qualify their recorded revisions only.
 The native CI fixture explicitly deploys its installed encoder/probe beside the
 source app; production Mac/Windows encoder lookup remains restricted to the
 application's deployed tools.
+Windows session discovery tolerates records removed between filesystem and ACL
+inspection during native shutdown; other ACL inspection failures remain rejected.
 
 Native export handling propagates image/movie failures into CLI exit status,
 rejects invalid numeric/range/format/camera requests, and rejects ambiguous explicit

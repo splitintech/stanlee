@@ -223,3 +223,22 @@ def test_stock_project_fallback_resolves_camera_fps_and_last_sound(tmp_path, mon
     options = ExportOptions(str(source), [str(tmp_path/'movie.mp4')], end='last-sound')
     expected = project_expectation(source, options, Workspace([tmp_path]), tmp_path, 'fixture')
     assert (expected.width, expected.height, expected.fps, expected.end, expected.audio_streams) == (320, 240, 24, 28, 1)
+
+
+@pytest.mark.parametrize('status', [2, 3])
+def test_windows_acl_probe_reports_vanished_paths_as_disappearance(tmp_path, monkeypatch, status):
+    import stanlee.windows as windows
+    class RemovedFile:
+        def GetNamedSecurityInfoW(self, *_args): return status
+    monkeypatch.setattr(windows, 'libraries', lambda: (None, RemovedFile()))
+    with pytest.raises(FileNotFoundError):
+        windows.check_private(tmp_path/'exited-session.json')
+
+
+def test_windows_acl_probe_still_rejects_permission_failures(tmp_path, monkeypatch):
+    import stanlee.windows as windows
+    class DeniedFile:
+        def GetNamedSecurityInfoW(self, *_args): return 5
+    monkeypatch.setattr(windows, 'libraries', lambda: (None, DeniedFile()))
+    with pytest.raises(StanleeError, match='unsafe_discovery'):
+        windows.check_private(tmp_path/'unreadable-session.json')
