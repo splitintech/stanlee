@@ -734,3 +734,38 @@ def test_native_movie_matches_selected_camera_image_composition(native):
     assert difference(png, wrong) > 5, 'Fixture cameras must produce materially different content'
     assert difference(png, encoded) < 3, 'Movie must retain the selected native camera composition'
     assert source.read_bytes() == before
+
+
+def test_native_audio_document_exports_exit_cleanly_repeatedly(native):
+    import wave
+    service, session, root = native
+    state = mutate(service, session, 'layer.create', {'type': 'sound', 'name': 'Shutdown fixture'})
+    sound = state['layer_index']
+    asset = root/'silence.wav'
+    with wave.open(str(asset), 'wb') as output:
+        output.setnchannels(1)
+        output.setsampwidth(2)
+        output.setframerate(8000)
+        output.writeframes(b'\0\0'*8000)
+    mutate(service, session, 'audio.import', {'index': sound, 'frame': 1, 'path': str(asset)})
+    for _ in range(200):
+        state = service.inspect(session)
+        if state['layers'][sound]['frames'][0]['duration_ms'] == 1000:
+            break
+        time.sleep(.05)
+    assert state['layers'][sound]['frames'][0]['duration_ms'] == 1000
+    source = root/'with-audio.pclx'
+    mutate(service, session, 'document.save', {'path': str(source)})
+    saved = source.read_bytes()
+    environment = os.environ.copy()
+    environment.update(STANLEE_AUTOMATION='0', QT_QPA_PLATFORM='offscreen', QT_STYLE_OVERRIDE='Fusion')
+    environment.pop('STANLEE_DISCOVERY_DIR', None)
+    environment.pop('STANLEE_WORKSPACES', None)
+    for index in range(5):
+        environment['STANLEE_SETTINGS_DIR'] = str(root/f'export-settings-{index}')
+        result = subprocess.run([os.environ['STANLEE_TEST_APP'], str(source), '--export', str(root/f'audio-{index}.png'),
+                                 '--width', '64', '--height', '64', '--end', '1'],
+                                env=environment, capture_output=True, timeout=30)
+        assert result.returncode == 0, (result.returncode, result.stdout, result.stderr)
+        assert (root/f'audio-{index}0001.png').read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
+    assert source.read_bytes() == saved

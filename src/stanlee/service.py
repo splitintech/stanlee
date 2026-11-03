@@ -73,7 +73,7 @@ class Service:
         probe_environment = {**environment, "QT_QPA_PLATFORM": "offscreen", "QT_STYLE_OVERRIDE": "Fusion"}
         try:
             probe = subprocess.run([str(self.executable), "--version"], env=probe_environment,
-                                   stdin=subprocess.DEVNULL, capture_output=True, timeout=10)
+                                   stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
         except (OSError, subprocess.TimeoutExpired) as error:
             raise StanleeError("application_probe_failed", "Could not inspect the configured native executable") from error
         if probe.returncode or not probe.stdout.strip().startswith(b"Pencil2D-Stanlee "):

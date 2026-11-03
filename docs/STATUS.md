@@ -15,13 +15,13 @@ review remains incomplete. Operation counts do not establish capability coverage
 
 ## Current local source
 
-`build-manifest.json` pins native `31290f32dc4b240ed1e6bdabc946a38413d11451`
-on the review integration branch. Local verification passes **76 Python/native
+`build-manifest.json` pins native `b7d1b77a60ee3cc48faa327483c31b602b37ce22`
+on the review integration branch. Local verification passes **77 Python/native
 integration, CLI, recovery and packaging tests**, with one Windows-only test skipped
-on Mac, plus **79 native cases / 1,175 assertions** through qmake and CMake.
+on Mac, plus **80 native cases / 1,183 assertions** through qmake and CMake.
 Both bridge-enabled and bridge-disabled CMake applications build on Mac.
 
-The latest native change propagates image/movie failures into CLI exit status,
+Native export handling propagates image/movie failures into CLI exit status,
 rejects invalid numeric/range/format/camera requests, and rejects ambiguous explicit
 camera names. CLI and GUI movie selections carry native layer IDs instead of
 resolving an already selected camera by label again. Movie buffering uses actual
@@ -30,6 +30,17 @@ preservation, plus selected-camera MP4/PNG composition against a visibly differe
 camera. Automated GUI interaction with repeated camera labels remains an open check.
 A staged encoder symlink is replaced as a directory entry, preserving its external
 target; a packaging regression fixture checks this behavior.
+
+The subsequent relocated-package check exposed a native audio shutdown crash.
+`SoundPlayer` previously destroyed its borrowed input buffer before QObject deleted
+its decoder child. The decoder is now explicitly stopped/destroyed while the buffer
+is alive, with teardown metadata forwarding disconnected. A focused native lifetime
+test failed with SIGBUS before the fix, then passed all eight assertions; the same
+saved audio document completed 30 consecutive clean CLI exports after the fix.
+[Normalized evidence](evidence/2026-11-03-audio-shutdown.json) records the source and
+verification boundaries. Current final package/platform acceptance is a separate gate.
+The application-version probe allows a bounded 30 seconds for first-load work;
+a cold extracted package previously exceeded its ten-second probe deadline.
 
 The native bridge uses opt-in activation, private authenticated local IPC,
 strict schemas, GUI-thread dispatch, document/revision checks, workspace grants,

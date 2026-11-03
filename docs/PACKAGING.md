@@ -96,3 +96,11 @@ and provenance. Download experimental artifacts:
 These expire after 14 days and use native `5b25d9495c01`, before the latest
 export-integrity changes. [Exact source identities and archive hashes](evidence/2026-11-03-cross-platform-packages.json)
 are retained separately. A newer source pin requires its own qualification.
+
+
+The launch probe permits up to 30 seconds for initial Qt/OS loading, then still
+fails closed on timeout or a non-Stanlee executable. A relocated audio-document
+fixture exposed a decoder/backing-device shutdown fault; native `b7d1b77a60ee`
+fixes that lifetime and includes a regression test. Historical downloadable
+checkpoints above precede this fix. Current final-byte/platform qualification
+must be read independently.
