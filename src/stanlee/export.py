@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -75,8 +76,8 @@ def native_arguments(options: ExportOptions, outputs: list[Path]) -> list[str]:
     return arguments
 
 
-def inspect_media(path: Path, options: ExportOptions, *, movie: bool) -> dict:
-    probe = shutil.which("ffprobe")
+def inspect_media(path: Path, options: ExportOptions, *, movie: bool, probe: str | None = None) -> dict:
+    probe = probe or shutil.which("ffprobe")
     if not probe:
         raise StanleeError("validator_missing", "ffprobe is required to validate native output")
     result = subprocess.run([probe, "-v", "error", "-count_frames", "-show_streams", "-show_format", "-of", "json", str(path)],
@@ -119,6 +120,16 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
         raise StanleeError("invalid_path", "Output directories must already exist")
     if not options.overwrite and any(destination.exists() for destination in destinations):
         raise StanleeError("overwrite_required", "Explicit overwrite required")
+    if any(Path(output).suffix.lower() in MOVIES for output in options.outputs):
+        name = 'ffmpeg.exe' if os.name == 'nt' else 'ffmpeg'
+        bundled = executable.parent/'plugins'/name
+        encoder = bundled if bundled.is_file() else (Path(shutil.which(name)) if sys.platform not in {'darwin','win32'} and shutil.which(name) else None)
+        if encoder is None or not os.access(encoder,os.X_OK):
+            raise StanleeError('encoder_missing','The native movie encoder is unavailable',{'expected_path':str(bundled)})
+    bundled_probe = executable.parent/"plugins"/("ffprobe.exe" if os.name == "nt" else "ffprobe")
+    probe = str(bundled_probe) if bundled_probe.is_file() else shutil.which("ffprobe")
+    if not probe:
+        raise StanleeError("validator_missing", "ffprobe is required to validate native output")
     cancelled = cancelled or threading.Event()
     with tempfile.TemporaryDirectory(prefix="stanlee-export-") as folder:
         temporary = Path(folder)
@@ -134,8 +145,8 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
         environment.pop("STANLEE_WORKSPACES", None)
         log_path = temporary/"native.log"
         with log_path.open("wb") as log:
-            process = subprocess.Popen([str(executable), *native_arguments(options, staged)],
-                stdin=subprocess.DEVNULL, stdout=log, stderr=log, env=environment,
+            process = subprocess.Popen([sys.executable, "-m", "stanlee.worker", "--", str(executable), *native_arguments(options, staged)],
+                stdin=subprocess.PIPE, stdout=log, stderr=log, env=environment,
                 start_new_session=os.name != "nt")
             started = time.monotonic()
             try:
@@ -161,8 +172,10 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
                         else:
                             process.kill()
                         process.wait(timeout=3)
+        if process.stdin is not None:
+            process.stdin.close()
         if process.returncode:
-            raise StanleeError("native_failure", "Native export process failed", {"exit_code": process.returncode})
+            raise StanleeError("native_failure", "Native export process failed", {"exit_code": process.returncode, "log": log_path.read_text(errors="replace")[-8000:]})
         log = log_path.read_text(errors="replace")
         if "Warning:" in log or "Error:" in log:
             raise StanleeError("native_warning", "Native export reported a warning or error; output was not published")
@@ -170,7 +183,7 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
         for stage, destination in zip(staged, destinations):
             files = sorted(stage.parent.iterdir())
             if not files:
-                raise StanleeError("output_missing", "Native process returned without producing output")
+                raise StanleeError("output_missing", "Native process returned without producing output", {"log": log[-8000:]})
             movie = destination.suffix.lower() in MOVIES
             if movie and (files != [stage]):
                 raise StanleeError("output_invalid", "Unexpected native movie outputs")
@@ -180,7 +193,7 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
                 target = workspace.path(str(destination.parent/file.name))
                 if target.exists() and not options.overwrite:
                     raise StanleeError("overwrite_required", "An output sequence frame already exists")
-                metadata = inspect_media(file, options, movie=movie)
+                metadata = inspect_media(file, options, movie=movie, probe=probe)
                 publish.append((file, target, metadata))
         if cancelled.is_set():
             raise StanleeError("cancelled", "Cancelled before publication")

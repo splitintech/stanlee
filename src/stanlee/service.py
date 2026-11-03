@@ -23,12 +23,25 @@ def find_application(explicit: str | None = None) -> Path | None:
 
 
 class Service:
-    def __init__(self, workspaces: list[str], discovery_directory: Path, *, executable: str | None = None):
+    def __init__(self, workspaces: list[str], discovery_directory: Path, *, executable: str | None = None, workers: int = 1):
+        if type(workers) is not int or not 1 <= workers <= 8:
+            raise StanleeError('invalid_arguments','Rendering workers must be an integer from 1 to 8')
+        self.workers = workers
         self.workspace = Workspace(workspaces)
         self.directory = discovery_directory.expanduser().resolve()
         self.executable = find_application(executable)
         self.children: list[subprocess.Popen] = []
         self._jobs = None
+
+    def close(self):
+        if self._jobs is not None:
+            self._jobs.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.close()
 
     def sessions(self) -> list[dict]:
         return discovery(self.directory)
@@ -92,11 +105,15 @@ class Service:
         schema_validate(result, contract["output"])
         return result
 
+    def recover_outputs(self, directories: list[str]) -> dict:
+        from .publication import recover_publications
+        return {'transactions': recover_publications(self.workspace, directories)}
+
     def diagnostics(self) -> dict:
         return {"python": sys.version.split()[0], "executable": str(self.executable) if self.executable else None,
                 "discovery_directory": str(self.directory), "sessions": len(self.sessions()),
                 "protocol_version": REGISTRY["protocol_version"], "qualified_alpha": False,
-                "ffprobe": shutil.which("ffprobe"), "platform": sys.platform}
+                "ffprobe": shutil.which("ffprobe"), "platform": sys.platform, "workers": self.workers}
 
     @property
     def jobs(self):

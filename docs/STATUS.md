@@ -10,27 +10,28 @@ waived or converted into unsupported upstream limitations.
 | Step 1 | Public repositories; unchanged pinned upstream passes local Mac tests and the three-platform Qt 5/6 CI matrix; locked Python dependencies; per-process native settings isolation | Reproducible distributed application packages |
 | Step 2 | 124 main-window actions; 2,159 discovered UI/API entries; drift checker | Semantic review, full mappings, dialog/tool controls, per-capability acceptance |
 | Step 3 | Optional activation; private authenticated Unix sockets/Windows named pipes; bounded framing; GUI-thread dispatch; native revisions/events; visible and API revocation; stale-process discovery cleanup | Full observation coverage |
-| Step 4 | New/open/save, immutable checkpoints/snapshots, explicit recovery, snapshot-only FPS override; source preservation and corrupt recovery tests | Old-format save, safe close and the full recovery/file-format matrix |
+| Step 4 | New/open/save, immutable checkpoints/snapshots, explicit recovery, snapshot-only FPS override; source preservation and corrupt recovery tests | Old-format save and the full recovery/file-format matrix |
 | Step 5 | Native strokes; both history modes preserve interleaved human/agent edits; bounded atomic batches/rollback; layer properties/order/duplication; timeline exposure/reverse; camera keys/path/easing; opacity; isolated project FPS | Full vector/bitmap editing, multi-key repositioning and the remaining native surface |
 | Step 6 | Automated Mac subset of reference workflow and native PNG export | Entire alpha workflow, human-edit acceptance and native video/audio fixtures |
 | Step 7 | Independent issue fixes submitted upstream with attribution and tests; links in NATIVE_FIXES.md | Complete alpha before the separate automation-bridge proposal/design engagement |
-| Step 8 | Remaining surface explicitly inventoried | Remaining timeline operations, vector geometry, audio, palettes, preferences and other editor capabilities |
+| Step 8 | Remaining surface explicitly inventoried | Remaining timeline, bitmap/tools, preferences/dialogs and full format/codec surface |
 | Step 9 | Saved/snapshot native CLI jobs, repeated exports and native aliases, ranges, dimensions, camera arguments; decode/dimension/frame-count/PNG-alpha validation | Full format/codec/audio/content/timing and GUI import/export coverage; native warning localization |
-| Step 10 | Scoped persistent jobs; cancellation/deadlines; isolated profiles; owned process groups; interrupted-owner detection; one worker per service; locked output staging and sequence failure rollback with retained conflict backups | Crash supervision, configurable/global worker concurrency, PID-reuse proof, crash-time publication recovery and Windows recovery qualification |
+| Step 10 | Scoped persistent jobs; cancellation/deadlines; isolated profiles; owned process groups; interrupted-owner detection; kernel owner leases; configurable shared worker slots; durable fsynced publication journals and rollback with retained conflict backups | Full crash-point/OS matrix and Windows runtime recovery qualification |
 | Step 11 | Official SDK stdio; tools/resources/images/prompts and effect annotations; config merge preservation; installed-wheel native stdio test; real signed-in Codex subset workflow | Complete Codex workflow, Cursor and Claude Desktop acceptance; subscriptions/progress negotiation and complete resources |
-| Step 12 | GPL notices, build manifest, Python wheel/sdist build and CI definitions | Clean-machine binary packaging, source/provenance bundle, stable signing/notarization, PyPI ownership/publication, upgrades/rollback/uninstall |
+| Step 12 | GPL notices, source pins, wheel/sdist and relocatable Mac package; cross-platform deployment/nightly/signing/gate implementations | Clean-machine binary packaging, source/provenance bundle, stable signing/notarization, PyPI ownership/publication, upgrades/rollback/uninstall |
 
 Native source integration is on `splitintech/pencil` branch
 `stanlee/qualified-integration`, pinned by this repository's build manifest. Normal
-fork `master` remains upstream code. The integrated native suite passes **1,167 assertions in
-78 cases** locally through both qmake and CMake. **53 Python/native integration and CLI tests** pass locally (one Windows-only test skipped on Mac); the
+fork `master` remains upstream code. The integrated native suite passes **1,175 assertions in
+79 cases** locally through both qmake and CMake. **69 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
 latest CI results must be read separately from this local evidence.
 
-The native shared registry currently advertises 41 implemented development
-operations, including 15 new batch/layer/timeline/camera/opacity operations.
+The native shared registry currently advertises 63 implemented development
+operations, including vector geometry/styles/fill, palettes, sound assets, playback,
+image import, safe close and viewport pan/flips.
 Layer creation, strokes, FPS and supported content edits now use native document
 transactions. See [editing contracts and history behavior](EDITING.md).
-Twenty-one UI controls/actions have reviewed API/test mappings; the remaining
+Thirty-seven UI controls/actions have reviewed API/test mappings; the remaining
 inventory is semantically incomplete and is not a declaration of full Pencil2D
 coverage. Windows discovery ACL checks and deadline-bounded named-pipe transport are
 implemented and passed the complete native matrix, including profiles,
@@ -49,8 +50,10 @@ handle and a fresh undo history, and marks recovered content dirty. Its optional
 Output publication stages all validated files, locks destination directories,
 and rolls back earlier files if a later publication fails. External edits are
 preserved; original backups are retained and reported when rollback would overwrite
-them. Readers can see intermediate files. Process death can leave staging/backup
-files and `.stanlee-publication.lock`; automatic crash recovery is unfinished.
+them. Readers can see intermediate files. Real-process crash tests recover a death between replacement and journal update,
+refuse live recovery, preserve external edits and recover interrupted job outputs.
+Persistent lease files are intentional. Full crash-point/platform qualification
+remains unfinished. See [recovery behavior](RECOVERY.md).
 
 MCP tools share the command service with CLI. Native frame previews use the
 application's Object/camera composition. Export validation currently establishes
@@ -118,3 +121,20 @@ documentation/evidence changes do not alter this qualified runtime/native code.
 The current native integration also builds successfully with CMake
 `STANLEE_AUTOMATION=OFF` on macOS arm64. This compile check preserves the optional
 bridge boundary; it is separate from normal-application runtime qualification.
+
+
+The content/audio extension is pinned to native `9be9e56b90ec`. Local qmake and
+CMake tests each pass 79 native cases / 1,175 assertions. The optional bridge-OFF
+CMake application also builds. Official Qt 6.12 supplies the headless FFmpeg backend
+used by sound fixtures; the local Homebrew native Mac media backend did not resolve
+headless duration, so no fake duration or weakened audio assertion was introduced.
+
+A locally relocated Mac ARM package passed the installed SDK fixture: pressure
+batch/undo/redo, vector geometry, independent decoded sound, camera preview,
+save/new/reopen, four distinct PNG frames and a four-frame H.264 movie with one
+audio stream, 24 FPS and duration 0.166667 seconds. Encoder/validator libraries are
+isolated from Qt media libraries to avoid equal-SONAME ABI conflicts. This local
+result is separate from the pending CI package/platform and real-client matrix.
+The final committed package bytes and CI results must be recorded independently.
+See [packaging and signing](PACKAGING.md). Nightly scheduling remains inactive
+until the workflow is merged into the default branch; no such merge is claimed.

@@ -13,6 +13,8 @@ from .errors import StanleeError
 from .export import ExportOptions, export_saved
 from .workspace import private_directory
 from .processes import process_alive
+from .locking import FileLease
+from .publication import recover_publications
 
 
 class Jobs:
@@ -21,7 +23,12 @@ class Jobs:
         self.directory = private_directory(directory)
         self.database = self.directory/"jobs.sqlite3"
         self.lock = threading.RLock()
-        self.worker = threading.Semaphore(1)
+        workers = getattr(service, 'workers', 1)
+        self.worker = threading.Semaphore(workers)
+        self.owner_token = uuid.uuid4().hex
+        self.owners = private_directory(self.directory/'owners')
+        self.slots = private_directory(self.directory/'workers')
+        self.owner_lease = FileLease(self.owners/(self.owner_token+'.lock')).acquire()
         self.cancellations = {}
         self.threads = {}
         with self._connection() as connection:
@@ -30,9 +37,37 @@ class Jobs:
             columns = {row[1] for row in connection.execute("PRAGMA table_info(jobs)")}
             if "roots" not in columns:
                 connection.execute("ALTER TABLE jobs ADD COLUMN roots TEXT NOT NULL DEFAULT '[]'")
-            for job_id, owner in connection.execute("SELECT id, owner FROM jobs WHERE state IN ('queued','running')"):
-                if process_alive(owner) is False:
-                    connection.execute("UPDATE jobs SET state='interrupted', updated=? WHERE id=?", (time.time(), job_id))
+            if "owner_token" not in columns:
+                connection.execute("ALTER TABLE jobs ADD COLUMN owner_token TEXT")
+            for job_id, owner, token, roots, detail in connection.execute("SELECT id,owner,owner_token,roots,detail FROM jobs WHERE state IN ('queued','running')"):
+                # A narrowly granted service must never inspect another workspace's jobs.
+                try:
+                    recorded = json.loads(roots)
+                    if not recorded: continue
+                    for root in recorded: self.service.workspace.path(root)
+                except StanleeError:
+                    continue
+                exited = process_alive(owner) is False if not token else False
+                if token:
+                    if not isinstance(token,str) or len(token)!=32 or any(c not in '0123456789abcdef' for c in token):
+                        continue
+                    lease = FileLease(self.owners/(token+'.lock'))
+                    try:
+                        lease.acquire(); exited = True
+                    except StanleeError as error:
+                        if error.code != 'busy': raise
+                    finally: lease.close()
+                if exited:
+                    evidence = json.loads(detail)
+                    request = evidence.get('request') if isinstance(evidence,dict) else None
+                    if isinstance(request,dict) and isinstance(request.get('outputs'),list):
+                        try:
+                            directories = {str(self.service.workspace.path(output).parent) for output in request['outputs']}
+                            recovered = recover_publications(self.service.workspace,directories)
+                            if recovered: evidence['publication_recovery'] = recovered
+                        except (StanleeError,OSError,ValueError) as error:
+                            evidence['publication_recovery'] = {'state':'attention_required','message':str(error)}
+                    connection.execute("UPDATE jobs SET state='interrupted', updated=?, detail=? WHERE id=?", (time.time(),json.dumps(evidence),job_id))
         if os.name != "nt":
             self.database.chmod(0o600)
 
@@ -47,8 +82,8 @@ class Jobs:
 
     def _write(self, job_id, state, detail):
         with self.lock, self._connection() as connection:
-            connection.execute("INSERT INTO jobs (id,state,owner,updated,detail,roots) VALUES (?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state, updated=excluded.updated, detail=excluded.detail",
-                               (job_id, state, os.getpid(), time.time(), json.dumps(detail), json.dumps(list(map(str, self.service.workspace.roots)))))
+            connection.execute("INSERT INTO jobs (id,state,owner,updated,detail,roots,owner_token) VALUES (?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state, updated=excluded.updated, detail=excluded.detail",
+                               (job_id, state, os.getpid(), time.time(), json.dumps(detail), json.dumps(list(map(str, self.service.workspace.roots))), self.owner_token))
 
     def submit(self, options: ExportOptions) -> dict:
         options.validate()
@@ -70,9 +105,22 @@ class Jobs:
             try:
                 if event.is_set():
                     raise StanleeError("cancelled", "Cancelled while queued")
-                self._write(job_id, "running", {"request": asdict(options)})
-                result = export_saved(self.service.executable, self.service.workspace, options, event)
-                self._write(job_id, "succeeded", result)
+                slot = None
+                while slot is None:
+                    if event.is_set(): raise StanleeError('cancelled','Cancelled waiting for a shared rendering slot')
+                    for index in range(self.service.workers):
+                        candidate = FileLease(self.slots/(str(index)+'.lock'))
+                        try:
+                            candidate.acquire();slot=candidate;break
+                        except StanleeError as error:
+                            candidate.close()
+                            if error.code!='busy':raise
+                    if slot is None:event.wait(.05)
+                try:
+                    self._write(job_id, "running", {"request": asdict(options)})
+                    result = export_saved(self.service.executable, self.service.workspace, options, event)
+                    self._write(job_id, "succeeded", result)
+                finally:slot.close()
             except StanleeError as error:
                 state = error.code if error.code in {"cancelled", "timeout"} else "failed"
                 self._write(job_id, state, {"error": error.as_dict()})
@@ -121,3 +169,5 @@ class Jobs:
             event.set()
         for thread in self.threads.values():
             thread.join(timeout=10)
+        if not any(thread.is_alive() for thread in self.threads.values()):
+            self.owner_lease.close()

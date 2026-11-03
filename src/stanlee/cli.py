@@ -14,6 +14,7 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Native Pencil2D automation (experimental development build)")
     root.add_argument("--workspace", action="append", default=[], help="Explicit granted directory; repeat for multiple grants")
     root.add_argument("--discovery-dir", type=Path, default=Path.home()/".local/state/stanlee/sessions")
+    root.add_argument("--workers", type=int, default=1)
     root.add_argument("--application", help="Native Pencil2D executable")
     sub = root.add_subparsers(dest="action", required=True)
     for name in ("serve", "diagnostics", "sessions", "launch", "operations"):
@@ -37,6 +38,8 @@ def parser() -> argparse.ArgumentParser:
     export.add_argument("--transparency", action="store_true")
     export.add_argument("--overwrite", action="store_true")
     export.add_argument("--timeout", type=float, default=120)
+    recovery = sub.add_parser("recover-outputs")
+    recovery.add_argument("directories", nargs="+")
     jobs = sub.add_parser("jobs")
     jobs.add_argument("job_id", nargs="?")
     config = sub.add_parser("config")
@@ -56,7 +59,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.action == "operations":
             result = REGISTRY
         else:
-            service = Service(args.workspace, args.discovery_dir, executable=args.application)
+            service = Service(args.workspace, args.discovery_dir, executable=args.application, workers=args.workers)
             if args.action == "serve":
                 from .server import create_server
                 create_server(service).run(transport="stdio")
@@ -65,6 +68,8 @@ def main(argv: list[str] | None = None) -> int:
                 result = getattr(service, args.action)()
             elif args.action == "inspect":
                 result = service.inspect(args.session_id)
+            elif args.action == "recover-outputs":
+                result = service.recover_outputs(args.directories)
             elif args.action == "jobs":
                 result = service.jobs.get(args.job_id) if args.job_id else service.jobs.list()
             elif args.action == "export":

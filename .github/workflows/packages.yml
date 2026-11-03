@@ -1,0 +1,200 @@
+name: Experimental application packages
+on:
+  push:
+    branches: ['main', 'stanlee/**']
+    paths-ignore: ['docs/**', '**.md']
+  pull_request:
+    paths-ignore: ['docs/**', '**.md']
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish an immutable experimental prerelease after package checks
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: packages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  python:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.12'}
+      - run: python -m pip install -r requirements.lock
+      - run: python -m build
+      - run: sha256sum dist/* > dist/SHA256SUMS
+      - name: Per-file checksums
+        run: for file in dist/*.whl dist/*.tar.gz; do (cd dist && sha256sum "$(basename "$file")") > "$file.sha256"; done
+      - uses: actions/upload-artifact@v7
+        with: {name: experimental-python, path: 'dist/*', if-no-files-found: error, retention-days: 14}
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-14, arch: arm64, qt_arch: clang_64, tag: macos-arm64}
+          - {os: macos-15-intel, arch: x86_64, qt_arch: clang_64, tag: macos-x86_64}
+          - {os: ubuntu-24.04, arch: x86_64, qt_arch: gcc_64, tag: linux-x86_64}
+          - {os: windows-2022, arch: x86_64, qt_arch: win64_msvc2022_64, tag: windows-x86_64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.12'}
+      - name: Read immutable native pin
+        id: native
+        shell: bash
+        run: python -c "import json,os;open(os.environ['GITHUB_OUTPUT'],'a').write('revision='+json.load(open('build-manifest.json'))['fork_revision']+'\n')"
+      - uses: actions/checkout@v7
+        with:
+          repository: splitintech/pencil
+          ref: ${{ steps.native.outputs.revision }}
+          path: native
+          fetch-depth: 0
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.12.0'
+          arch: ${{ matrix.qt_arch }}
+          modules: qtmultimedia
+          cache: true
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+      - name: Linux build and encoder dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libegl1 libxkbcommon-x11-0 libxcb-cursor0 libpulse0 ffmpeg patchelf
+      - name: Mac encoder
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+      - name: Windows encoder
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg --yes --no-progress
+      - name: Build package source
+        shell: bash
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install --no-deps -e .
+          python -m build
+          python scripts/verify_native_fixes.py --native native
+      - name: Native Unix build and tests
+        if: runner.os != 'Windows'
+        shell: bash
+        env: {QT_QPA_PLATFORM: offscreen, QT_STYLE_OVERRIDE: Fusion}
+        run: |
+          mkdir native/build
+          (cd native/build && qmake ../pencil2d.pro CONFIG-=debug_and_release CONFIG+=release CONFIG-=GIT STANLEE_AUTOMATION=1 'QMAKE_APPLE_DEVICE_ARCHS=${{ matrix.arch }}')
+          make -C native/build -j4
+          native/build/tests/tests
+      - name: Native Windows build and tests
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env: {QT_QPA_PLATFORM: offscreen, QT_STYLE_OVERRIDE: Fusion}
+        run: |
+          New-Item -ItemType Directory native/build | Out-Null
+          Push-Location native/build
+          qmake ../pencil2d.pro 'CONFIG-=debug_and_release' 'CONFIG+=release' 'CONFIG-=GIT' STANLEE_AUTOMATION=1
+          if ($LASTEXITCODE -ne 0) { throw 'qmake failed' }
+          nmake
+          if ($LASTEXITCODE -ne 0) { throw 'native build failed' }
+          $tests = Get-ChildItem tests -Recurse -Filter tests.exe | Select-Object -First 1
+          & $tests.FullName
+          if ($LASTEXITCODE -ne 0) { throw 'native tests failed' }
+          Pop-Location
+      - name: Collect license texts
+        shell: bash
+        run: |
+          mkdir -p vendor-licenses/Qt
+          python packaging/fetch_qt_licenses.py --version 6.12.0 --output vendor-licenses/Qt
+      - name: Deploy Unix application
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = macOS ]; then app=native/build/app/Pencil2D-Stanlee.app; else app=native/build/app/pencil2d-stanlee; fi
+          python packaging/package_application.py --native native --application "$app" --qt-bin "$(dirname "$(command -v qmake)")" --encoder "$(command -v ffmpeg)" --architecture '${{ matrix.arch }}' --license-dir vendor-licenses/Qt --output dist
+      - name: Deploy Windows application
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $app = Get-ChildItem native/build/app -Recurse -Filter pencil2d-stanlee.exe | Select-Object -First 1
+          $encoder = Get-ChildItem C:/ProgramData/chocolatey/lib/ffmpeg -Recurse -Filter ffmpeg.exe | Select-Object -First 1
+          $qtbin = Split-Path (Get-Command qmake).Source
+          python packaging/package_application.py --native native --application $app.FullName --qt-bin $qtbin --encoder $encoder.FullName --architecture x86_64 --license-dir vendor-licenses/Qt --output dist
+          if ($LASTEXITCODE -ne 0) { throw 'package deployment failed' }
+      - name: Install wheel and test relocated application
+        shell: bash
+        run: |
+          python -m venv installed
+          if [ "$RUNNER_OS" = Windows ]; then py=installed/Scripts/python; else py=installed/bin/python; fi
+          "$py" -m pip install -r requirements.lock
+          "$py" -m pip install --no-deps dist/*.whl
+          package=$(find dist -name 'stanlee-experimental-*.tar.gz' | head -1)
+          "$py" packaging/accept_application.py --package "$package" --python "$py" --target '${{ matrix.tag }}' --evidence 'dist/acceptance-${{ matrix.tag }}.json'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: experimental-${{ matrix.tag }}
+          path: |
+            dist/stanlee-experimental-*.tar.gz
+            dist/stanlee-experimental-*.sha256
+            dist/acceptance-*.json
+          if-no-files-found: error
+          retention-days: 14
+  universal:
+    needs: build
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.12'}
+      - uses: actions/download-artifact@v8
+        with: {pattern: 'experimental-macos-*', path: arch-packages}
+      - name: Merge universal app and every native dependency
+        run: |
+          arm=$(find arch-packages -name '*macos-arm64*.tar.gz' | head -1)
+          intel=$(find arch-packages -name '*macos-x86_64*.tar.gz' | head -1)
+          python packaging/merge_macos.py --arm64 "$arm" --x86-64 "$intel" --output dist
+      - uses: actions/upload-artifact@v7
+        with: {name: experimental-macos-universal, path: 'dist/*', if-no-files-found: error, retention-days: 14}
+  universal-acceptance:
+    needs: [python, universal]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-14, arch: arm64}
+          - {os: macos-15-intel, arch: x86_64}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.12'}
+      - uses: actions/download-artifact@v8
+        with: {name: experimental-macos-universal, path: dist}
+      - uses: actions/download-artifact@v8
+        with: {name: experimental-python, path: python-dist}
+      - run: python -m pip install -r requirements.lock
+      - run: python -m pip install --no-deps python-dist/*.whl
+      - name: Accept universal final bytes on this architecture
+        run: python packaging/accept_application.py --package dist/stanlee-experimental-*.tar.gz --target macos-universal-${{ matrix.arch }} --evidence acceptance-macos-universal-${{ matrix.arch }}.json
+      - uses: actions/upload-artifact@v7
+        with: {name: experimental-acceptance-macos-universal-${{ matrix.arch }}, path: 'acceptance-*.json', if-no-files-found: error, retention-days: 14}
+  publish:
+    needs: [python, build, universal, universal-acceptance]
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.publish)
+    runs-on: ubuntu-24.04
+    permissions: {contents: write}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with: {pattern: 'experimental-*', path: artifacts}
+      - name: Publish immutable experimental snapshot
+        env: {GH_TOKEN: '${{ github.token }}'}
+        shell: bash
+        run: |
+          tag="nightly-$(date -u +%Y%m%d)-${GITHUB_SHA:0:12}"
+          find artifacts -type f \( -name '*.tar.gz' -o -name '*.whl' -o -name '*.sha256' -o -name 'acceptance-*.json' \) > asset-list.txt
+          python packaging/publish_nightly.py --repository "$GITHUB_REPOSITORY" --revision "$GITHUB_SHA" --tag "$tag" --assets-file asset-list.txt

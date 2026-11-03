@@ -108,6 +108,15 @@ def create_server(service: Service) -> MCPServer:
         """Request cancellation of a worker owned by this service."""
         return await run(service.jobs.cancel, job_id)
 
+    @server.tool(structured_output=True, annotations=write)
+    async def recover_outputs(directories: list[str]) -> dict[str, Any]:
+        """Recover interrupted publications in explicit granted output directories.
+
+        Refuse live publishers. Restore original output bytes or retain validated
+        committed outputs; preserve external edits and report retained backups.
+        """
+        return await run(service.recover_outputs, directories)
+
     @server.resource("stanlee://jobs", mime_type="application/json")
     async def jobs_resource() -> str:
         return json.dumps(await run(service.jobs.list))

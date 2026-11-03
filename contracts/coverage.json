@@ -2926,19 +2926,22 @@
       "label": "New",
       "family": "application",
       "fingerprint": "28d9febdace91a5f3656a3f4e9d81d8435dab73cdfca8f0d9f31cb2b4f06a927",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.new",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit discard for dirty documents",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.new",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOpen#1",
@@ -2948,19 +2951,22 @@
       "label": "Open",
       "family": "application",
       "fingerprint": "731663e3632674afa5890cc8b0138ebecbcb5f270bf08c02d02fa7561f5497a7",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.open",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Granted path and explicit discard",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.open",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSave#1",
@@ -2970,19 +2976,22 @@
       "label": "Save",
       "family": "documents",
       "fingerprint": "73389f594c5742e7008a876ad0b93d771ee16b5f6e3dca8830526e4a17cd0838",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.save",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit granted pclx output; legacy pcl pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.save",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSave_as#1",
@@ -2992,19 +3001,22 @@
       "label": "Save As...",
       "family": "documents",
       "fingerprint": "ba7eebc50d1cb2d6ebe4cb9fe38f08cf8cbd6b3dc12321b7848908f09a33c3c3",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.save",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit new pclx path; legacy format dialog choices pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.save",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionExit#1",
@@ -3014,19 +3026,22 @@
       "label": "Exit",
       "family": "application",
       "fingerprint": "fb66c6ff9b0401f88593641afe35452f9f0c2aa1a0872c11b180c7ce498b207d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "session.close",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Clean document or explicit discard; refuses intervening changes",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::session.close",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionExport_ImageSeq#1",
@@ -3102,19 +3117,22 @@
       "label": "Palette",
       "family": "import_export",
       "fingerprint": "7e710463fd272a37de1ad1b2e6f95c96a807e411cefe4097f72abd59f8a9d5b7",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "palette.export",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_palette_roundtrip_and_used_color_guard"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "XML round trip qualified; GPL fixture pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::palette.export",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_Image#1",
@@ -3124,19 +3142,22 @@
       "label": "Image...",
       "family": "import_export",
       "fingerprint": "069502525580d3be64958fecddb91f8a2a7e1409510a80f57ae313f0631601a9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "import.image",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_closed_vector_fill_selection_clear_and_bitmap_import"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Bitmap fixture qualified; complete vector/image format matrix pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::import.image",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_ImageSeq#1",
@@ -3190,19 +3211,22 @@
       "label": "Sound...",
       "family": "import_export",
       "fingerprint": "2aeafcdda81ec59ab2ba8b2ae9cdea470d0f2e5b532756a2cb7383ce2c28c2f6",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "audio.import",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_sound_asset_import_undo_source_independence_and_timing"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Independent one-second WAV fixture; remaining decoder formats pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::audio.import",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_ImageSeqNum#1",
@@ -3402,19 +3426,22 @@
       "label": "Clear Frame",
       "family": "timeline",
       "fingerprint": "146a20cf83abbf5ab7bc615b01ba0bc674ec821d0cb5484f6da0e43227793f1d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.clear",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_closed_vector_fill_selection_clear_and_bitmap_import"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Exact keys on visible paintable layers; native undo",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::content.clear",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPreference#1",
@@ -3578,19 +3605,22 @@
       "label": "Horizontal Flip",
       "family": "application",
       "fingerprint": "c9e2b159b7413c052031686a51e9c65a5eb49ce3190685ba9bb170d00b412624",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "view.set",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit view flip, outside content history",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::view.set",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVertical_Flip#1",
@@ -3600,19 +3630,22 @@
       "label": "Vertical Flip",
       "family": "application",
       "fingerprint": "6db3012e1f388b5e34252f6cf3b344fc412eae3392527398fd9dc0756a18429c",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "view.set",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Vertical parameter implemented; direct vertical fixture pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::view.set",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionGrid#1",
@@ -3710,19 +3743,22 @@
       "label": "Loop",
       "family": "application",
       "fingerprint": "6a2d414efe038107b2536e5c188104d1b3321c084bbc41b5f70f4251fa941f65",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "project.playback",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit loop/ranged/start/end values; undoable",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::project.playback",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNext_Frame#1",
@@ -4484,19 +4520,22 @@
       "label": "Range",
       "family": "application",
       "fingerprint": "530a5a73c334df27008645cec8c4164ce941f996a16640e61e42f6d5d90ab877",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "project.playback",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit loop/ranged/start/end values; undoable",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::project.playback",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionFlip_X#1",
@@ -5012,19 +5051,22 @@
       "label": "Append to Palette...",
       "family": "import_export",
       "fingerprint": "f11905d177f5de99e9c6170bd25cfd6242de8c9caff6714028bb5d97ae1cc749",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "palette.import",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_palette_roundtrip_and_used_color_guard"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Native append implementation; XML replacement fixture currently qualified",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::palette.import",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_Replace_Palette#1",
@@ -5034,19 +5076,22 @@
       "label": "Replace Palette...",
       "family": "import_export",
       "fingerprint": "5e2abeadbb279e7516b0aa479765954ada994c100328cbd6acd703fea6030fef",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "palette.import",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_palette_roundtrip_and_used_color_guard"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Preserves existing vector indices; full GPL format matrix pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::palette.import",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionChangeLineColorCurrent_keyframe#1",
@@ -5310,19 +5355,22 @@
       "label": "Center",
       "family": "viewport",
       "fingerprint": "df9629c1126a9a19c6f6abc88097891719a630788fecf9f150500382b20c5a87",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "view.set",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Native center parameter implemented; specific center fixture pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::view.set",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionReset_Rotation#1",

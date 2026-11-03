@@ -46,6 +46,7 @@ def native():
             session = service.sessions()[0]["session_id"]
             yield service, session, root
         finally:
+            service.close()
             process.terminate()
             try:
                 process.wait(timeout=5)
@@ -442,3 +443,131 @@ def test_launches_a_separate_bridge_profile(native, monkeypatch):
         except subprocess.TimeoutExpired:
             process.kill()
             process.wait(timeout=5)
+
+def test_native_vector_geometry_styles_transforms_and_save(native):
+    service, session, root = native
+    mutate(service, session, 'layer.create', {'type':'vector','name':'Editable paths'})
+    state=service.inspect(session);index=state['layer_index']
+    args={'index':index,'frame':1,'origin':{'x':-30,'y':0,'pressure':.4},
+          'segments':[{'c1x':-10,'c1y':-30,'c2x':10,'c2y':30,'x':30,'y':0,'pressure':1}],
+          'color_index':0,'width':8,'variable_width':True}
+    mutate(service,session,'vector.path',args)
+    inspect=lambda: service.command(session,'vector.inspect',{'index':index,'frame':1})
+    vector=inspect();assert vector['curve_count']==1 and vector['curves'][0]['width']==8
+    before=service.command(session,'frame.preview',{})['data']
+    mutate(service,session,'vector.geometry',{'index':index,'frame':1,'curve':0,'vertex':0,'x':50,'y':20,'c1x':-20,'c1y':-40})
+    assert inspect()['curves'][0]['segments'][0]['x']==50
+    mutate(service,session,'history.undo',{})
+    assert service.command(session,'frame.preview',{})['data']==before
+    mutate(service,session,'vector.style',{'index':index,'frame':1,'curves':[0],'width':14,'feather':2})
+    assert inspect()['curves'][0]['width']==14
+    mutate(service,session,'vector.transform',{'index':index,'frame':1,'curves':[0],'matrix':[1,0,0,1,20,10]})
+    assert inspect()['curves'][0]['origin']['x']==-10
+    current=service.inspect(session)
+    with pytest.raises(StanleeError,match='invalid_arguments'):
+        mutate(service,session,'vector.transform',{'index':index,'frame':1,'curves':[0],'matrix':[0,0,0,0,0,0]})
+    assert inspect()['curves'][0]['origin']['x']==-10
+    path=root/'vector-path.pclx';mutate(service,session,'document.save',{'path':str(path)})
+    expected=inspect()['curves']
+    mutate(service,session,'document.new',{'discard':True});mutate(service,session,'document.open',{'path':str(path)})
+    reopened=inspect()['curves']
+    for rows in (expected,reopened):
+        for row in rows:
+            row.pop('selected',None)
+            for segment in row['segments']: segment.pop('selected',None)
+    assert reopened==expected
+    mutate(service,session,'vector.delete',{'index':index,'frame':1,'curves':[0]})
+    assert inspect()['curve_count']==0
+    mutate(service,session,'history.undo',{})
+    assert inspect()['curve_count']==1
+
+
+def test_native_palette_roundtrip_and_used_color_guard(native):
+    service,session,root=native
+    original=service.command(session,'palette.inspect',{})['colors']
+    mutate(service,session,'palette.add',{'name':'Accent','color':'#12ab78'})
+    colors=service.command(session,'palette.inspect',{})['colors'];index=len(colors)-1
+    assert colors[-1]['name']=='Accent'
+    mutate(service,session,'palette.update',{'index':index,'name':'Changed','color':'#aa3344'})
+    path=root/'palette.xml';mutate(service,session,'palette.export',{'path':str(path)})
+    assert path.is_file()
+    mutate(service,session,'palette.remove',{'index':index})
+    assert service.command(session,'palette.inspect',{})['colors']==original
+    mutate(service,session,'history.undo',{})
+    assert service.command(session,'palette.inspect',{})['colors'][-1]['name']=='Changed'
+    mutate(service,session,'palette.import',{'path':str(path),'replace':True})
+    assert service.command(session,'palette.inspect',{})['colors'][-1]['name']=='Changed'
+    with pytest.raises(StanleeError,match='unsupported_atomic_operation'):
+        mutate(service,session,'edit.batch',{'operations':[{'operation':'palette.import','arguments':{'path':str(path)}}]})
+
+
+def test_native_sound_asset_import_undo_source_independence_and_timing(native):
+    import wave
+    service,session,root=native
+    source=root/'tone.wav'
+    with wave.open(str(source),'wb') as audio:
+        audio.setnchannels(1);audio.setsampwidth(2);audio.setframerate(8000);audio.writeframes(b'\0\0'*8000)
+    created=mutate(service,session,'layer.create',{'type':'sound','name':'Sound'})
+    index=created['layer_index']
+    mutate(service,session,'audio.import',{'index':index,'frame':3,'path':str(source),'name':'One second'})
+    for _ in range(100):
+        state=service.inspect(session);frames=state['layers'][index]['frames']
+        if frames and frames[0]['duration_ms']>0:break
+        time.sleep(.05)
+    assert frames[0]['duration_ms']==1000 and frames[0]['length']==12, (root/'native.log').read_text()[-4000:]
+    source.unlink()
+    mutate(service,session,'project.fps',{'fps':24})
+    assert service.inspect(session)['layers'][index]['frames'][0]['length']==24
+    mutate(service,session,'history.undo',{})
+    assert service.inspect(session)['fps']==12
+    mutate(service,session,'audio.update',{'index':index,'frame':3,'name':'Renamed'})
+    assert service.inspect(session)['layers'][index]['frames'][0]['name']=='Renamed'
+    mutate(service,session,'history.undo',{})
+    assert service.inspect(session)['layers'][index]['frames'][0]['name']=='One second'
+    path=root/'sound.pclx';mutate(service,session,'document.save',{'path':str(path)})
+    with zipfile.ZipFile(path) as archive:
+        assert any(name.endswith('.wav') for name in archive.namelist())
+
+
+def test_native_playback_view_and_safe_close(native):
+    service,session,root=native
+    mutate(service,session,'project.playback',{'loop':True,'ranged':True,'start':2,'end':8})
+    assert service.inspect(session)['playback']['loop']
+    mutate(service,session,'history.undo',{})
+    assert not service.inspect(session)['playback']['loop']
+    mutate(service,session,'view.set',{'scale':1.5,'rotation':20,'x':12,'y':23,'flip_horizontal':True})
+    view=service.command(session,'view.inspect',{})
+    assert view['x']==12 and view['y']==23 and view['flip_horizontal']
+    mutate(service,session,'project.fps',{'fps':24})
+    with pytest.raises(StanleeError,match='discard_required'):mutate(service,session,'session.close',{})
+    result=mutate(service,session,'session.close',{'discard':True})
+    assert result['state']=='closing'
+    for _ in range(100):
+        if not service.sessions():break
+        time.sleep(.02)
+    assert not service.sessions()
+
+
+def test_native_closed_vector_fill_selection_clear_and_bitmap_import(native):
+    service,session,root=native
+    created=mutate(service,session,'layer.create',{'type':'vector','name':'Filled vector'})
+    index=created['layer_index']
+    vertices=[(20,-20),(20,20),(-20,20),(-20,-20)]
+    segments=[{'x':x,'y':y,'c1x':x,'c1y':y,'c2x':x,'c2y':y} for x,y in vertices]
+    mutate(service,session,'vector.path',{'index':index,'frame':1,'origin':{'x':-20,'y':-20},'segments':segments,'color_index':0,'width':2})
+    mutate(service,session,'vector.select',{'index':index,'frame':1,'curves':[0]})
+    assert service.command(session,'vector.inspect',{'index':index,'frame':1})['curves'][0]['selected']
+    mutate(service,session,'vector.fill',{'index':index,'frame':1,'curves':[0],'color_index':0})
+    assert service.command(session,'vector.inspect',{'index':index,'frame':1})['area_count']>0
+    painted=service.command(session,'frame.preview',{})['data']
+    mutate(service,session,'content.clear',{'index':index,'frames':[1]})
+    assert service.command(session,'vector.inspect',{'index':index,'frame':1})['curve_count']==0
+    mutate(service,session,'history.undo',{})
+    assert service.command(session,'frame.preview',{})['data']==painted
+    image=root/'artwork.png';image.write_bytes(base64.b64decode(painted))
+    mutate(service,session,'content.clear',{'index':index,'frames':[1]})
+    mutate(service,session,'import.image',{'index':1,'frame':1,'path':str(image),'position':1})
+    image.unlink()
+    assert service.command(session,'frame.preview',{})['data']==painted
+    mutate(service,session,'history.undo',{})
+    assert service.command(session,'frame.preview',{})['data']!=painted

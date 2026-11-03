@@ -57,9 +57,9 @@ encoded PNGs are limited to 2 MiB.
 ## Atomic batches and history
 
 An `edit.batch` contains 1–64 `{operation, arguments}` steps. Only operations
-advertising `undo: native_document_transaction` are eligible. The entire batch
+advertising `undo: native_document_transaction` and not `atomic: false` are eligible. The entire batch
 has a 16,384 pointer-sample budget. Nested batches, file writes, exports,
-application settings, undo/redo, and view/tool selection are excluded. Select the
+external asset imports, application settings, undo/redo, and view/tool selection are excluded. Select the
 appropriate tool and its settings before batching native strokes.
 
 ```json
@@ -97,3 +97,38 @@ snapshot preparation cost grow with project size. Large-project responsiveness,
 complete vector/audio editing, and remaining native actions are still release
 qualification work. `contracts/coverage.json` records reviewed mappings separately
 from the larger pending inventory.
+
+
+## Vector content, palettes and assets
+
+`vector.inspect` returns paginated native cubic curves, handles, pressure and
+styles. At most 4,096 segments are returned per response. `vector.path` accepts an
+origin and 1–2,048 cubic segments; colors use native palette indices. Geometry,
+explicit curve selection, affine transform, width/feather/color/visibility styles,
+native closed-path fill and deletion have separate operations. Invalid indices,
+singular transforms and unfillable paths fail without retaining partial edits.
+
+Palette add/update/remove/move preserve native references. Used vector colors
+cannot be removed. Native XML/GPL import can append or replace; replacement must
+retain existing indices. Export requires an explicit granted path and overwrite
+consent. Palette/file imports are outside atomic batches.
+
+`audio.import` copies at most 64 MiB of source bytes into a sound layer at an exact
+frame. Replacing an existing key requires `overwrite`. Source deletion cannot
+remove the imported content. Inspection reports decoder duration, pending timing,
+name and playability. Timing is asynchronous and advances the revision; inspect
+again before mutating. `audio.update` changes the native clip name. Invalid decoder
+formats may remain unplayable; complete codec qualification is pending.
+
+`import.image` uses native placement rules on a visible paintable layer. Bitmap
+preflight bounds dimensions and decoded pixels; `content.clear` clears explicit
+bitmap/vector keys with undo. Vector import formats need further qualification.
+
+`project.playback` sets undoable range/loop values. `playback.set` changes live
+play/stop and sound state. Stop is allowed while playing; unrelated mutations
+remain busy. `view.inspect`/`view.set` support pan, center and horizontal/vertical
+flips in addition to scale and rotation. These are view changes, outside batches.
+
+`session.close` requires a clean document or explicit discard and flushes the
+response before quitting. It cancels close if newer document/tool/modal activity
+appears. It does not mark human history clean as a shortcut around save prompts.

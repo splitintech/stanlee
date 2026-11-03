@@ -21,7 +21,7 @@ def validate(operation: str, arguments: dict) -> dict:
         samples = 0
         for step in arguments["operations"]:
             nested = OPERATIONS.get(step["operation"], {})
-            if step["operation"] == "edit.batch" or nested.get("undo") != "native_document_transaction":
+            if step["operation"] == "edit.batch" or (nested.get("undo") != "native_document_transaction" or nested.get("atomic") is False):
                 raise StanleeError("unsupported_atomic_operation", "Batch accepts undoable document edits only")
             validate(step["operation"], step["arguments"])
             if step["operation"] == "canvas.stroke":
