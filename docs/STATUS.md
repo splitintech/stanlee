@@ -23,15 +23,15 @@ waived or converted into unsupported upstream limitations.
 Native source integration is on `splitintech/pencil` branch
 `stanlee/qualified-integration`, pinned by this repository's build manifest. Normal
 fork `master` remains upstream code. The integrated native suite passes **1,175 assertions in
-79 cases** locally through both qmake and CMake. **70 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
+79 cases** locally through both qmake and CMake. **72 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
 latest CI results must be read separately from this local evidence.
 
-The native shared registry currently advertises 63 implemented development
+The native shared registry currently advertises 67 implemented development
 operations, including vector geometry/styles/fill, palettes, sound assets, playback,
 image import, safe close and viewport pan/flips.
 Layer creation, strokes, FPS and supported content edits now use native document
 transactions. See [editing contracts and history behavior](EDITING.md).
-Thirty-seven UI controls/actions have reviewed API/test mappings; the remaining
+Fifty-one UI controls/actions have reviewed API/test mappings; the remaining
 inventory is semantically incomplete and is not a declaration of full Pencil2D
 coverage. Windows discovery ACL checks and deadline-bounded named-pipe transport are
 implemented and passed the complete native matrix, including profiles,
@@ -123,7 +123,7 @@ The current native integration also builds successfully with CMake
 bridge boundary; it is separate from normal-application runtime qualification.
 
 
-The content/audio extension is pinned to native `0506f14b0c96`. Local qmake and
+The content/audio checkpoint used native `0506f14b0c96`. Local qmake and
 CMake tests each pass 79 native cases / 1,175 assertions. The optional bridge-OFF
 CMake application also builds. Official Qt 6.12 supplies the headless FFmpeg backend
 used by sound fixtures; the local Homebrew native Mac media backend did not resolve
@@ -147,3 +147,13 @@ retain the exact 1,000 ms / 12-frame assertion. The controller recovery/package
 suite passed every Mac/Linux/Windows Python 3.11/3.12 job at `fcb6863`:
 [CI evidence](https://github.com/splitintech/stanlee/actions/runs/41655448423).
 Native and application package qualification must be rerun at the corrected pin.
+
+
+The bitmap extension adds bounded independent pixel inspection, explicit native
+region/affine edits and reflection, document-internal region copy/cut, and native
+paper processing. Exact-pixel/opacity/save/reopen/undo and failure rollback fixtures
+pass locally. The native paper threshold and RGB controls now have reviewed API
+mappings; clipboard and selection UI workflows remain explicitly partial. Latest
+source pin and platform qualification are recorded separately from this local proof.
+
+The new bitmap source pin is `02c10d7d0953b4f1fbb12e9fcd46fa5fdb3a2622`.

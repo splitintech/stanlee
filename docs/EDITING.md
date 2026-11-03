@@ -132,3 +132,37 @@ flips in addition to scale and rotation. These are view changes, outside batches
 `session.close` requires a clean document or explicit discard and flushes the
 response before quitting. It cancels close if newer document/tool/modal activity
 appears. It does not mark human history clean as a shortcut around save prompts.
+
+
+## Bitmap regions and scanned paper
+
+`bitmap.inspect` normalizes an independent image copy and returns its canvas bounds,
+opacity and up to 1,024 explicitly requested RGBA samples. It preserves live image
+backing data, revision, dirty state and history. Samples outside content are
+transparent. Native image coordinates include negative positions; centered imports
+place their top-left at `(-width/2, -height/2)` before the chosen native placement.
+
+`bitmap.transform` applies a six-number native affine matrix to an explicit region
+or the full bitmap bounds. It clears the old region and pastes the transformed
+pixels in one document transaction. Singular and oversized transforms fail before
+retaining any edit. Optional `smooth` selects native interpolation. Existing frame
+opacity remains attached to the keyframe.
+
+`bitmap.copy` copies a source region into an exact existing destination bitmap key.
+`target_index` and `target_frame` identify the destination; `dx`/`dy` offset canvas
+coordinates. `cut: true` clears the source region in the same undo unit. Both layers
+must be visible. This operation preserves the system clipboard. Clipboard exchange
+and full vector transfer workflows remain separate unfinished capabilities.
+
+`bitmap.paper` applies Pencil2D's native scanned-paper algorithm to 1–256 exact
+bitmap keys. Threshold is 0–255; `red`, `green` and `blue` explicitly choose native
+line-color retention. The native algorithm classifies lines and existing alpha;
+it can stop a column at an existing transparent pixel. Processing is bounded to
+four million source pixels per command. Rectangle/affine/copy allocations are
+bounded to 8,192 per axis and 32 million pixels, with bounded canvas positions.
+Large projects require explicit smaller regions or key groups.
+
+Exact-pixel fixtures cover independent imported bytes, reflection, region movement,
+cut/paste, atomic rollback, opacity, single/multiple-key paper processing, threshold
+zero, undo and save/reopen. These are automated local capability tests; the complete
+platform/client and performance matrix remains a release requirement.

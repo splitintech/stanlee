@@ -3,7 +3,7 @@
   "upstream_repository": "https://github.com/pencil2d/pencil",
   "upstream_revision": "408563a37068daf7f1b4c6a9291daef039be8cb5",
   "fork_repository": "https://github.com/splitintech/pencil",
-  "fork_revision": "0506f14b0c9652b7f259c029f4fd4e413c70d96d",
+  "fork_revision": "02c10d7d0953b4f1fbb12e9fcd46fa5fdb3a2622",
   "bridge_protocol": 1,
   "mcp_sdk": "2.3.0",
   "python_development": "3.12.15",

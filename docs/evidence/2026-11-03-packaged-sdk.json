@@ -1,0 +1,40 @@
+{
+  "checks": [
+    "relocated native startup",
+    "installed SDK stdio",
+    "atomic edit undo/redo",
+    "vector geometry",
+    "independent sound asset and duration",
+    "camera preview",
+    "save/new/reopen",
+    "four distinct PNG frames",
+    "four-frame 24 FPS movie with audio",
+    "source file preservation",
+    "safe close"
+  ],
+  "movie": {
+    "width": 320,
+    "height": 240,
+    "frames": 4,
+    "frame_rate": "24/1",
+    "duration": "0.166667",
+    "audio_streams": 1,
+    "codec": "h264"
+  },
+  "passed": true,
+  "target": "macos-arm64",
+  "controller_revision": "e1c2a14915804f562ead416dcec72ed340045dee",
+  "native_revision": "0506f14b0c9652b7f259c029f4fd4e413c70d96d",
+  "package_sha256": "87f4b70a0dfa157b313b90b5445ef8f67321b191aef1e16f4c0c4bbc3a6b9d38",
+  "package_architectures": [
+    "arm64"
+  ],
+  "mcp_wheel_sha256": "ad54b832033f0c31811daa11172aeaf794a71c643982597a195a5225e4474351",
+  "environment": {
+    "qt": "6.12.0 official universal SDK",
+    "host_architecture": "arm64",
+    "build_machine_loader_paths_removed": true,
+    "application_signing": "ad-hoc-only",
+    "full_reference_workflow": false
+  }
+}

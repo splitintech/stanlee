@@ -72,6 +72,14 @@ async def accept(root,application,python):
             await edit('edit.batch',{'operations':batch})
             await edit('history.undo',{});assert (await inspect())['fps']==12
             await edit('history.redo',{});assert (await inspect())['fps']==24
+            probes={'index':1,'frame':1,'points':[{'x':0,'y':25},{'x':30,'y':0}]}
+            before=await edit('bitmap.inspect',probes)
+            await edit('bitmap.transform',{'index':1,'frame':1,'matrix':[1,0,0,1,5,0]})
+            await edit('history.undo',{})
+            restored=await edit('bitmap.inspect',probes)
+            assert restored['bounds']==before['bounds'] and restored['points']==before['points']
+            await edit('bitmap.copy',{'index':1,'frame':1,'target_index':1,'target_frame':4,'dx':10})
+            await edit('history.undo',{})
             state=await edit('layer.create',{'type':'vector','name':'Vector artwork'});vector=state['layer_index']
             await edit('vector.path',{'index':vector,'frame':1,'origin':{'x':-20,'y':-20},'segments':[
                 {'x':30,'y':-20,'c1x':0,'c1y':-40,'c2x':20,'c2y':-40}], 'width':5,'color_index':0})
@@ -112,7 +120,7 @@ async def accept(root,application,python):
             assert abs(float(movie['duration'])-4/24)<.05,movie
             assert digest(path)==saved,'Export changed the saved project'
             await edit('session.close',{})
-            return {'checks':['relocated native startup','installed SDK stdio','atomic edit undo/redo','vector geometry',
+            return {'checks':['relocated native startup','installed SDK stdio','atomic edit undo/redo','bitmap region transaction undo','vector geometry',
                 'independent sound asset and duration','camera preview','save/new/reopen','four distinct PNG frames',
                 'four-frame 24 FPS movie with audio','source file preservation','safe close'],
                 'movie':{k:movie[k] for k in ('width','height','frames','frame_rate','duration','audio_streams','codec')},'passed':True}

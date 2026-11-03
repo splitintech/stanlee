@@ -571,3 +571,73 @@ def test_native_closed_vector_fill_selection_clear_and_bitmap_import(native):
     assert service.command(session,'frame.preview',{})['data']==painted
     mutate(service,session,'history.undo',{})
     assert service.command(session,'frame.preview',{})['data']!=painted
+
+
+def bitmap_fixture(root):
+    import zlib
+    def chunk(kind,data):
+        return struct.pack('!I',len(data))+kind+data+struct.pack('!I',zlib.crc32(kind+data)&0xffffffff)
+    row=b'\xff\xff\xff\xff'+b'\x00\x00\x00\xff'+b'\xff\x00\x00\xff'+b'\xff\xff\xff\xff'
+    data=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!IIBBBBB',4,2,8,6,0,0,0))+chunk(b'IDAT',zlib.compress((b'\x00'+row)*2))+chunk(b'IEND',b'')
+    path=root/'bitmap.png';path.write_bytes(data);return path
+
+
+def test_native_bitmap_region_transform_copy_cut_undo_and_paper(native):
+    service,session,root=native
+    path=bitmap_fixture(root)
+    mutate(service,session,'import.image',{'index':1,'frame':1,'path':str(path),'position':4})
+    path.unlink()
+    def pixels(index,points):
+        return [p['rgba'] for p in service.command(session,'bitmap.inspect',{'index':index,'frame':1,'points':[{'x':x,'y':y} for x,y in points]})['points']]
+    assert pixels(1,[(-2,-1),(-1,-1),(0,0),(5,5)])==[[255,255,255,255],[0,0,0,255],[255,0,0,255],[0,0,0,0]]
+    mutate(service,session,'content.opacity',{'index':1,'frames':[1],'opacity':.35})
+    original=service.inspect(session)
+    service.command(session,'bitmap.inspect',{'index':1,'frame':1})
+    assert service.inspect(session)==original
+    mutate(service,session,'bitmap.transform',{'index':1,'frame':1,'rect':{'x':-1,'y':-1,'width':1,'height':2},'matrix':[1,0,0,1,2,0]})
+    assert pixels(1,[(-1,-1),(1,-1)])==[[0,0,0,0],[0,0,0,255]]
+    mutate(service,session,'history.undo',{})
+    assert pixels(1,[(-1,-1),(1,-1)])==[[0,0,0,255],[255,255,255,255]]
+    mutate(service,session,'bitmap.transform',{'index':1,'frame':1,'matrix':[-1,0,0,1,0,0]})
+    assert pixels(1,[(-1,-1),(0,-1)])==[[255,0,0,255],[0,0,0,255]]
+    mutate(service,session,'history.undo',{})
+    target=mutate(service,session,'layer.create',{'type':'bitmap','name':'Copy destination'})['layer_index']
+    mutate(service,session,'bitmap.copy',{'index':1,'frame':1,'target_index':target,'target_frame':1,'rect':{'x':-1,'y':-1,'width':1,'height':2},'dx':10,'cut':True})
+    assert pixels(1,[(-1,-1)])==[[0,0,0,0]]
+    assert pixels(target,[(9,-1)])==[[0,0,0,255]]
+    mutate(service,session,'history.undo',{})
+    assert pixels(1,[(-1,-1)])==[[0,0,0,255]]
+    assert pixels(target,[(9,-1)])==[[0,0,0,0]]
+    mutate(service,session,'bitmap.paper',{'index':1,'frames':[1],'threshold':240,'red':True,'green':True,'blue':True})
+    assert pixels(1,[(-2,-1),(-1,-1),(0,0)])==[[0,0,0,0],[1,1,1,255],[254,0,0,255]]
+    assert service.command(session,'bitmap.inspect',{'index':1,'frame':1})['opacity']==.35
+    project=root/'bitmap.pclx';mutate(service,session,'document.save',{'path':str(project)})
+    mutate(service,session,'document.new',{'discard':True});mutate(service,session,'document.open',{'path':str(project)})
+    assert pixels(1,[(-2,-1),(-1,-1),(0,0)])==[[0,0,0,0],[1,1,1,255],[254,0,0,255]]
+    assert service.command(session,'bitmap.inspect',{'index':1,'frame':1})['opacity']==.35
+
+
+    mutate(service,session,'timeline.duplicate_key',{'index':1,'from':1,'to':4})
+    mutate(service,session,'bitmap.paper',{'index':1,'frames':[1,4],'threshold':0,'red':False,'green':False,'blue':False})
+    for frame in (1,4):
+        sample=service.command(session,'bitmap.inspect',{'index':1,'frame':frame,'points':[{'x':-1,'y':-1}]})
+        assert sample['points'][0]['rgba']==[0,0,0,0]
+    mutate(service,session,'history.undo',{})
+    assert pixels(1,[(-1,-1)])==[[1,1,1,255]]
+
+
+def test_native_bitmap_invalid_geometry_and_batch_restore_pixels(native):
+    service,session,root=native
+    mutate(service,session,'import.image',{'index':1,'frame':1,'path':str(bitmap_fixture(root)),'position':4})
+    def inspect():return service.command(session,'bitmap.inspect',{'index':1,'frame':1,'points':[{'x':1,'y':0}]})
+    original=inspect()
+    for matrix in ([0,0,0,0,0,0],[10000,0,0,10000,0,0]):
+        with pytest.raises(StanleeError,match='invalid_arguments'):
+            mutate(service,session,'bitmap.transform',{'index':1,'frame':1,'matrix':matrix})
+        assert inspect()['points']==original['points']
+    with pytest.raises(StanleeError,match='invalid_selection'):
+        mutate(service,session,'edit.batch',{'operations':[
+            {'operation':'bitmap.transform','arguments':{'index':1,'frame':1,'matrix':[1,0,0,1,5,0]}},
+            {'operation':'bitmap.copy','arguments':{'index':1,'frame':1,'target_index':1,'target_frame':99}}]})
+    assert inspect()['points']==original['points']
+    assert inspect()['bounds']==original['bounds']

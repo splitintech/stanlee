@@ -33,19 +33,22 @@
       "label": "",
       "family": "application",
       "fingerprint": "ebdb3f527db167e915839784dbaadb191cb3783137e5bae0b2baa4581df5cfec",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::sb_threshold#1",
@@ -55,19 +58,22 @@
       "label": "",
       "family": "application",
       "fingerprint": "8d1043bb965e515f2d7185af32bc9bfb4a5f6336f9ac921771f657b1d1870118",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::cb_Red#1",
@@ -77,19 +83,22 @@
       "label": "Trace Red",
       "family": "application",
       "fingerprint": "beaf69555c9f6cb311f8d528c8b99d41f066e896896165e0bed0854a98162b72",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::cb_Green#1",
@@ -99,19 +108,22 @@
       "label": "Trace Green",
       "family": "application",
       "fingerprint": "05f635e832041c35ad7ea45e17397de2ac190d263cafe96bf637af7838d18343",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::cb_Blue#1",
@@ -121,19 +133,22 @@
       "label": "Trace Blue",
       "family": "application",
       "fingerprint": "0e5255f9ced3c9770227f1d8c52d5e3905605fecde38c89f48b36bdccb43b004",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::rbCurrentKeyframe#1",
@@ -143,19 +158,22 @@
       "label": "Current Keyframe",
       "family": "timeline",
       "fingerprint": "6a79b462a926c62adf236974bfed89c862dbc2413f937d3b27549899904ff159",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::rbAllKeyframes#1",
@@ -165,19 +183,22 @@
       "label": "All Keyframes on Layer",
       "family": "timeline",
       "fingerprint": "f674de0554bc7db37dbafa2d8177189001d950540d1ac4e3d3333afde1282d95",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::buttonBox#1",
@@ -187,19 +208,22 @@
       "label": "",
       "family": "application",
       "fingerprint": "5e35cf729eeca417883ed4115edd3f712cdfc0da46d08ff32051b31666cae8bd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command; interactive dialog cancellation remains outside this bounded command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::zoomSlider#1",
@@ -3316,19 +3340,22 @@
       "label": "Cut",
       "family": "application",
       "fingerprint": "6a64bdd73619684228bdf51fc363c31bf0083428a4f8702f155e0d802bea94a9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.copy",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Document-internal bitmap region copy/cut into explicit exact destination keys; system clipboard and vector transfer workflow pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.copy",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCopy#1",
@@ -3338,19 +3365,22 @@
       "label": "Copy",
       "family": "application",
       "fingerprint": "6fc26cedbd9dc3bb99d6022d0167aad79eb077b2d72d9877f440d381bd64346a",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.copy",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Document-internal bitmap region copy/cut into explicit exact destination keys; system clipboard and vector transfer workflow pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.copy",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPaste#1",
@@ -3360,19 +3390,22 @@
       "label": "Paste",
       "family": "application",
       "fingerprint": "104bee70e0935d5491ed974fc70c2dddcaf6f241f44e4c6ca0f1a6d0fe6c8b35",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.copy",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Document-internal bitmap region copy/cut into explicit exact destination keys; system clipboard and vector transfer workflow pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.copy",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSelect_All#1",
@@ -4545,19 +4578,22 @@
       "label": "Flip X",
       "family": "application",
       "fingerprint": "992b57ef6e306d56ca335e623e104828f1c95f2dd0f97bc8b9d34ebb2898e739",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.transform",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap region/native affine transform; UI and vector selection workflow still pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.transform",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionFlip_Y#1",
@@ -4567,19 +4603,22 @@
       "label": "Flip Y",
       "family": "application",
       "fingerprint": "cb388f21f80418e0413dadd71f73347e6541703cad0aa8f0b9f2876abb9aa48e",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.transform",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap region/native affine transform; UI and vector selection workflow still pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.transform",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionMove_Frame_Forward#1",
@@ -5402,19 +5441,22 @@
       "label": "Replace Paper with Transparency",
       "family": "application",
       "fingerprint": "7e4a7d42b28a74bb10082f46b2b45593cb112721f21bb1c8ba097c8e2672a2a8",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Native paper algorithm on explicit exact bitmap keys; preserves native transparency and color classification semantics",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionAdd_Frame_Exposure#1",
