@@ -180,3 +180,94 @@ labels therefore do not replace a GUI-selected camera with another layer. Name
 fallback remains for legacy descriptors without an ID. Automated CLI fixtures
 compare selected-camera movie/image composition; the complete GUI dialog workflow
 remains a separate acceptance gate.
+
+## Application controls and observation
+
+`ui.inspect` enumerates the supported control IDs and enabled/checked state.
+`ui.configure` sets one allowlisted grid, onion, composition/perspective guide,
+display, visibility-mode or layout-lock control through its native QAction.
+`ui.panel` sets a named dock/toolbar's visibility; `ui.layout_reset` uses the native
+layout reset. Disabled controls return `invalid_context`; exclusive groups must
+be changed by selecting another member. These settings/view operations require a
+revision and are excluded from atomic document batches.
+
+`settings.inspect` describes 35 typed preference fields with native values/ranges.
+`settings.configure` accepts a `values` object containing those fields only. It
+validates all values and coupled onion opacity bounds before applying any writes.
+Autosave/file locations, undo-system migration and unrestricted settings keys are
+not exposed through this API.
+
+`shortcuts.inspect`, `shortcuts.configure` and `shortcuts.reset` read/change the
+native command table in this application's settings profile. Commands must exist
+in the shipped default table. Key sequences use Qt PortableText; an empty sequence
+clears a binding. Conflicts require explicit `replace_conflict: true`.
+
+`canvas.capture` and `window.capture` return bounded native PNG images, including
+display overlays/UI where applicable; `frame.preview` remains the clean native
+camera composition. `application.info` returns application/Qt versions, license
+and project/manual links. Captures concern this application's main window/canvas.
+
+Native preference, action and panel signals advance the revision. Before dispatch,
+the bridge also reconciles an independent document content fingerprint so GUI
+mutations without a manager signal invalidate stale commands. Fingerprinting does
+not read/reload live bitmap storage. Missing assets leave inspection and explicit
+discard/replacement available while blocking unsafe content mutations.
+
+## Additional native content operations
+
+- `canvas.polyline` completes a 2–4096 point path through the selected native
+  polyline tool. Native properties select its style; bitmap/vector edits form one
+  undo unit, without leaving a pending pointer gesture.
+- `vector.insert_point` splits a cubic by `fraction` strictly between zero and
+  one and preserves native filled-area references. `vector.remove_point` uses
+  native point removal. `vector.select_points`, `vector.transform_points` and
+  `vector.delete_points` operate on explicit curve/vertex references. Vertex `-1`
+  identifies the origin. Inspection also returns paginated area colors, selection
+  and boundary vertex geometry through `area_offset`/`area_limit`.
+- `import.sequence` imports an explicit ordered path list with starting `frame`,
+  `spacing` and optional native `position`; key collisions require `overwrite`.
+  `import.animated` uses the native animated-image importer with a known bounded
+  frame count. Both reject requests exceeding asset/frame/pixel budgets.
+- `layer.import` imports explicit source-project `indices`, remaps vector palette
+  indices and independently copies sound assets. The source project is not changed.
+
+Sequence/animated and cross-project imports are single undoable transactions but
+are excluded from nested atomic batches because they read external assets.
+
+## Media expectations and jobs
+
+Native export records its resolved camera dimensions, FPS, numeric range and
+expected audio before rendering. Stanlee enforces the actual output format,
+dimensions, frame count, timing and audio-stream presence before publication.
+GIF timing allows native centisecond quantization; container duration allows
+frame/audio rounding. Stock CLI mode derives equivalent structural expectations
+from bounded project metadata and sound probes. Fixture-specific image/audio
+content comparison remains a separate acceptance requirement.
+
+`export_capabilities` inspects the configured build's actual Qt writers and its
+encoder's encoders/muxers. An older stock executable can explicitly decline this
+discovery operation while retaining compatible export behavior.
+
+`import_media` queues video or audio decoding in a supervised owned worker, then
+applies one revision-checked native import. Video uses the document FPS and is
+bounded to 256 frames / 64 million pixels; audio extraction is bounded to five
+minutes and the native asset-size budget. A human or another client changing the
+revision during decoding causes rejection rather than a revision refresh.
+Cancellation is cooperative until native application; an accepted native edit is
+one bounded, non-interruptible transaction and can be undone normally.
+
+Jobs retain request, progress, native log and terminal results. Deadlines apply
+while queued and running, including shared-worker waits; probes use the remaining
+budget. An authorized CLI/MCP instance can request cancellation in the shared
+private job store; only the owning worker terminates its process. CLI parity:
+
+```sh
+stanlee --workspace /absolute/project --application /absolute/pencil2d-stanlee export-capabilities
+stanlee --workspace /absolute/project jobs JOB_ID --cancel
+stanlee --workspace /absolute/project --application /absolute/pencil2d-stanlee import-media /absolute/project/movie.mp4 SESSION_ID --document-id DOCUMENT_ID --expected-revision REVISION --index 1
+```
+
+All operation results require their typed payload and session metadata. Image
+responses additionally validate base64/PNG headers and declared dimensions.
+`invalid_native_output` reports whether a mutation may already have completed;
+inspect/reconcile before deciding whether to retry it.

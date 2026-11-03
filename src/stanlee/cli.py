@@ -8,16 +8,18 @@ from pathlib import Path
 from .errors import StanleeError
 from .registry import REGISTRY
 from .service import Service
+from . import __version__
 
 
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Native Pencil2D automation (experimental development build)")
+    root.add_argument('--version', action='version', version='Stanlee ' + __version__)
     root.add_argument("--workspace", action="append", default=[], help="Explicit granted directory; repeat for multiple grants")
     root.add_argument("--discovery-dir", type=Path, default=Path.home()/".local/state/stanlee/sessions")
     root.add_argument("--workers", type=int, default=1)
     root.add_argument("--application", help="Native Pencil2D executable")
     sub = root.add_subparsers(dest="action", required=True)
-    for name in ("serve", "diagnostics", "sessions", "launch", "operations"):
+    for name in ("serve", "diagnostics", "sessions", "launch", "operations", "export-capabilities"):
         sub.add_parser(name)
     inspect = sub.add_parser("inspect")
     inspect.add_argument("session_id")
@@ -38,10 +40,22 @@ def parser() -> argparse.ArgumentParser:
     export.add_argument("--transparency", action="store_true")
     export.add_argument("--overwrite", action="store_true")
     export.add_argument("--timeout", type=float, default=120)
+    media = sub.add_parser('import-media')
+    media.add_argument('input')
+    media.add_argument('session_id')
+    media.add_argument('--document-id', required=True)
+    media.add_argument('--expected-revision', required=True, type=int)
+    media.add_argument('--index', required=True, type=int)
+    media.add_argument('--frame', type=int, default=1)
+    media.add_argument('--kind', choices=['video', 'audio'], default='video')
+    media.add_argument('--max-frames', type=int, default=256)
+    media.add_argument('--overwrite', action='store_true')
+    media.add_argument('--timeout', type=float, default=120)
     recovery = sub.add_parser("recover-outputs")
     recovery.add_argument("directories", nargs="+")
     jobs = sub.add_parser("jobs")
     jobs.add_argument("job_id", nargs="?")
+    jobs.add_argument('--cancel', action='store_true', help='Request cancellation by the owning worker')
     config = sub.add_parser("config")
     config.add_argument("--client", choices=["codex", "cursor", "claude-desktop"], required=True)
     config.add_argument("--python", default=sys.executable)
@@ -51,6 +65,7 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
+    service = None
     try:
         if args.action == "config":
             from .config import generate
@@ -66,12 +81,17 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
             if args.action in {"diagnostics", "sessions", "launch"}:
                 result = getattr(service, args.action)()
+            elif args.action == 'export-capabilities':
+                result = service.export_capabilities()
             elif args.action == "inspect":
                 result = service.inspect(args.session_id)
             elif args.action == "recover-outputs":
                 result = service.recover_outputs(args.directories)
             elif args.action == "jobs":
-                result = service.jobs.get(args.job_id) if args.job_id else service.jobs.list()
+                if args.cancel and not args.job_id:
+                    raise StanleeError('invalid_arguments', 'jobs --cancel requires a job ID')
+                result = service.jobs.cancel(args.job_id) if args.cancel else (
+                    service.jobs.get(args.job_id) if args.job_id else service.jobs.list())
             elif args.action == "export":
                 from .export import ExportOptions
                 options = ExportOptions(**{key: getattr(args, key) for key in ExportOptions.__dataclass_fields__})
@@ -84,6 +104,15 @@ def main(argv: list[str] | None = None) -> int:
                     service.jobs.close()
                 if result["state"] != "succeeded":
                     raise StanleeError(result["state"], "Export job did not succeed", result)
+            elif args.action == 'import-media':
+                from .imports import ImportOptions
+                request = ImportOptions(**{key: getattr(args, key) for key in ImportOptions.__dataclass_fields__})
+                result = service.jobs.submit(request)
+                while result['state'] in {'queued', 'running'}:
+                    time.sleep(.1)
+                    result = service.jobs.get(result['job_id'])
+                if result['state'] != 'succeeded':
+                    raise StanleeError(result['state'], 'Media import job did not succeed', result)
             else:
                 result = service.command(args.session_id, args.operation, args.arguments,
                                          args.expected_revision, args.document_id)
@@ -95,6 +124,9 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError) as error:
         print(json.dumps({"error": {"code": "local_failure", "message": str(error)}}), file=sys.stderr)
         return 2
+    finally:
+        if service is not None:
+            service.close()
 
 
 if __name__ == "__main__":

@@ -61,6 +61,242 @@ def mutate(service, session, operation, arguments):
     return service.command(session, operation, arguments, state["revision"], state["document_id"])
 
 
+def test_native_ui_controls_panels_and_invalid_context(native):
+    service, session, _root = native
+    before = service.inspect(session)
+    ui = service.command(session, 'ui.inspect', {})
+    controls = {row['control']: row for row in ui['controls']}
+    assert {'grid', 'onion.previous', 'guide.thirds', 'windows.lock'} <= controls.keys()
+    for name, control in controls.items():
+        desired = True if name.startswith(('angle.', 'visibility.')) else not control['checked']
+        if not control['enabled']:
+            with pytest.raises(StanleeError, match='invalid_context'):
+                mutate(service, session, 'ui.configure', {'control': name, 'checked': desired})
+            continue
+        result = mutate(service, session, 'ui.configure', {'control': name, 'checked': desired})
+        assert next(row for row in result['controls'] if row['control'] == name)['checked'] == desired
+    for visible in (False, True):
+        result = mutate(service, session, 'ui.panel', {'panel': 'palette', 'visible': visible})
+        assert next(row for row in result['panels'] if row['panel'] == 'palette')['visible'] is visible
+    with pytest.raises(StanleeError, match='invalid_context'):
+        mutate(service, session, 'ui.configure', {'control': 'angle.2', 'checked': False})
+    after = service.inspect(session)
+    assert after['dirty'] == before['dirty'] and after['history'] == before['history']
+    mutate(service, session, 'ui.layout_reset', {})
+
+
+def test_native_vector_points_edit_and_restore_through_history(native):
+    service, session, _root = native
+    layer = mutate(service, session, 'layer.create', {'type': 'vector', 'name': 'Point editing'})['layer_index']
+    mutate(service, session, 'vector.path', {'index': layer, 'frame': 1, 'origin': {'x': 0, 'y': 0},
+        'segments': [{'c1x': 10, 'c1y': 0, 'c2x': 20, 'c2y': 0, 'x': 30, 'y': 0},
+                     {'c1x': 40, 'c1y': 0, 'c2x': 50, 'c2y': 0, 'x': 60, 'y': 0}],
+        'color_index': 0, 'width': 3})
+    def inspect():
+        return service.command(session, 'vector.inspect', {'index': layer, 'frame': 1})
+    before = inspect()
+    assert before['curves'][0]['segment_count'] == 2 and before['areas'] == []
+    mutate(service, session, 'vector.insert_point', {'index': layer, 'frame': 1, 'curve': 0, 'vertex': 0, 'fraction': .5})
+    assert inspect()['curves'][0]['segment_count'] == 3
+    mutate(service, session, 'history.undo', {})
+    assert inspect()['curves'] == before['curves']
+    mutate(service, session, 'vector.select_points', {'index': layer, 'frame': 1, 'points': [{'curve': 0, 'vertex': 0}]})
+    selected = inspect()['curves'][0]
+    assert selected['segments'][0]['selected'] is True and selected['segments'][1]['selected'] is False
+    mutate(service, session, 'vector.transform_points', {'index': layer, 'frame': 1,
+        'points': [{'curve': 0, 'vertex': 0}], 'matrix': [1, 0, 0, 1, 0, 10]})
+    transformed = inspect()['curves'][0]
+    assert transformed['segments'][0]['y'] == 10 and transformed['segments'][1]['y'] == 0
+    mutate(service, session, 'history.undo', {})
+    assert inspect()['curves'][0]['segments'][0]['y'] == 0
+    mutate(service, session, 'vector.remove_point', {'index': layer, 'frame': 1, 'curve': 0, 'vertex': 1})
+    assert inspect()['curves'][0]['segment_count'] == 1
+    mutate(service, session, 'history.undo', {})
+    assert inspect()['curves'][0]['segment_count'] == 2
+
+
+def test_native_image_sequence_is_one_undoable_import_with_explicit_collisions(native):
+    service, session, root = native
+    paths = [str(bitmap_fixture(root))]
+    paths.append(paths[0])
+    request = {'index': 1, 'frame': 1, 'spacing': 3, 'paths': paths, 'position': 4}
+    before = service.command(session, 'frame.preview', {})['data']
+    with pytest.raises(StanleeError, match='overwrite_required'):
+        mutate(service, session, 'import.sequence', request)
+    result = mutate(service, session, 'import.sequence', {**request, 'overwrite': True})
+    assert sorted(key['frame'] for key in result['layers'][1]['frames']) == [1, 4]
+    assert service.command(session, 'frame.preview', {})['data'] != before
+    mutate(service, session, 'history.undo', {})
+    assert service.command(session, 'frame.preview', {})['data'] == before
+    assert len(service.inspect(session)['layers'][1]['frames']) == 1
+
+
+def test_native_animated_image_import_preserves_spacing_and_undo(native):
+    service, session, root = native
+    application = Path(os.environ['STANLEE_TEST_APP'])
+    mutate(service, session, 'camera.configure', {'index': 0, 'width': 64, 'height': 64})
+    mutate(service, session, 'layer.select', {'index': 1})
+    mutate(service, session, 'tool.select', {'type': 7})
+    mutate(service, session, 'canvas.stroke', {'points': [{'x': -20, 'y': 0}, {'x': 20, 'y': 0}]})
+    mutate(service, session, 'timeline.add_key', {'frame': 2})
+    mutate(service, session, 'canvas.stroke', {'points': [{'x': 0, 'y': -20}, {'x': 0, 'y': 20}]})
+    source = root/'animated-source.pclx'
+    mutate(service, session, 'document.save', {'path': str(source)})
+    gif = root/'animated.gif'
+    export_saved(application, service.workspace, ExportOptions(str(source), [str(gif)], end='2'))
+    target = mutate(service, session, 'layer.create', {'type': 'bitmap', 'name': 'Animated import'})['layer_index']
+    before = service.command(session, 'frame.preview', {})['data']
+    result = mutate(service, session, 'import.animated', {'index': target, 'frame': 1, 'spacing': 3, 'path': str(gif), 'overwrite': True})
+    assert {key['frame'] for key in result['layers'][target]['frames']} == {1, 4}
+    mutate(service, session, 'history.undo', {})
+    assert service.command(session, 'frame.preview', {})['data'] == before
+
+
+@pytest.mark.parametrize('layer_type', ['bitmap', 'vector'])
+def test_native_polyline_uses_native_tools_and_one_history_step(native, layer_type):
+    service, session, _root = native
+    index = mutate(service, session, 'layer.create', {'type': layer_type, 'name': 'Polyline content'})['layer_index']
+    mutate(service, session, 'tool.select', {'type': 8})
+    before = service.command(session, 'frame.preview', {})['data']
+    mutate(service, session, 'canvas.polyline', {'points': [{'x': -20, 'y': -10}, {'x': 0, 'y': 20}, {'x': 20, 'y': -10}]})
+    assert service.command(session, 'frame.preview', {})['data'] != before
+    mutate(service, session, 'history.undo', {})
+    assert service.command(session, 'frame.preview', {})['data'] == before
+    mutate(service, session, 'history.redo', {})
+    assert service.command(session, 'frame.preview', {})['data'] != before
+
+
+def test_native_video_and_audio_import_jobs_preserve_requests_and_native_undo(native):
+    import wave
+    from stanlee.imports import ImportOptions
+    service, session, root = native
+    application = Path(os.environ['STANLEE_TEST_APP'])
+    service.executable = application
+    mutate(service, session, 'camera.configure', {'index': 0, 'width': 64, 'height': 64})
+    mutate(service, session, 'layer.select', {'index': 1})
+    mutate(service, session, 'tool.select', {'type': 7})
+    mutate(service, session, 'canvas.stroke', {'points': [{'x': -20, 'y': 0}, {'x': 20, 'y': 0}]})
+    source = root/'import-source.pclx'
+    mutate(service, session, 'document.save', {'path': str(source)})
+    movie = root/'import-source.mp4'
+    export_saved(application, service.workspace, ExportOptions(str(source), [str(movie)], end='1'))
+    state = service.inspect(session)
+    request = ImportOptions(str(movie), session, state['revision'], state['document_id'], 1, frame=2)
+    job = service.jobs.submit(request)
+    service.jobs.threads[job['job_id']].join(timeout=20)
+    result = service.jobs.get(job['job_id'])
+    assert result['state'] == 'succeeded', result
+    assert result['detail']['imported_frames'] == 1
+    assert result['detail']['request']['kind'] == 'video'
+    assert {key['frame'] for key in service.inspect(session)['layers'][1]['frames']} == {1, 2}
+    mutate(service, session, 'history.undo', {})
+    assert {key['frame'] for key in service.inspect(session)['layers'][1]['frames']} == {1}
+    audio = root/'import-source.wav'
+    with wave.open(str(audio), 'wb') as output:
+        output.setnchannels(1); output.setsampwidth(2); output.setframerate(8000)
+        output.writeframes(b'\0\0'*2000)
+    state = mutate(service, session, 'layer.create', {'type': 'sound', 'name': 'Decoded audio'})
+    index = state['layer_index']
+    job = service.jobs.submit(ImportOptions(str(audio), session, state['revision'], state['document_id'], index, kind='audio'))
+    service.jobs.threads[job['job_id']].join(timeout=20)
+    result = service.jobs.get(job['job_id'])
+    assert result['state'] == 'succeeded', result
+    audio.unlink()
+    assert len(service.inspect(session)['layers'][index]['frames']) == 1
+    for _ in range(200):
+        if service.inspect(session)['layers'][index]['frames'][0]['duration_ms'] == 250:
+            break
+        time.sleep(.05)
+    mutate(service, session, 'history.undo', {})
+    assert service.inspect(session)['layers'][index]['frames'] == []
+
+
+def test_native_export_capabilities_reflect_actual_qt_and_encoder(native):
+    service, session, _root = native
+    service.executable = Path(os.environ['STANLEE_TEST_APP'])
+    result = service.export_capabilities()
+    assert 'png' in result['image_extensions']
+    assert result['native_export_plan'] is True
+    assert result['encoder']['available']
+    assert 'png' in result['encoder']['encoders']
+    assert 'mp4' in result['encoder']['muxers']
+
+
+def test_native_preferences_shortcuts_captures_and_information(native):
+    service, session, _root = native
+    before = service.inspect(session)
+    settings = service.command(session, 'settings.inspect', {})
+    assert len(settings['settings']) == 35
+    result = mutate(service, session, 'settings.configure', {'values': {
+        'grid.width': 125, 'grid.height': 75, 'onion.minimum_opacity': 20,
+        'onion.maximum_opacity': 60, 'sound.scrub': True}})
+    values = {row['key']: row['value'] for row in result['settings']}
+    assert values['grid.width'] == 125 and values['sound.scrub'] is True
+    with pytest.raises(StanleeError, match='invalid_arguments'):
+        mutate(service, session, 'settings.configure', {'values': {'onion.minimum_opacity': 90, 'onion.maximum_opacity': 10}})
+    unchanged = {row['key']: row['value'] for row in service.command(session, 'settings.inspect', {})['settings']}
+    assert unchanged == values
+    shortcuts = service.command(session, 'shortcuts.inspect', {})['shortcuts']
+    assert len(shortcuts) > 30
+    command = next(row['command'] for row in shortcuts if row['key_sequence'])
+    other = next(row['command'] for row in shortcuts if row['key_sequence'] and row['command'] != command)
+    sequence = next(row['key_sequence'] for row in shortcuts if row['command'] == command)
+    with pytest.raises(StanleeError, match='shortcut_conflict'):
+        mutate(service, session, 'shortcuts.configure', {'command': other, 'key_sequence': sequence})
+    with pytest.raises(StanleeError, match='unsupported_capability'):
+        mutate(service, session, 'shortcuts.configure', {'command': 'CmdUnknownAutomationCommand', 'key_sequence': ''})
+    result = mutate(service, session, 'shortcuts.configure', {'command': command, 'key_sequence': ''})
+    assert next(row['key_sequence'] for row in result['shortcuts'] if row['command'] == command) == ''
+    mutate(service, session, 'shortcuts.reset', {})
+    restored = service.command(session, 'shortcuts.inspect', {})['shortcuts']
+    assert all(row['key_sequence'] == row['default'] for row in restored)
+    for operation in ('canvas.capture', 'window.capture'):
+        capture = service.command(session, operation, {})
+        assert base64.b64decode(capture['data']).startswith(b'\x89PNG')
+        assert capture['width'] > 0 and capture['height'] > 0
+    assert service.command(session, 'application.info', {})['license'] == 'GPL-2.0-only'
+    assert service.inspect(session)['dirty'] == before['dirty']
+
+
+def test_native_project_layer_import_copies_content_assets_and_palette(native):
+    service, session, root = native
+    import wave
+    mutate(service, session, 'import.image', {'index': 1, 'frame': 1, 'path': str(bitmap_fixture(root)), 'position': 4})
+    mutate(service, session, 'palette.add', {'name': 'Imported vector color', 'color': '#ff0088cc'})
+    color = len(service.command(session, 'palette.inspect', {})['colors'])-1
+    vector = mutate(service, session, 'layer.create', {'type': 'vector', 'name': 'Imported vector'})['layer_index']
+    mutate(service, session, 'vector.path', {'index': vector, 'frame': 1, 'origin': {'x': 0, 'y': 0},
+        'segments': [{'c1x': 10, 'c1y': 0, 'c2x': 20, 'c2y': 0, 'x': 30, 'y': 0}], 'color_index': color, 'width': 3})
+    state = mutate(service, session, 'layer.create', {'type': 'sound', 'name': 'Imported source sound'})
+    sound = state['layer_index']
+    asset = root/'source sound.wav'
+    with wave.open(str(asset), 'wb') as output:
+        output.setnchannels(1); output.setsampwidth(2); output.setframerate(8000); output.writeframes(b'\0\0'*2000)
+    mutate(service, session, 'audio.import', {'index': sound, 'frame': 1, 'path': str(asset)})
+    for _ in range(200):
+        if service.inspect(session)['layers'][sound]['frames'][0]['duration_ms'] == 250:
+            break
+        time.sleep(.05)
+    path = root/'source project.pclx'; mutate(service, session, 'document.save', {'path': str(path)})
+    original = path.read_bytes()
+    mutate(service, session, 'document.new', {'discard': True})
+    before = service.inspect(session)
+    result = mutate(service, session, 'layer.import', {'path': str(path), 'indices': [1, vector, sound]})
+    assert len(result['layers']) == len(before['layers'])+3
+    assert result['layers'][-1]['type'] == 4
+    assert path.read_bytes() == original
+    path.unlink(); asset.unlink()
+    pixels = service.command(session, 'bitmap.inspect', {'index': 2, 'frame': 1, 'points': [{'x': 0, 'y': 0}]})
+    assert pixels['points'][0]['rgba'] == [255, 0, 0, 255]
+    imported_color = next(row for row in service.command(session, 'palette.inspect', {})['colors'] if row['name'] == 'Imported vector color')
+    assert service.command(session, 'vector.inspect', {'index': 3, 'frame': 1})['curves'][0]['color_index'] == imported_color['index']
+    mutate(service, session, 'history.undo', {})
+    assert len(service.inspect(session)['layers']) == len(before['layers'])
+    mutate(service, session, 'history.redo', {})
+    assert len(service.inspect(session)['layers']) == len(before['layers'])+3
+    mutate(service, session, 'document.save', {'path': str(root/'imported.pclx')})
+
+
 def test_native_batch_publishes_one_native_undo_unit(native):
     service, session, root = native
     mutate(service, session, "tool.select", {"type": 7})

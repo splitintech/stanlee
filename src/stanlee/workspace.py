@@ -18,7 +18,7 @@ class Workspace:
             raise StanleeError("invalid_path", "Paths must be absolute")
         try:
             resolved = candidate.resolve(strict=exists)
-        except (OSError, RuntimeError) as exc:
+        except (OSError, RuntimeError, ValueError) as exc:
             raise StanleeError("invalid_path", str(exc)) from exc
         if not any(resolved.is_relative_to(root) for root in self.roots):
             raise StanleeError("workspace_denied", "Path is outside granted workspaces")

@@ -222,6 +222,8 @@ def publish_outputs(outputs, workspace, *, overwrite, cancelled):
                 entries.append(entry)
                 write_journal(journal, data)
                 shutil.copyfile(source, name)
+                if os.name != 'nt':
+                    os.chmod(name, entry['mode'])
                 sync_file(Path(name))
                 if original is not None:
                     fd, backup = tempfile.mkstemp(prefix='.stanlee-backup-'+data['id']+'-', dir=target.parent)

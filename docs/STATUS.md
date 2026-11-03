@@ -4,22 +4,41 @@ Stanlee is an experimental development build. The complete approved plan remains
 the scope contract; full Pencil2D coverage, alpha acceptance and stable release
 qualification remain unfinished.
 
-The native registry contains **67 operations**. Implemented workflows include
+The native registry contains **88 operations**. Implemented workflows include
 pressure strokes, native atomic history/rollback, layer editing, explicit timeline
 keys/exposure/reverse, animated cameras, vector geometry/styles/fill, palettes,
 independent audio/image import, playback/view controls, bitmap region inspection,
-transform/copy/cut and scanned-paper processing. See [editing contracts](EDITING.md).
-The inventory contains 2,159 entries and 124 main-window actions; 51 controls/actions
-have reviewed mappings, including explicitly partial mappings. Semantic inventory
-review remains incomplete. Operation counts do not establish capability coverage.
+transform/copy/cut and scanned-paper processing, polylines, vector point editing,
+sequence/animated/cross-project imports, 25 view controls, 10 panels/toolbars,
+35 typed preference fields, native shortcuts, captures and application information.
+See [editing contracts](EDITING.md).
+The upstream inventory contains 2,159 entries and 124 main-window actions. It has
+81 mapped rows, of which 60 have explicit semantic review; 65 rows are marked
+implemented, 16 partial and 2,078 pending. Registry coverage back-links now match
+all forward mappings. Regeneration preserves reviews/rationale and invalidates
+changed fingerprints. Semantic review remains incomplete; raw inventory counts
+are not a product-completion percentage.
 
 ## Current local source
 
-`build-manifest.json` pins native `e7bc6f8387b0142fcb5d8b61cf12f03682d225c0`
-on the review integration branch. Local verification passes **119 Python/native
+`build-manifest.json` pins native `880b49778b71e865b837506bab9e4eaa3a3b47a1`
+on the review integration branch. Local verification passes **237 Python/native
 integration, CLI, recovery and packaging tests**, with one Windows-only test skipped
-on Mac, plus **80 native cases / 1,183 assertions** through qmake and CMake.
+on Mac, plus **83 native cases / 1,210 assertions** through qmake and CMake.
 Both bridge-enabled and bridge-disabled CMake applications build on Mac.
+
+The audit-gap implementation synchronizes first job-manager construction,
+preserves existing POSIX output access modes, validates typed native payloads and
+PNG image metadata, reconciles unobserved GUI content changes through independent
+snapshots, and streams native archives through atomic `QSaveFile` publication.
+Native process death before archive commit preserves the original project.
+Media validation enforces resolved format/dimensions/range/video timing and
+expected audio-stream presence. Complete image/audio content equivalence remains
+a fixture acceptance gate. Export/import jobs retain requests, progress and logs;
+queued jobs can time out, authorized peer CLI instances can request owner-handled
+cancellation, and imports reject document revisions changed during decoding.
+The current source requires fresh platform/package/client qualification; historical
+package runs below qualify their recorded revisions only.
 
 Native export handling propagates image/movie failures into CLI exit status,
 rejects invalid numeric/range/format/camera requests, and rejects ambiguous explicit

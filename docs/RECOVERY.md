@@ -55,3 +55,19 @@ The 42-case transition matrix passes locally. Cross-platform execution must be
 recorded independently. These process-death fixtures do not establish power-loss,
 filesystem-corruption, native editor crash or complete client/platform qualification.
 The initial unjournaled empty-orphan window described above remains open.
+
+## Native project archive publication
+
+Native `.pclx` compression now streams through `QSaveFile` with direct-write
+fallback disabled, rather than opening the original archive with `wb`. Compression
+or commit failure leaves the original intact; only a complete archive is renamed
+into place. A native child-process fixture exits after writing a source asset but
+before finalizing/committing the archive, verifies the original bytes and archive
+remain valid, and verifies a subsequent save succeeds. Missing-source compression
+also preserves existing bytes.
+
+This closes the direct-truncation path independently of the Python output journal.
+It does not establish OS power-loss/filesystem guarantees or atomic publication of
+the legacy `.pcl` plus data-directory pair. The bridge continues to save `.pclx`.
+Successful Python export overwrites preserve existing POSIX access modes; newly
+created private outputs use mode `0600`.

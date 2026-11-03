@@ -3191,19 +3191,23 @@
       "label": "Image Sequence...",
       "family": "import_export",
       "fingerprint": "26262e632cf8316ff6f2c2bae2df89dedab9d68539f0ee82a2a1e74558a371b9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "import.sequence",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_image_sequence_is_one_undoable_import_with_explicit_collisions"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::import.sequence",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_MovieVideo#1",
@@ -3484,19 +3488,23 @@
       "label": "Preferences",
       "family": "application",
       "fingerprint": "b905549c8ee585c7e685c0e6687bae9807318c773e87e7fe73f1595e4a885236",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "settings.configure",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_preferences_shortcuts_captures_and_information"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::settings.configure",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionResetWindows#1",
@@ -3506,19 +3514,23 @@
       "label": "Reset Windows",
       "family": "application",
       "fingerprint": "0f8a7fbcf9bcccf5bb0c11ba07430bb391d5197a282f037b22799302862426a0",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.layout_reset",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.layout_reset",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionZoom_In#1",
@@ -3688,19 +3700,23 @@
       "label": "Grid",
       "family": "application",
       "fingerprint": "2c5e6fbbf0e4ed108245b99185131c2e99e422d5e2f16dc5107e631b5a22f660",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOnionPrev#1",
@@ -3710,19 +3726,23 @@
       "label": "Previous",
       "family": "viewport",
       "fingerprint": "da5f4a18bc5384c8e69315e0a5a281bf1480cc1f6ef564b92ae8e1fa4312051f",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOnionNext#1",
@@ -3732,19 +3752,23 @@
       "label": "Next",
       "family": "viewport",
       "fingerprint": "923aaca225cc528a83f540c987b89e2d476409ab500b247fdc52c66d0e0168a3",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPlay#1",
@@ -4738,19 +4762,23 @@
       "label": "Animated Image...",
       "family": "import_export",
       "fingerprint": "51e3337c2b83c2517be31e80f6fa90796bc77d7d91ae652af615259e71fc0d75",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "import.animated",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_animated_image_import_preserves_spacing_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::import.animated",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionExport_Animated_GIF#1",
@@ -5184,19 +5212,23 @@
       "label": "Layers from Project file...",
       "family": "import_export",
       "fingerprint": "da1e98a0c39ca40497afb70d6cb0d30935a33c8fc29b124b2b464c59d5b64aaa",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.import",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_project_layer_import_copies_content_assets_and_palette"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::layer.import",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVisibilityCurrentLayerOnly#1",
@@ -5206,19 +5238,23 @@
       "label": "Current layer only",
       "family": "layers",
       "fingerprint": "0b08331fc67bd823443378a332fdd14c1f4d393b192edadc96368b92892194cd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVisibilityRelative#1",
@@ -5228,19 +5264,23 @@
       "label": "Relative",
       "family": "application",
       "fingerprint": "9711ad6e3103e06d76939de40c3695688ed54d94b05e76b216e9fca9de056a59",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVisibilityAll#1",
@@ -5250,19 +5290,23 @@
       "label": "All layers",
       "family": "application",
       "fingerprint": "0312c70e3471089318a1591046bfd6a3fc1b3e53dc356fb495b59d3f1815055d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionReposition_Selected_Frames#1",
@@ -5372,19 +5416,23 @@
       "label": "Lock Windows",
       "family": "application",
       "fingerprint": "6c0c863cea920ff0bfa6ebb0afce1b9a725493dee5fa49cd9d45b65271a60e7d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCenter_View#1",
@@ -5674,19 +5722,23 @@
       "label": "Status Bar",
       "family": "application",
       "fingerprint": "63b9151e9e0313c8dfbc37159d72db71feb3b3f2a62c14c675503737bfbcfa33",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPaste_Previous#1",
@@ -5718,19 +5770,23 @@
       "label": "Show Invisible Lines",
       "family": "application",
       "fingerprint": "960300a58e4659cdc1ff3fa46525329af77a1ce46c6da5bc20c2ff1c0cd7026c",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionShowOutlinesOnly#1",
@@ -5740,19 +5796,23 @@
       "label": "Show Outlines Only",
       "family": "application",
       "fingerprint": "2ddffe1c7d0250be7960ac8366cf716194f5a2b3ce40f7f8e24f80f6ff283f47",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCenter#1",
@@ -5762,19 +5822,23 @@
       "label": "Center",
       "family": "application",
       "fingerprint": "0be7643826859f3ce9ef02eb7fdbc26efc7262da7fddac571d5b22372334d4b6",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionThirds#1",
@@ -5784,19 +5848,23 @@
       "label": "Thirds",
       "family": "application",
       "fingerprint": "4095b40a02f2b6528f33fd315c86f21f722f73423aa769cdeb517bbc8898305b",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionGoldenRatio#1",
@@ -5806,19 +5874,23 @@
       "label": "Golden Ratio",
       "family": "application",
       "fingerprint": "c6cc09a9bed3acd538f9b4ce058a4cc2e3f3d701e126ce17f4ae9a02ca08217a",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSafeAreas#1",
@@ -5828,19 +5900,23 @@
       "label": "Safe Areas",
       "family": "application",
       "fingerprint": "6a5e55c37afb22117b6d51cfa5e9b99f499512fdfe47ce27f0a7a178f863096b",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOnePointPerspective#1",
@@ -5850,19 +5926,23 @@
       "label": "One Point Perspective",
       "family": "application",
       "fingerprint": "98ba28314c2a2b21f19051c2ec8dc081f1cad851886d4d9756067ebf0740d0f5",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionTwoPointPerspective#1",
@@ -5872,19 +5952,23 @@
       "label": "Two Point Perspective",
       "family": "application",
       "fingerprint": "59d63d0e354251a7d02791dcc337f21f96a49ef6e1694ce7a319faac9a6a2b34",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionThreePointPerspective#1",
@@ -5894,19 +5978,23 @@
       "label": "Three Point Perspective",
       "family": "application",
       "fingerprint": "b48a2997a01362df1c281098372a2ed968a9fe9f8c6c5d1d06a26215d12b2fcd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action2Degrees#1",
@@ -5916,19 +6004,23 @@
       "label": "2\u00b0",
       "family": "application",
       "fingerprint": "1832531e01c936c6fdeec189b03f313fb732404ff615fbe22c0655bbdea3adbd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action3Degrees#1",
@@ -5938,19 +6030,23 @@
       "label": "3\u00b0",
       "family": "application",
       "fingerprint": "465cd75af5e29282198b303fa5deb3b7645f03608dd41bcc34c4f9f447b86cdf",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action5Degrees#1",
@@ -5960,19 +6056,23 @@
       "label": "5\u00b0",
       "family": "application",
       "fingerprint": "a28023af77c717676b66e6f2778e7afe6a38bf363270f0cf08f796946fc094a0",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action7_5Degrees#1",
@@ -5982,19 +6082,23 @@
       "label": "7.5\u00b0",
       "family": "application",
       "fingerprint": "5a152c2270b7ec4b1d5280144e8cd38b195c47945484af43bd3f0262ab2c8502",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action10Degrees#1",
@@ -6004,19 +6108,23 @@
       "label": "10\u00b0",
       "family": "application",
       "fingerprint": "7a076ec0a88bb3964de7cc73ed2897532d4e4ef3a137e728f566edf74243ecff",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action15Degrees#1",
@@ -6026,19 +6134,23 @@
       "label": "15\u00b0",
       "family": "application",
       "fingerprint": "904def167d7c31f25cb2b6a61d30617a8c251b12d698c45a1d43434d279c54bb",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action20Degrees#1",
@@ -6048,19 +6160,23 @@
       "label": "20\u00b0",
       "family": "application",
       "fingerprint": "b21c2eafaa01c6456b45da087d0d13408dcb4188edfde38c091c6e971b4658c1",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action30Degrees#1",
@@ -6070,19 +6186,23 @@
       "label": "30\u00b0",
       "family": "application",
       "fingerprint": "5dcef3bd703948dde3ab489b7cde8b31412d14166c6446af103794679738caec",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/onionskin.ui::onionPrevFramesNumBox#1",

@@ -22,8 +22,7 @@ def create_server(service: Service) -> MCPServer:
         try:
             yield service
         finally:
-            if service._jobs is not None:
-                await asyncio.to_thread(service._jobs.close)
+            await asyncio.to_thread(service.close)
 
     server = MCPServer("Stanlee", version=__version__, subscriptions=False, lifespan=lifespan,
         instructions="Inspect before editing. Use the returned document_id and revision on every mutation. "
@@ -73,6 +72,21 @@ def create_server(service: Service) -> MCPServer:
     async def diagnostics() -> dict:
         """Inspect the application and environment without returning tokens."""
         return await run(service.diagnostics)
+
+    @server.tool(annotations=read)
+    async def export_capabilities() -> dict:
+        """Inspect this native build's image writers and actual FFmpeg encoders/muxers."""
+        return await run(service.export_capabilities)
+
+    @server.tool(structured_output=True, annotations=write)
+    async def import_media(input_path: str, session_id: str, expected_revision: int, document_id: str,
+                           index: int, frame: int = 1, kind: str = 'video', max_frames: int = 256,
+                           overwrite: bool = False, timeout: float = 120) -> dict[str, Any]:
+        """Queue isolated video/audio decoding and one stale-safe native import; poll job_status."""
+        from .imports import ImportOptions
+        request = ImportOptions(input_path, session_id, expected_revision, document_id, index,
+                                frame, kind, max_frames, overwrite, timeout)
+        return await run(service.jobs.submit, request)
 
     @server.tool(structured_output=True, annotations=write)
     async def export_saved_project(input_path: str, outputs: list[str], camera: str | None = None,

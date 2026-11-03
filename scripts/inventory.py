@@ -96,7 +96,8 @@ def main():
         changed = sorted(k for k in before.keys() & after.keys() if before[k] != after[k])
         print(json.dumps({"added": added, "removed": removed, "changed": changed}, indent=2))
         raise SystemExit(bool(added or removed or changed))
-    old_entries = json.loads(args.output.read_text())["entries"] if args.output.exists() else []
+    old_document = json.loads(args.output.read_text()) if args.output.exists() else {}
+    old_entries = old_document.get('entries', [])
     annotations = {e["id"]: e for e in old_entries}
     for entry in discovered:
         old = annotations.get(entry["id"], {})
@@ -107,9 +108,27 @@ def main():
             "undo": "requires semantic review", "inputs": "requires semantic review",
         }.items():
             entry[key] = old.get(key, default)
+        # A native fingerprint change invalidates the review, not its history.
+        # Never silently discard reviewed/non-applicable decisions on a refresh.
+        for key in ("reviewed", "review_rationale"):
+            if key in old:
+                entry[key] = old[key]
+        if old.get("fingerprint") != entry.get("fingerprint") and old.get("reviewed"):
+            entry["reviewed"] = False
+            entry["previous_review_rationale"] = old.get("review_rationale", "")
+        elif "previous_review_rationale" in old:
+            entry["previous_review_rationale"] = old["previous_review_rationale"]
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    before = {entry['id']: entry.get('fingerprint') for entry in old_entries}
+    after = {entry['id']: entry.get('fingerprint') for entry in discovered}
+    reviewed_surface_unchanged = before == after
+    retired = {entry['id']: entry for entry in old_document.get('retired_entries', [])}
+    retired.update({entry['id']: entry for entry in old_entries if entry['id'] not in after})
+    for key in after:
+        retired.pop(key, None)
     args.output.write_text(json.dumps({"schema_version": 1, "upstream_revision": revision,
-                                     "semantic_review_complete": False, "entries": discovered}, indent=2)+"\n")
+                                     "semantic_review_complete": bool(old_document.get('semantic_review_complete') and reviewed_surface_unchanged),
+                                     "retired_entries": list(retired.values()), "entries": discovered}, indent=2)+"\n")
     print(json.dumps({"revision": revision, "entries": len(discovered),
                       "main_window_actions": sum(e["kind"] == "QAction" and e["source"] == "app/ui/mainwindow2.ui" for e in discovered)}))
 
