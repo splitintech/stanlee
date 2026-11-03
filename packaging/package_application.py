@@ -91,7 +91,7 @@ def linux_dependencies(root,qt):
     for name in ('platforms','imageformats','multimedia','tls','platformthemes','networkinformation'):
         source=qt.parent/'plugins'/name
         if source.is_dir():shutil.copytree(source,root/'plugins'/name,dirs_exist_ok=True)
-    done=set()
+    done=set();original_hashes={}
     base=re.compile(r'^(?:ld-linux|lib(?:c|m|dl|rt|pthread|resolv|util)\.so)')
     while True:
         candidates=[p for p in root.rglob('*') if p.is_file() and p not in done]
@@ -110,8 +110,13 @@ def linux_dependencies(root,qt):
                 source=Path(match.group(1)).resolve()
                 if base.match(source.name):continue
                 target=libraries/soname
-                if target.exists() and sha(target)!=sha(source):raise RuntimeError('Conflicting library basename: '+source.name)
-                if not target.exists():shutil.copy2(source,target)
+                if target.exists():
+                    if source==target.resolve():continue
+                    # patchelf changes copied bytes; compare against the original
+                    # source hash retained before rewriting its loader paths.
+                    if original_hashes[target]!=sha(source):raise RuntimeError('Conflicting library basename: '+source.name)
+                else:
+                    original_hashes[target]=sha(source);shutil.copy2(source,target)
             relative=os.path.relpath(libraries,binary.parent)
             run('patchelf','--set-rpath','$ORIGIN/'+relative,binary)
     (root/'bin/qt.conf').write_text('[Paths]\nPrefix=..\nPlugins=plugins\nLibraries=lib\nTranslations=translations\n')
