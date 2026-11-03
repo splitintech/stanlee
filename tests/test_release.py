@@ -81,3 +81,15 @@ def test_encoder_source_integrity_fails_before_extraction(tmp_path,monkeypatch):
     with pytest.raises(ValueError,match='Source checksum mismatch'):
         builder.download(entry,tmp_path)
     assert list(tmp_path.iterdir())==[]
+
+
+def test_staged_encoder_replacement_preserves_an_external_symlink_target(tmp_path):
+    from package_application import install_tool
+    original=tmp_path/'original';original.write_bytes(b'external installed encoder')
+    source=tmp_path/'pinned';source.write_bytes(b'pinned encoder')
+    staged=tmp_path/'staged';staged.mkdir();target=staged/'ffmpeg'
+    try:target.symlink_to(original)
+    except OSError:pytest.skip('Symlink creation unavailable')
+    install_tool(source,target)
+    assert original.read_bytes()==b'external installed encoder'
+    assert target.read_bytes()==b'pinned encoder' and not target.is_symlink()

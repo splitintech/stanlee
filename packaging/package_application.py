@@ -29,6 +29,12 @@ def copy_notices(source,destination):
             if p.is_file():shutil.copy2(p,destination/p.name)
 
 
+def install_tool(source, target):
+    """Replace only this staged directory entry, never a stale symlink target."""
+    if target.is_symlink() or target.is_file():target.unlink()
+    shutil.copy2(source,target)
+
+
 def macho(path):
     if not path.is_file() or path.is_symlink():return False
     with path.open('rb') as f:magic=f.read(4)
@@ -160,8 +166,13 @@ def main():
         if system=='macos':
             bundle=root/'Pencil2D-Stanlee.app';shutil.copytree(args.application,bundle,symlinks=True)
             executable=bundle/'Contents/MacOS/pencil2d-stanlee'
-            plugins=executable.parent/'plugins';plugins.mkdir(exist_ok=True)
-            shutil.copy2(args.encoder,plugins/'ffmpeg');shutil.copy2(validator,plugins/'ffprobe')
+            plugins=executable.parent/'plugins'
+            if not executable.parent.resolve().is_relative_to(bundle.resolve()):raise RuntimeError('Application executable directory leaves the staged bundle')
+            if plugins.is_symlink():plugins.unlink()
+            plugins.mkdir(exist_ok=True)
+            install_tool(args.encoder,plugins/'ffmpeg');install_tool(validator,plugins/'ffprobe')
+            for link in bundle.rglob('*'):
+                if link.is_symlink() and not link.resolve().is_relative_to(bundle.resolve()):raise RuntimeError('Application link leaves the staged bundle: '+str(link))
             offscreen=bundle/'Contents/PlugIns/platforms/libqoffscreen.dylib'
             offscreen.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(args.qt_bin.parent/'plugins/platforms/libqoffscreen.dylib',offscreen)
