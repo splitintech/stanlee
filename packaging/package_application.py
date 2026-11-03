@@ -170,8 +170,10 @@ def main():
         for name in ('LICENSE','NOTICE'):shutil.copy2(repository/name,notices/name)
         for source in args.license_dir:shutil.copytree(source,notices/source.name,dirs_exist_ok=True)
         license_text=run(args.encoder,'-L')
-        license_start=license_text.find('This version')
+        license_start=license_text.find('ffmpeg is free software;')
         (notices/'ffmpeg-license.txt').write_text(license_text[license_start:] if license_start>=0 else license_text)
+        sbom=args.qt_bin.parent/'sbom'
+        if sbom.is_dir():shutil.copytree(sbom,notices/'Qt-SBOM',dirs_exist_ok=True)
         # Provide the exact native corresponding source with every binary package.
         with (root/'native-source.tar').open('wb') as stream:
             subprocess.run(['git','-C',str(args.native),'archive','--format=tar',revision],stdout=stream,check=True)

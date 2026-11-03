@@ -23,7 +23,7 @@ waived or converted into unsupported upstream limitations.
 Native source integration is on `splitintech/pencil` branch
 `stanlee/qualified-integration`, pinned by this repository's build manifest. Normal
 fork `master` remains upstream code. The integrated native suite passes **1,175 assertions in
-79 cases** locally through both qmake and CMake. **69 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
+79 cases** locally through both qmake and CMake. **70 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
 latest CI results must be read separately from this local evidence.
 
 The native shared registry currently advertises 63 implemented development
@@ -123,7 +123,7 @@ The current native integration also builds successfully with CMake
 bridge boundary; it is separate from normal-application runtime qualification.
 
 
-The content/audio extension is pinned to native `9be9e56b90ec`. Local qmake and
+The content/audio extension is pinned to native `0506f14b0c96`. Local qmake and
 CMake tests each pass 79 native cases / 1,175 assertions. The optional bridge-OFF
 CMake application also builds. Official Qt 6.12 supplies the headless FFmpeg backend
 used by sound fixtures; the local Homebrew native Mac media backend did not resolve
@@ -138,3 +138,12 @@ result is separate from the pending CI package/platform and real-client matrix.
 The final committed package bytes and CI results must be recorded independently.
 See [packaging and signing](PACKAGING.md). Nightly scheduling remains inactive
 until the workflow is merged into the default branch; no such merge is claimed.
+
+
+The first expanded CI pass found a real Qt 6.5 timing difference: some decoders
+emit duration synchronously during player initialization. SoundManager now connects
+before initialization, complementing the player-level subscription fix. The tests
+retain the exact 1,000 ms / 12-frame assertion. The controller recovery/package
+suite passed every Mac/Linux/Windows Python 3.11/3.12 job at `fcb6863`:
+[CI evidence](https://github.com/splitintech/stanlee/actions/runs/41655448423).
+Native and application package qualification must be rerun at the corrected pin.

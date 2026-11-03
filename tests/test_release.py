@@ -37,7 +37,7 @@ def test_release_requires_complete_review_and_all_client_platform_pairs(tmp_path
 
 def test_release_proof_is_bound_to_final_archive_and_both_revisions(tmp_path):
     (tmp_path/'contracts').mkdir()
-    (tmp_path/'contracts/coverage.json').write_text(json.dumps({'semantic_review_complete': True, 'entries': []}))
+    (tmp_path/'contracts/coverage.json').write_text(json.dumps({'semantic_review_complete': True, 'entries': [{'id':'fixture','operation':'fixture','implementation':'implemented','tests':['fixture'],'platforms':{p:'qualified' for p in ('macos','windows','linux')}}]}))
     revision, native = 'a'*40, 'b'*40
     record = {'controller_revision': revision, 'native_revision': native, 'packages': [], 'clients': [],
               'crash_matrix_passed': True, 'reference_workflow_passed': True}
@@ -47,7 +47,9 @@ def test_release_proof_is_bound_to_final_archive_and_both_revisions(tmp_path):
             'path': package.name, 'sha256': sha(package), 'controller_revision': revision, 'native_revision': native,
             'acceptance_passed': True, 'dependency_source_audit': True})
         for client in ('codex', 'cursor', 'claude-desktop'):
-            evidence = tmp_path/(platform+'-'+client+'.json'); evidence.write_text('{}')
+            evidence = tmp_path/(platform+'-'+client+'.json')
+            evidence.write_text(json.dumps({'passed':True,'controller_revision':revision,'native_revision':native,
+                'package_sha256':sha(package),'platform':platform,'client':client,'client_version':'fixture','full_reference_workflow':True}))
             record['clients'].append({'platform': platform, 'client': client, 'client_version': 'fixture', 'passed': True,
                 'controller_revision': revision, 'native_revision': native, 'package_sha256': sha(package),
                 'evidence': evidence.name, 'evidence_sha256': sha(evidence)})
@@ -56,3 +58,15 @@ def test_release_proof_is_bound_to_final_archive_and_both_revisions(tmp_path):
     assert any('Final package bytes' in failure for failure in evaluate(tmp_path, record))
     record['clients'][0]['native_revision'] = 'c'*40
     assert 'Client reference workflow missing: macos/codex' in evaluate(tmp_path, record)
+
+
+def test_empty_or_generic_json_cannot_qualify_client_proof(tmp_path):
+    (tmp_path/'contracts').mkdir()
+    (tmp_path/'contracts/coverage.json').write_text(json.dumps({'semantic_review_complete': True, 'entries': []}))
+    evidence=tmp_path/'proof.json';evidence.write_text('{}')
+    record={'controller_revision':'a'*40,'native_revision':'b'*40,'clients':[{'platform':'macos','client':'codex',
+        'client_version':'fixture','passed':True,'controller_revision':'a'*40,'native_revision':'b'*40,
+        'package_sha256':None,'evidence':evidence.name,'evidence_sha256':sha(evidence)}]}
+    failures=evaluate(tmp_path,record)
+    assert 'Capability inventory is empty' in failures
+    assert 'Client reference workflow missing: macos/codex' in failures

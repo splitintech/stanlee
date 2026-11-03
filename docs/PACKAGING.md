@@ -2,7 +2,7 @@
 
 The package workflow builds pinned native source with official Qt 6.12 on Mac
 ARM/Intel, Windows x64 and Linux x64. It deploys Qt plugins, FFmpeg and ffprobe,
-embeds native corresponding source and license texts, records source revisions and
+embeds native corresponding source, Qt SBOMs and license texts, records source revisions and
 per-file hashes, then tests the extracted application in a different directory
 using an installed MCP wheel. The encoder's Mac libraries are isolated from Qt's
 media libraries even when their SONAMEs match. The headless platform plugin is
@@ -50,3 +50,11 @@ coverage, all platform/client combinations, exact source revisions, final archiv
 hashes, signed/universal requirements and full reference/crash qualification.
 It returns failure while any gate is missing. Signing by itself never marks an
 artifact stable-qualified or publishes it.
+
+
+Qt 6.12 Linux uses `linux_gcc_64`. Its Windows catalog separates the MSVC repository;
+`install_qt_windows.py` adapts pinned aqt 3.3's repository suffix for that exact
+version/architecture while retaining normal archive checksum verification and
+relocation. Other Qt versions/architectures are not rewritten. The official catalog
+dry run resolves base and multimedia archives. Acceptance removes build-machine
+Qt plugin/loader/PATH settings before launching the extracted application.

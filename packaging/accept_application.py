@@ -26,6 +26,16 @@ def digest(path):
 
 async def accept(root,application,python):
     sessions=root/'s'
+    # The install-Qt action exports build-tree loader/plugin paths. Remove them
+    # so this test cannot succeed by loading undeployed build-machine libraries.
+    qtroot=os.environ.get('QT_ROOT_DIR')
+    if qtroot:
+        prefix=Path(qtroot).resolve()
+        os.environ['PATH']=os.pathsep.join(part for part in os.environ.get('PATH','').split(os.pathsep)
+            if part and not Path(part).resolve().is_relative_to(prefix))
+    for key in ('QT_PLUGIN_PATH','QT_QPA_PLATFORM_PLUGIN_PATH','QML2_IMPORT_PATH','QML_IMPORT_PATH',
+                'LD_LIBRARY_PATH','DYLD_LIBRARY_PATH','DYLD_FRAMEWORK_PATH','QT_MEDIA_BACKEND'):
+        os.environ.pop(key,None)
     os.environ.update(QT_QPA_PLATFORM='offscreen',QT_STYLE_OVERRIDE='Fusion')
     service=Service([str(root)],sessions,executable=str(application))
     service.launch()

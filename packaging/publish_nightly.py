@@ -17,7 +17,9 @@ def sha(path):
 def collect_assets(paths):
     assets = {}
     for path in paths:
-        path = Path(path).resolve(strict=True)
+        path = Path(path)
+        if path.is_symlink():raise ValueError('Symlink release asset: '+str(path))
+        path = path.resolve(strict=True)
         if not path.is_file() or path.is_symlink() or not re.fullmatch(r'[A-Za-z0-9_.-]+', path.name):
             raise ValueError('Unsafe release asset: ' + str(path))
         if path.name in assets and sha(path) != sha(assets[path.name]):
@@ -59,6 +61,12 @@ def main():
     if args.dry_run:
         print(json.dumps({'tag': args.tag, 'channel': 'experimental', 'assets': manifest}, indent=2))
         return
+    bundle=assets.get('stanlee-provenance.sigstore.json')
+    if bundle is None:raise ValueError('Signed package provenance bundle is required')
+    for name,path in assets.items():
+        if name.endswith(('.tar.gz','.whl')):
+            subprocess.run(['gh','attestation','verify',str(path),'--bundle',str(bundle),'--repo',args.repository,
+                '--signer-workflow',args.repository+'/.github/workflows/packages.yml','--source-digest',args.revision],check=True)
     # An existing release is never mutated, even if a previous upload was partial.
     # Only a genuine 404 permits creation; authentication/network errors fail closed.
     view = subprocess.run(['gh', 'api', f'repos/{args.repository}/releases/tags/{args.tag}'], capture_output=True, text=True)

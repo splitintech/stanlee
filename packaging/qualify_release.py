@@ -18,6 +18,8 @@ def evaluate(root, record):
     if not re.fullmatch('[0-9a-f]{40}', revision) or not re.fullmatch('[0-9a-f]{40}', native):
         failures.append('Exact controller/native source revisions are required')
     coverage = json.loads((root/'contracts/coverage.json').read_text())
+    if not coverage.get('entries'):
+        failures.append('Capability inventory is empty')
     if not coverage.get('semantic_review_complete'):
         failures.append('Semantic capability review remains incomplete')
     for item in coverage['entries']:
@@ -50,7 +52,12 @@ def evaluate(root, record):
                 and proof.get('package_sha256') == hashes.get(proof.get('platform')) and proof.get('evidence') and proof.get('client_version')):
             evidence = root/proof['evidence']
             if evidence.is_file() and sha(evidence) == proof.get('evidence_sha256'):
-                accepted.add((proof.get('platform'), proof.get('client')))
+                data=json.loads(evidence.read_text())
+                expected={'passed':True,'controller_revision':revision,'native_revision':native,
+                    'package_sha256':proof['package_sha256'],'platform':proof['platform'],
+                    'client':proof['client'],'client_version':proof['client_version'],'full_reference_workflow':True}
+                if all(data.get(k)==v for k,v in expected.items()):
+                    accepted.add((proof.get('platform'), proof.get('client')))
     for platform in sorted(PLATFORMS):
         for client in sorted(CLIENTS):
             if (platform, client) not in accepted:
