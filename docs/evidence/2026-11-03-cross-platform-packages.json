@@ -1,0 +1,429 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "workflow_run": 41668969493,
+  "workflow_url": "https://github.com/splitintech/stanlee/actions/runs/41668969493",
+  "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+  "pull_request_head_revision": "9521442bc37aa5773ea0e10c1955d1a694f01386",
+  "source_tree": "e4049da64969e698927f2071c2f3b338a118ddc5",
+  "source_identity": "Synthetic PR merge and head have the same Git tree; both revisions retained explicitly",
+  "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+  "conclusion": "success",
+  "acceptance": [
+    {
+      "job_id": 126032787488,
+      "checks": [
+        "relocated native startup",
+        "installed SDK stdio",
+        "atomic edit undo/redo",
+        "bitmap region transaction undo",
+        "vector geometry",
+        "independent sound asset and duration",
+        "camera preview",
+        "save/new/reopen",
+        "four distinct PNG frames",
+        "four-frame 24 FPS movie with audio",
+        "native AVI/WebM with audio",
+        "native GIF/APNG frame counts",
+        "source file preservation",
+        "safe close"
+      ],
+      "additional_formats": {
+        "avi": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.208980",
+          "audio_streams": 1,
+          "codec": "mpeg4"
+        },
+        "webm": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.174000",
+          "audio_streams": 1,
+          "codec": "vp9"
+        },
+        "gif": {
+          "frames": 4,
+          "frame_rate": "25/1",
+          "duration": "0.170000",
+          "audio_streams": 0,
+          "codec": "gif"
+        },
+        "apng": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": null,
+          "audio_streams": 0,
+          "codec": "apng"
+        }
+      },
+      "movie": {
+        "width": 320,
+        "height": 240,
+        "frames": 4,
+        "frame_rate": "24/1",
+        "duration": "0.166667",
+        "audio_streams": 1,
+        "codec": "h264"
+      },
+      "passed": true,
+      "target": "macos-x86_64",
+      "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+      "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+      "package_sha256": "f643d8ec0f385a53aa39bae9deb13fe80a76506a511f307d358d6562173c172d",
+      "package_architectures": [
+        "x86_64"
+      ]
+    },
+    {
+      "job_id": 126032788000,
+      "checks": [
+        "relocated native startup",
+        "installed SDK stdio",
+        "atomic edit undo/redo",
+        "bitmap region transaction undo",
+        "vector geometry",
+        "independent sound asset and duration",
+        "camera preview",
+        "save/new/reopen",
+        "four distinct PNG frames",
+        "four-frame 24 FPS movie with audio",
+        "native AVI/WebM with audio",
+        "native GIF/APNG frame counts",
+        "source file preservation",
+        "safe close"
+      ],
+      "additional_formats": {
+        "avi": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.208980",
+          "audio_streams": 1,
+          "codec": "mpeg4"
+        },
+        "webm": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.174000",
+          "audio_streams": 1,
+          "codec": "vp9"
+        },
+        "gif": {
+          "frames": 4,
+          "frame_rate": "25/1",
+          "duration": "0.170000",
+          "audio_streams": 0,
+          "codec": "gif"
+        },
+        "apng": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": null,
+          "audio_streams": 0,
+          "codec": "apng"
+        }
+      },
+      "movie": {
+        "width": 320,
+        "height": 240,
+        "frames": 4,
+        "frame_rate": "24/1",
+        "duration": "0.166667",
+        "audio_streams": 1,
+        "codec": "h264"
+      },
+      "passed": true,
+      "target": "linux-x86_64",
+      "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+      "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+      "package_sha256": "5621c510245ea208e510a402693f3c17d609b9021dff7eabd3bab44240c6f585",
+      "package_architectures": [
+        "x86_64"
+      ]
+    },
+    {
+      "job_id": 126032788047,
+      "checks": [
+        "relocated native startup",
+        "installed SDK stdio",
+        "atomic edit undo/redo",
+        "bitmap region transaction undo",
+        "vector geometry",
+        "independent sound asset and duration",
+        "camera preview",
+        "save/new/reopen",
+        "four distinct PNG frames",
+        "four-frame 24 FPS movie with audio",
+        "native AVI/WebM with audio",
+        "native GIF/APNG frame counts",
+        "source file preservation",
+        "safe close"
+      ],
+      "additional_formats": {
+        "avi": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.208980",
+          "audio_streams": 1,
+          "codec": "mpeg4"
+        },
+        "webm": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.174000",
+          "audio_streams": 1,
+          "codec": "vp9"
+        },
+        "gif": {
+          "frames": 4,
+          "frame_rate": "25/1",
+          "duration": "0.170000",
+          "audio_streams": 0,
+          "codec": "gif"
+        },
+        "apng": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": null,
+          "audio_streams": 0,
+          "codec": "apng"
+        }
+      },
+      "movie": {
+        "width": 320,
+        "height": 240,
+        "frames": 4,
+        "frame_rate": "24/1",
+        "duration": "0.166667",
+        "audio_streams": 1,
+        "codec": "h264"
+      },
+      "passed": true,
+      "target": "macos-arm64",
+      "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+      "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+      "package_sha256": "f5a990c9e191fdfeebe28a4d438c53b01bd4e2703ae54ac064fa17b7409d091b",
+      "package_architectures": [
+        "arm64"
+      ]
+    },
+    {
+      "job_id": 126032788230,
+      "checks": [
+        "relocated native startup",
+        "installed SDK stdio",
+        "atomic edit undo/redo",
+        "bitmap region transaction undo",
+        "vector geometry",
+        "independent sound asset and duration",
+        "camera preview",
+        "save/new/reopen",
+        "four distinct PNG frames",
+        "four-frame 24 FPS movie with audio",
+        "native AVI/WebM with audio",
+        "native GIF/APNG frame counts",
+        "source file preservation",
+        "safe close"
+      ],
+      "additional_formats": {
+        "avi": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.208980",
+          "audio_streams": 1,
+          "codec": "mpeg4"
+        },
+        "webm": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.174000",
+          "audio_streams": 1,
+          "codec": "vp9"
+        },
+        "gif": {
+          "frames": 4,
+          "frame_rate": "25/1",
+          "duration": "0.170000",
+          "audio_streams": 0,
+          "codec": "gif"
+        },
+        "apng": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": null,
+          "audio_streams": 0,
+          "codec": "apng"
+        }
+      },
+      "movie": {
+        "width": 320,
+        "height": 240,
+        "frames": 4,
+        "frame_rate": "24/1",
+        "duration": "0.166667",
+        "audio_streams": 1,
+        "codec": "h264"
+      },
+      "passed": true,
+      "target": "windows-x86_64",
+      "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+      "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+      "package_sha256": "f63bb4d942fa2c181567f95f0188fe1e0645f04711b928031005aedf809cc0e3",
+      "package_architectures": [
+        "x86_64"
+      ]
+    },
+    {
+      "job_id": 126052203525,
+      "checks": [
+        "relocated native startup",
+        "installed SDK stdio",
+        "atomic edit undo/redo",
+        "bitmap region transaction undo",
+        "vector geometry",
+        "independent sound asset and duration",
+        "camera preview",
+        "save/new/reopen",
+        "four distinct PNG frames",
+        "four-frame 24 FPS movie with audio",
+        "native AVI/WebM with audio",
+        "native GIF/APNG frame counts",
+        "source file preservation",
+        "safe close"
+      ],
+      "additional_formats": {
+        "avi": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.208980",
+          "audio_streams": 1,
+          "codec": "mpeg4"
+        },
+        "webm": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.174000",
+          "audio_streams": 1,
+          "codec": "vp9"
+        },
+        "gif": {
+          "frames": 4,
+          "frame_rate": "25/1",
+          "duration": "0.170000",
+          "audio_streams": 0,
+          "codec": "gif"
+        },
+        "apng": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": null,
+          "audio_streams": 0,
+          "codec": "apng"
+        }
+      },
+      "movie": {
+        "width": 320,
+        "height": 240,
+        "frames": 4,
+        "frame_rate": "24/1",
+        "duration": "0.166667",
+        "audio_streams": 1,
+        "codec": "h264"
+      },
+      "passed": true,
+      "target": "macos-universal-arm64",
+      "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+      "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+      "package_sha256": "f368f5f564c6954aa701a1860fb9b4dfe34ddd188b7768e272398771a081e258",
+      "package_architectures": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+    {
+      "job_id": 126052203567,
+      "checks": [
+        "relocated native startup",
+        "installed SDK stdio",
+        "atomic edit undo/redo",
+        "bitmap region transaction undo",
+        "vector geometry",
+        "independent sound asset and duration",
+        "camera preview",
+        "save/new/reopen",
+        "four distinct PNG frames",
+        "four-frame 24 FPS movie with audio",
+        "native AVI/WebM with audio",
+        "native GIF/APNG frame counts",
+        "source file preservation",
+        "safe close"
+      ],
+      "additional_formats": {
+        "avi": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.208980",
+          "audio_streams": 1,
+          "codec": "mpeg4"
+        },
+        "webm": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": "0.174000",
+          "audio_streams": 1,
+          "codec": "vp9"
+        },
+        "gif": {
+          "frames": 4,
+          "frame_rate": "25/1",
+          "duration": "0.170000",
+          "audio_streams": 0,
+          "codec": "gif"
+        },
+        "apng": {
+          "frames": 4,
+          "frame_rate": "24/1",
+          "duration": null,
+          "audio_streams": 0,
+          "codec": "apng"
+        }
+      },
+      "movie": {
+        "width": 320,
+        "height": 240,
+        "frames": 4,
+        "frame_rate": "24/1",
+        "duration": "0.166667",
+        "audio_streams": 1,
+        "codec": "h264"
+      },
+      "passed": true,
+      "target": "macos-universal-x86_64",
+      "controller_revision": "43cc7c5aadaf85b6a168341949dd83ec580b9f72",
+      "native_revision": "5b25d9495c01580dc6ef8ce8a0e56636a60563b7",
+      "package_sha256": "f368f5f564c6954aa701a1860fb9b4dfe34ddd188b7768e272398771a081e258",
+      "package_architectures": [
+        "arm64",
+        "x86_64"
+      ]
+    }
+  ],
+  "provenance_job_id": 126056411533,
+  "provenance_artifact_id": 13250825510,
+  "artifacts": {
+    "macos-arm64": 13247963545,
+    "macos-x86_64": 13249801582,
+    "macos-universal": 13248644365,
+    "linux-x86_64": 13247082723,
+    "windows-x86_64": 13247382526,
+    "python": 13247905713
+  },
+  "limits": [
+    "experimental packages only; ad-hoc Mac signing and unsigned Windows",
+    "SDK acceptance, not full real-client or full editor acceptance",
+    "dependency source/notice and clean-machine release audit remain open",
+    "nightly release publishing skipped on this review-branch build",
+    "later native export integrity changes require their own qualification"
+  ]
+}

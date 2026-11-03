@@ -1,0 +1,107 @@
+# Experimental application packaging
+
+The package workflow builds pinned native source with official Qt 6.12 on Mac
+ARM/Intel, Windows x64 and Linux x64. It deploys Qt plugins, FFmpeg and ffprobe,
+embeds native corresponding source, Qt SBOMs and license texts, records source revisions and
+per-file hashes, then tests the extracted application in a different directory
+using an installed MCP wheel. The encoder's Mac libraries are isolated from Qt's
+media libraries even when their SONAMEs match. The headless platform plugin is
+included explicitly.
+
+The reference fixture exercises atomic pressure edits and undo/redo, camera keys,
+vector geometry, imported independent sound bytes and decoder timing, save/new/
+reopen, PNG frames and an audio-bearing 24 FPS movie. It verifies output metadata
+and source-file preservation. This is automated SDK acceptance, separate from
+human/client acceptance and the complete editor reference workflow.
+
+Mac architecture artifacts are merged only when resources and source pins match;
+every executable and native dependency must contain both slices. The merged final
+archive is tested on both Mac architectures. A failed merge or either acceptance
+job prevents nightly publishing. Each artifact has a SHA-256 sidecar; archives
+retain executable permissions and symlinks. CI artifacts expire after 14 days.
+
+`packages.yml` runs on review-branch pushes. Scheduled publication starts only once
+the workflow reaches the default branch. Manual publication requires its explicit
+`publish` input. `publish_nightly.py` requires all six acceptance results at the
+exact source revision and matching archive hashes. Existing tags/releases/assets
+are never overwritten. Snapshots are prereleases named `nightly-DATE-REVISION`.
+No alpha/stable or PyPI publication is performed by this workflow.
+
+Before distributing packages as qualified releases, complete the dependency notice
+and corresponding-source audit, full native format/codec/reference fixtures,
+clean-machine OS qualification, upgrades/rollback/uninstall, real client matrix
+and signed final-byte acceptance. Those remain explicit gates. Ubuntu and Chocolatey encoder toolchains remain unlocked. The Mac encoder uses
+the source lock described below; full reproducibility qualification remains open.
+
+## Signing and qualification
+
+Run `packaging/sign_application.py --root UNPACKED_PACKAGE` on its native platform.
+Mac signing uses an already provisioned `STANLEE_APPLE_SIGN_IDENTITY` and
+`STANLEE_APPLE_NOTARY_PROFILE`; the script signs native files with hardened runtime
+and timestamp, submits through `notarytool`, staples, and checks Gatekeeper.
+Windows uses the installed certificate identified by `STANLEE_WINDOWS_CERT_SHA1`,
+SignTool SHA-256 signing/timestamping and verification of every EXE/DLL. Missing
+configuration fails before signing. No credentials are downloaded or inspected.
+These paths require actual signing-environment acceptance before release use.
+
+Signing changes bytes. Repackage, regenerate checksums and rerun acceptance before
+recording a release. `qualify_release.py --record RECORD.json` checks semantic
+coverage, all platform/client combinations, exact source revisions, final archive
+hashes, signed/universal requirements and full reference/crash qualification.
+It returns failure while any gate is missing. Signing by itself never marks an
+artifact stable-qualified or publishes it.
+
+
+Qt 6.12 Linux uses `linux_gcc_64`. Its Windows catalog separates the MSVC repository;
+`install_qt_windows.py` adapts pinned aqt 3.3's repository suffix for that exact
+version/architecture while retaining normal archive checksum verification and
+relocation. Other Qt versions/architectures are not rewritten. The official catalog
+dry run resolves base and multimedia archives. Acceptance removes build-machine
+Qt plugin/loader/PATH settings before launching the extracted application.
+
+
+## Pinned Mac encoder
+
+Mac packages build FFmpeg, x264, libvpx, Opus and LAME from `encoder-sources.json`.
+Archive hashes are mandatory before extraction. CLI codecs are statically linked;
+any remaining non-system shared dependency fails the build. Each package includes
+those exact source archives, license notices and a build receipt tied to executable
+hashes. This avoids architecture-divergent Homebrew codec ABIs. Qt media backend
+libraries remain separately deployed from the official Qt SDK.
+
+The encoder build requires macOS 14.4 or newer and native ARM/Intel compilation.
+CI caches are bound to architecture, runner image, source lock and builder code.
+Receipts and files are checked again on cache use. Universal manifests retain
+encoder build/dependency inventories for both CPUs; architecture-specific notices
+are preserved in separate directories. Every runtime Mach-O must contain both
+slices, and the final universal archive is accepted independently on both runners.
+
+The fixture also tests native AVI/WebM audio and GIF/APNG frame counts. GIF frame
+delays have centisecond quantization, APNG may omit a container duration field, and
+AVI can retain audio padding beyond the last video frame. Exact four-frame video
+counts remain required. Full format/codec/content acceptance is still unfinished.
+
+
+## Historical downloadable checkpoint
+
+[Run 41668969493](https://github.com/splitintech/stanlee/actions/runs/41668969493)
+completed all architecture builds, universal merging, acceptance on both Mac CPUs
+and provenance. Download experimental artifacts:
+
+- [Mac universal](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13248644365)
+- [Windows x64](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247382526)
+- [Linux x64](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247082723)
+- [MCP wheel/source](https://github.com/splitintech/stanlee/actions/runs/41668969493/artifacts/13247905713)
+
+These expire after 14 days and use native `5b25d9495c01`. They contain the
+subsequently fixed audio shutdown fault and precede export-integrity changes.
+Use a newer qualified checkpoint for audio-document work. [Exact source identities and archive hashes](evidence/2026-11-03-cross-platform-packages.json)
+are retained separately. A newer source pin requires its own qualification.
+
+
+The launch probe permits up to 30 seconds for initial Qt/OS loading, then still
+fails closed on timeout or a non-Stanlee executable. A relocated audio-document
+fixture exposed a decoder/backing-device shutdown fault; native `b7d1b77a60ee`
+fixes that lifetime and includes a regression test. Historical downloadable
+checkpoints above precede this fix. Current final-byte/platform qualification
+must be read independently.

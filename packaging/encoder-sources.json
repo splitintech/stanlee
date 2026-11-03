@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "minimum_macos": "14.4",
+  "sources": [
+    {
+      "name": "x264",
+      "version": "b35605ace3ddf7c1a5d67a2eb553f034aef41d55",
+      "url": "https://code.videolan.org/videolan/x264/-/archive/b35605ace3ddf7c1a5d67a2eb553f034aef41d55/x264-b35605ace3ddf7c1a5d67a2eb553f034aef41d55.tar.gz",
+      "sha256": "cd71a7515b0e9a012e1ac9b1f8415bebcaf6fc97d4db32286642ac4c0fbe24f9",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "name": "libvpx",
+      "version": "1.17.0",
+      "url": "https://github.com/webmproject/libvpx/archive/refs/tags/v1.17.0.tar.gz",
+      "sha256": "1020f184046187baa2985dbde38e0691f49c44088bca7a1842b0236c6081dc0a",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "opus",
+      "version": "1.6.1",
+      "url": "https://ftp.osuosl.org/pub/xiph/releases/opus/opus-1.6.1.tar.gz",
+      "sha256": "6ffcb593207be92584df15b32466ed64bbec99109f007c82205f0194572411a1",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "lame",
+      "version": "4.0",
+      "url": "https://downloads.sourceforge.net/project/lame/lame/4.0/lame-4.0.tar.gz",
+      "sha256": "3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb",
+      "license": "LGPL-2.0-or-later"
+    },
+    {
+      "name": "ffmpeg",
+      "version": "9.0.2",
+      "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+      "sha256": "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e",
+      "license": "GPL-2.0-or-later with this configuration"
+    }
+  ]
+}

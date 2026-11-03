@@ -41,7 +41,9 @@ stanlee --workspace /absolute/animation-workspace \
 document, then send commands with its current session/document IDs and revision.
 Every operation's schema, native mapping and undo behavior is available through
 `stanlee operations` and MCP `stanlee://operations`. Unsupported operations fail
-explicitly. Layer creation and FPS changes currently have no native undo.
+explicitly. Layer creation, FPS and supported content edits now use native undo
+transactions. `edit.batch` groups only advertised reversible document operations;
+see [native editing](EDITING.md) for bounds, context rules and conflict behavior.
 
 Run the MCP adapter using the same global flags followed by `serve`. Stdout is
 reserved for the official SDK's stdio protocol. Native diagnostics never include

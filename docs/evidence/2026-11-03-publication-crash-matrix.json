@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "platform": "macOS arm64",
+  "python": "3.12.15",
+  "before_controller_revision": "256d8c9392939be56616b1a81732bea7d9e890c1",
+  "native_revision": "e7bc6f8387b0142fcb5d8b61cf12f03682d225c0",
+  "files": {
+    "src/stanlee/publication.py": "4604ea280bb823b2473bb4a4db44ba4f204df7e6897929634297ee40b1ad06c6",
+    "tests/test_publication_crashes.py": "6998685cee6f030b1280ac8af03ad5aece8edd291b536991f5f7f04840849f73"
+  },
+  "passed_cases": 42,
+  "durable_transition_cases": 36,
+  "interrupted_recovery_cases": 2,
+  "committed_external_edit_cases": 4,
+  "conditions": {
+    "output_directories": 2,
+    "modes": [
+      "overwrite with original backup",
+      "new output without overwrite"
+    ],
+    "transitions": [
+      "initial journal",
+      "stage announcement/copy",
+      "backup announcement/copy",
+      "prepared",
+      "publishing",
+      "intent",
+      "replacement",
+      "published",
+      "complete",
+      "partial cleanup"
+    ],
+    "invariants": [
+      "unfinished transactions restore original outputs",
+      "committed transactions preserve new outputs",
+      "unrelated files and POSIX modes preserved",
+      "interrupted recovery is idempotent",
+      "external content preserved",
+      "repeated recovery cannot undo a durable commit"
+    ]
+  },
+  "red_before_fix": {
+    "failed_cases": 2,
+    "observed": "second recovery restored old overwritten output or deleted newly created committed output after another target changed externally"
+  },
+  "limits": [
+    "local process-death tests, not power-loss/filesystem corruption",
+    "platform CI recorded separately",
+    "not native editor or full client crash qualification",
+    "empty initial unjournaled orphan cleanup remains open"
+  ]
+}

@@ -32,8 +32,9 @@ hidden-layer edits (#1942), and download verification (#1964). Review the
 and validation limits.
 
 The development command set supports authenticated sessions, native inspection,
-layers, keyframes, strokes, undo/redo, previews, save/reopen, independent snapshots
+layer properties/order/duplication, keyframes/exposure, camera animation, strokes,
+atomic document batches, undo/redo, previews, save/reopen, independent snapshots
 and validated saved/snapshot export jobs. Full editor coverage is unfinished.
-See [current status](docs/STATUS.md) and [setup](docs/SETUP.md).
+See [native editing](docs/EDITING.md), [current status](docs/STATUS.md) and [setup](docs/SETUP.md).
 
 GPL-2.0-only. See [LICENSE](LICENSE) and [dependency notices](NOTICE).

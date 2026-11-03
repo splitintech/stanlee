@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "platform": "macOS arm64",
+  "qt": "6.12.0",
+  "before_native_revision": "31290f32dc4b240ed1e6bdabc946a38413d11451",
+  "native_revision": "b7d1b77a60ee3cc48faa327483c31b602b37ce22",
+  "failure": {
+    "packaged_cli_process_returncode": -10,
+    "native_focused_test_shell_exit": 138,
+    "signal": "SIGBUS",
+    "stage": "audio decoder destruction after a successful PNG render",
+    "publication": "withheld because child exit was nonzero"
+  },
+  "ownership": "QMediaPlayer borrows a QBuffer member; destroy/stop decoder before members and QObject child cleanup, disconnecting teardown metadata forwarding",
+  "native_regression": {
+    "test": "Sound decoder is destroyed before its borrowed input device",
+    "assertions": 8,
+    "passed": true,
+    "observation": "A decoder-owned destruction probe observes the borrowed input device still alive; independent of older Qt destruction signal disconnections"
+  },
+  "native_suite": {
+    "qmake_cases": 80,
+    "qmake_assertions": 1183,
+    "cmake_cases": 80,
+    "cmake_assertions": 1183,
+    "bridge_off_build": "passed"
+  },
+  "controller_native_suite": {
+    "passed": 77,
+    "skipped": 1,
+    "skip_reason": "Windows-only on Mac"
+  },
+  "repeated_cli_exports": [
+    {
+      "iteration": 0,
+      "returncode": 0
+    },
+    {
+      "iteration": 1,
+      "returncode": 0
+    },
+    {
+      "iteration": 2,
+      "returncode": 0
+    },
+    {
+      "iteration": 3,
+      "returncode": 0
+    },
+    {
+      "iteration": 4,
+      "returncode": 0
+    },
+    {
+      "iteration": 5,
+      "returncode": 0
+    },
+    {
+      "iteration": 6,
+      "returncode": 0
+    },
+    {
+      "iteration": 7,
+      "returncode": 0
+    },
+    {
+      "iteration": 8,
+      "returncode": 0
+    },
+    {
+      "iteration": 9,
+      "returncode": 0
+    },
+    {
+      "iteration": 10,
+      "returncode": 0
+    },
+    {
+      "iteration": 11,
+      "returncode": 0
+    },
+    {
+      "iteration": 12,
+      "returncode": 0
+    },
+    {
+      "iteration": 13,
+      "returncode": 0
+    },
+    {
+      "iteration": 14,
+      "returncode": 0
+    },
+    {
+      "iteration": 15,
+      "returncode": 0
+    },
+    {
+      "iteration": 16,
+      "returncode": 0
+    },
+    {
+      "iteration": 17,
+      "returncode": 0
+    },
+    {
+      "iteration": 18,
+      "returncode": 0
+    },
+    {
+      "iteration": 19,
+      "returncode": 0
+    },
+    {
+      "iteration": 20,
+      "returncode": 0
+    },
+    {
+      "iteration": 21,
+      "returncode": 0
+    },
+    {
+      "iteration": 22,
+      "returncode": 0
+    },
+    {
+      "iteration": 23,
+      "returncode": 0
+    },
+    {
+      "iteration": 24,
+      "returncode": 0
+    },
+    {
+      "iteration": 25,
+      "returncode": 0
+    },
+    {
+      "iteration": 26,
+      "returncode": 0
+    },
+    {
+      "iteration": 27,
+      "returncode": 0
+    },
+    {
+      "iteration": 28,
+      "returncode": 0
+    },
+    {
+      "iteration": 29,
+      "returncode": 0
+    }
+  ],
+  "limits": [
+    "source-build repetition and native regression; final package bytes/platform matrix recorded separately",
+    "native debugger attach was denied by the local OS; no debugger stack trace is claimed",
+    "not full audio/format/client/crash qualification",
+    "initial cross-platform test used a destruction-signal observer disconnected by older Qt; portable physical observer requires fresh platform CI"
+  ],
+  "portable_test_revision": "e7bc6f8387b0142fcb5d8b61cf12f03682d225c0"
+}

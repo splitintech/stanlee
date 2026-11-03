@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   native:
@@ -144,4 +144,5 @@ jobs:
           else
             export STANLEE_TEST_APP="$GITHUB_WORKSPACE/native-bridge/build/app/pencil2d-stanlee"
           fi
+          python scripts/deploy_test_encoder.py --application "$STANLEE_TEST_APP"
           python -m pytest

@@ -1,8 +1,13 @@
 """One command service shared by the CLI and official-SDK MCP adapter."""
 import os
+import base64
+import binascii
+import json
+import struct
 import shutil
 import subprocess
 import sys
+import threading
 import uuid
 from pathlib import Path
 
@@ -23,12 +28,29 @@ def find_application(explicit: str | None = None) -> Path | None:
 
 
 class Service:
-    def __init__(self, workspaces: list[str], discovery_directory: Path, *, executable: str | None = None):
+    def __init__(self, workspaces: list[str], discovery_directory: Path, *, executable: str | None = None, workers: int = 1):
+        if type(workers) is not int or not 1 <= workers <= 8:
+            raise StanleeError('invalid_arguments','Rendering workers must be an integer from 1 to 8')
+        self.workers = workers
         self.workspace = Workspace(workspaces)
         self.directory = discovery_directory.expanduser().resolve()
         self.executable = find_application(executable)
         self.children: list[subprocess.Popen] = []
         self._jobs = None
+        self._jobs_lock = threading.RLock()
+        self._closed = False
+
+    def close(self):
+        with self._jobs_lock:
+            self._closed = True
+            if self._jobs is not None:
+                self._jobs.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.close()
 
     def sessions(self) -> list[dict]:
         return discovery(self.directory)
@@ -60,7 +82,7 @@ class Service:
         probe_environment = {**environment, "QT_QPA_PLATFORM": "offscreen", "QT_STYLE_OVERRIDE": "Fusion"}
         try:
             probe = subprocess.run([str(self.executable), "--version"], env=probe_environment,
-                                   stdin=subprocess.DEVNULL, capture_output=True, timeout=10)
+                                   stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
         except (OSError, subprocess.TimeoutExpired) as error:
             raise StanleeError("application_probe_failed", "Could not inspect the configured native executable") from error
         if probe.returncode or not probe.stdout.strip().startswith(b"Pencil2D-Stanlee "):
@@ -88,22 +110,47 @@ class Service:
         result = self._bridge(session_id).call(operation, arguments, expected_revision=expected_revision,
                                                document_id=document_id)
         # Output schemas are part of the shared contract too.
-        from jsonschema import validate as schema_validate
-        schema_validate(result, contract["output"])
+        from jsonschema import ValidationError, validate as schema_validate
+        try:
+            schema_validate(result, contract["output"])
+            json.dumps(result, allow_nan=False)
+            if result['session_id'] != session_id:
+                raise ValueError('Native payload has the wrong session identity')
+            if operation in {'frame.preview', 'canvas.capture', 'window.capture'}:
+                png = base64.b64decode(result['data'], validate=True)
+                if (len(png) < 24 or len(png) > 2*1024*1024 or png[:8] != b'\x89PNG\r\n\x1a\n' or
+                        png[12:16] != b'IHDR' or struct.unpack('>II', png[16:24]) != (result['width'], result['height'])):
+                    raise ValueError('Native image payload does not match its PNG dimensions')
+        except (ValidationError, ValueError, TypeError, binascii.Error) as error:
+            raise StanleeError("invalid_native_output", "Native operation returned an invalid payload",
+                               {"operation": operation, "path": list(error.absolute_path) if isinstance(error, ValidationError) else [],
+                                "reason": str(error)[:1000],
+                                "may_have_completed": contract['effects'] != 'observation'}) from error
         return result
+
+    def recover_outputs(self, directories: list[str]) -> dict:
+        from .publication import recover_publications
+        return {'transactions': recover_publications(self.workspace, directories)}
 
     def diagnostics(self) -> dict:
         return {"python": sys.version.split()[0], "executable": str(self.executable) if self.executable else None,
                 "discovery_directory": str(self.directory), "sessions": len(self.sessions()),
                 "protocol_version": REGISTRY["protocol_version"], "qualified_alpha": False,
-                "ffprobe": shutil.which("ffprobe"), "platform": sys.platform}
+                "ffprobe": shutil.which("ffprobe"), "platform": sys.platform, "workers": self.workers}
+
+    def export_capabilities(self) -> dict:
+        from .capabilities import discover
+        return discover(self.executable)
 
     @property
     def jobs(self):
-        if self._jobs is None:
-            from .jobs import Jobs
-            self._jobs = Jobs(self, self.directory.parent/"jobs")
-        return self._jobs
+        with self._jobs_lock:
+            if self._closed:
+                raise StanleeError("service_closed", "The service has closed")
+            if self._jobs is None:
+                from .jobs import Jobs
+                self._jobs = Jobs(self, self.directory.parent/"jobs")
+            return self._jobs
 
     def export_document(self, session_id: str, expected_revision: int, document_id: str,
                         outputs: list[str], *, fps: int | None = None, **options):

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "client": "Codex CLI",
+  "client_version": "0.164.0-alpha.11.1",
+  "authentication": "existing ChatGPT login",
+  "platform": "macOS arm64",
+  "package_version": "0.1.0.dev0",
+  "configuration": "ephemeral command-line MCP configuration; per-tool editing/export approval only for the disposable granted workspace; no persistent user configuration changes",
+  "date": "2026-11-03",
+  "source_revision": "3e69f4bdfbb64109134f8bca129864c7961159d7",
+  "native_revision": "84351d2a9f7195510539fec821bbdb0b5358d5bc",
+  "wheel_sha256": "8f61028dd06c6e3655087b905ab637110e4ee5bcdd8d8f03be37991ba44cd6d9",
+  "completed_checks": [
+    "session and shared operation-resource discovery",
+    "one five-step native document transaction: FPS, pressure stroke, duplicate key, camera dimensions, camera key",
+    "undo/redo restores project timing and keys without changing document identity",
+    "native camera frame-4 image preview",
+    "save/new/reopen native project",
+    "snapshot export validated as 320x240 RGBA PNG",
+    "decoded nonempty pressure stroke with transparent background",
+    "deliberately stale revision rejected with identical before/after state"
+  ],
+  "mcp_completed_calls": 21,
+  "mcp_expected_failed_calls": 1,
+  "expected_error": "stale_revision",
+  "export": {
+    "width": 320,
+    "height": 240,
+    "frames": 1,
+    "frame_rate": "25/1",
+    "duration": null,
+    "audio_streams": 0,
+    "codec": "png",
+    "pixel_format": "rgba",
+    "bytes": 944,
+    "name": "client0001.png",
+    "sha256": "7f2d7dc069551ab58430a0e0edb9ccafae1f4c81728fc685d760667b70dd21cd",
+    "nontransparent_pixels": 811,
+    "nontransparent_bounds": [
+      134,
+      105,
+      175,
+      145
+    ],
+    "alpha_max": 255
+  },
+  "preserved_state": {
+    "fps": 24,
+    "revision": 46,
+    "dirty": false
+  },
+  "limitations": [
+    "subset workflow only; not the complete alpha reference workflow",
+    "no live human edit injection",
+    "Cursor and Claude Desktop acceptance pending",
+    "no close/recovery client qualification",
+    "no claim of complete content or audio equivalence"
+  ]
+}

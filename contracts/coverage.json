@@ -33,19 +33,22 @@
       "label": "",
       "family": "application",
       "fingerprint": "ebdb3f527db167e915839784dbaadb191cb3783137e5bae0b2baa4581df5cfec",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::sb_threshold#1",
@@ -55,19 +58,22 @@
       "label": "",
       "family": "application",
       "fingerprint": "8d1043bb965e515f2d7185af32bc9bfb4a5f6336f9ac921771f657b1d1870118",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::cb_Red#1",
@@ -77,19 +83,22 @@
       "label": "Trace Red",
       "family": "application",
       "fingerprint": "beaf69555c9f6cb311f8d528c8b99d41f066e896896165e0bed0854a98162b72",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::cb_Green#1",
@@ -99,19 +108,22 @@
       "label": "Trace Green",
       "family": "application",
       "fingerprint": "05f635e832041c35ad7ea45e17397de2ac190d263cafe96bf637af7838d18343",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::cb_Blue#1",
@@ -121,19 +133,22 @@
       "label": "Trace Blue",
       "family": "application",
       "fingerprint": "0e5255f9ced3c9770227f1d8c52d5e3905605fecde38c89f48b36bdccb43b004",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::rbCurrentKeyframe#1",
@@ -143,19 +158,22 @@
       "label": "Current Keyframe",
       "family": "timeline",
       "fingerprint": "6a79b462a926c62adf236974bfed89c862dbc2413f937d3b27549899904ff159",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::rbAllKeyframes#1",
@@ -165,19 +183,22 @@
       "label": "All Keyframes on Layer",
       "family": "timeline",
       "fingerprint": "f674de0554bc7db37dbafa2d8177189001d950540d1ac4e3d3333afde1282d95",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::buttonBox#1",
@@ -187,19 +208,22 @@
       "label": "",
       "family": "application",
       "fingerprint": "5e35cf729eeca417883ed4115edd3f712cdfc0da46d08ff32051b31666cae8bd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap exact keys, threshold 0..255 and RGB options; at most four million processed pixels per command; interactive dialog cancellation remains outside this bounded command",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/addtransparencytopaperdialog.ui::zoomSlider#1",
@@ -2585,19 +2609,52 @@
       "label": "",
       "family": "layers",
       "fingerprint": "866c52c7623c000b076c802b3d3a7b759240f436179ae6b678f1ffa00a5f39c5",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Current document/revision; explicit layer/key selection",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::chooseOpacitySpinBox#1",
@@ -2607,19 +2664,52 @@
       "label": "",
       "family": "layers",
       "fingerprint": "7aa39741657df7208b08cff8708fef09590d258319917c6f7d1f1b8019391bf5",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Current document/revision; explicit layer/key selection",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::rbActiveKeyframe#1",
@@ -2629,19 +2719,52 @@
       "label": "Active keyframe",
       "family": "layers",
       "fingerprint": "a9ffa41a94f4ed752f361cc9ff539e3084b274d2df11f0ac7a58cae005c7323f",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit frames: one active key, selected exact keys, or every key on the chosen bitmap/vector layer",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::rbSelectedKeyframes#1",
@@ -2651,19 +2774,52 @@
       "label": "Selected keyframe(s)",
       "family": "layers",
       "fingerprint": "914be3ae1c3d4a4ebc31086be83de59ebc12c4548bbde26337e3b86de39caee3",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit frames: one active key, selected exact keys, or every key on the chosen bitmap/vector layer",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::rbActiveLayer#1",
@@ -2673,19 +2829,52 @@
       "label": "Layer",
       "family": "layers",
       "fingerprint": "448ba3dead1da8843d1c6347970163015f189a51d5aa6fa1a20b7d27849076a9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit frames: one active key, selected exact keys, or every key on the chosen bitmap/vector layer",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/layeropacitydialog.ui::btnFadeIn#1",
@@ -2761,19 +2950,22 @@
       "label": "New",
       "family": "application",
       "fingerprint": "28d9febdace91a5f3656a3f4e9d81d8435dab73cdfca8f0d9f31cb2b4f06a927",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.new",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit discard for dirty documents",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.new",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOpen#1",
@@ -2783,19 +2975,22 @@
       "label": "Open",
       "family": "application",
       "fingerprint": "731663e3632674afa5890cc8b0138ebecbcb5f270bf08c02d02fa7561f5497a7",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.open",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Granted path and explicit discard",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.open",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSave#1",
@@ -2805,19 +3000,22 @@
       "label": "Save",
       "family": "documents",
       "fingerprint": "73389f594c5742e7008a876ad0b93d771ee16b5f6e3dca8830526e4a17cd0838",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.save",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit granted pclx output; legacy pcl pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.save",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSave_as#1",
@@ -2827,19 +3025,22 @@
       "label": "Save As...",
       "family": "documents",
       "fingerprint": "ba7eebc50d1cb2d6ebe4cb9fe38f08cf8cbd6b3dc12321b7848908f09a33c3c3",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "document.save",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit new pclx path; legacy format dialog choices pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::document.save",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionExit#1",
@@ -2849,19 +3050,22 @@
       "label": "Exit",
       "family": "application",
       "fingerprint": "fb66c6ff9b0401f88593641afe35452f9f0c2aa1a0872c11b180c7ce498b207d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "session.close",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Clean document or explicit discard; refuses intervening changes",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::session.close",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionExport_ImageSeq#1",
@@ -2937,19 +3141,22 @@
       "label": "Palette",
       "family": "import_export",
       "fingerprint": "7e710463fd272a37de1ad1b2e6f95c96a807e411cefe4097f72abd59f8a9d5b7",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "palette.export",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_palette_roundtrip_and_used_color_guard"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "XML round trip qualified; GPL fixture pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::palette.export",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_Image#1",
@@ -2959,19 +3166,22 @@
       "label": "Image...",
       "family": "import_export",
       "fingerprint": "069502525580d3be64958fecddb91f8a2a7e1409510a80f57ae313f0631601a9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "import.image",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_closed_vector_fill_selection_clear_and_bitmap_import"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Bitmap fixture qualified; complete vector/image format matrix pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::import.image",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_ImageSeq#1",
@@ -2981,19 +3191,23 @@
       "label": "Image Sequence...",
       "family": "import_export",
       "fingerprint": "26262e632cf8316ff6f2c2bae2df89dedab9d68539f0ee82a2a1e74558a371b9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "import.sequence",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_image_sequence_is_one_undoable_import_with_explicit_collisions"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::import.sequence",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_MovieVideo#1",
@@ -3025,19 +3239,22 @@
       "label": "Sound...",
       "family": "import_export",
       "fingerprint": "2aeafcdda81ec59ab2ba8b2ae9cdea470d0f2e5b532756a2cb7383ce2c28c2f6",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "audio.import",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_sound_asset_import_undo_source_independence_and_timing"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Independent one-second WAV fixture; remaining decoder formats pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::audio.import",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_ImageSeqNum#1",
@@ -3069,19 +3286,26 @@
       "label": "Undo",
       "family": "history",
       "fingerprint": "f70b5442a86939ad7c8a1273b1d3654be0c10c7835778a3c23acd63df5480a51",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "history.undo",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_history",
+      "inputs": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionRedo#1",
@@ -3091,19 +3315,26 @@
       "label": "Redo",
       "family": "history",
       "fingerprint": "1f184c769f8f55956ce4f68350bfc572a8f5e2b661050314f805c1b7a9e76032",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "history.redo",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_history",
+      "inputs": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCut#1",
@@ -3113,19 +3344,22 @@
       "label": "Cut",
       "family": "application",
       "fingerprint": "6a64bdd73619684228bdf51fc363c31bf0083428a4f8702f155e0d802bea94a9",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.copy",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Document-internal bitmap region copy/cut into explicit exact destination keys; system clipboard and vector transfer workflow pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.copy",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCopy#1",
@@ -3135,19 +3369,22 @@
       "label": "Copy",
       "family": "application",
       "fingerprint": "6fc26cedbd9dc3bb99d6022d0167aad79eb077b2d72d9877f440d381bd64346a",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.copy",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Document-internal bitmap region copy/cut into explicit exact destination keys; system clipboard and vector transfer workflow pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.copy",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPaste#1",
@@ -3157,19 +3394,22 @@
       "label": "Paste",
       "family": "application",
       "fingerprint": "104bee70e0935d5491ed974fc70c2dddcaf6f241f44e4c6ca0f1a6d0fe6c8b35",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.copy",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Document-internal bitmap region copy/cut into explicit exact destination keys; system clipboard and vector transfer workflow pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.copy",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSelect_All#1",
@@ -3223,19 +3463,22 @@
       "label": "Clear Frame",
       "family": "timeline",
       "fingerprint": "146a20cf83abbf5ab7bc615b01ba0bc674ec821d0cb5484f6da0e43227793f1d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.clear",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_closed_vector_fill_selection_clear_and_bitmap_import"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Exact keys on visible paintable layers; native undo",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::content.clear",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPreference#1",
@@ -3245,19 +3488,23 @@
       "label": "Preferences",
       "family": "application",
       "fingerprint": "b905549c8ee585c7e685c0e6687bae9807318c773e87e7fe73f1595e4a885236",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "settings.configure",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_preferences_shortcuts_captures_and_information"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::settings.configure",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionResetWindows#1",
@@ -3267,19 +3514,23 @@
       "label": "Reset Windows",
       "family": "application",
       "fingerprint": "0f8a7fbcf9bcccf5bb0c11ba07430bb391d5197a282f037b22799302862426a0",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.layout_reset",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.layout_reset",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionZoom_In#1",
@@ -3399,19 +3650,22 @@
       "label": "Horizontal Flip",
       "family": "application",
       "fingerprint": "c9e2b159b7413c052031686a51e9c65a5eb49ce3190685ba9bb170d00b412624",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "view.set",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit view flip, outside content history",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::view.set",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVertical_Flip#1",
@@ -3421,19 +3675,22 @@
       "label": "Vertical Flip",
       "family": "application",
       "fingerprint": "6db3012e1f388b5e34252f6cf3b344fc412eae3392527398fd9dc0756a18429c",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "view.set",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Vertical parameter implemented; direct vertical fixture pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::view.set",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionGrid#1",
@@ -3443,19 +3700,23 @@
       "label": "Grid",
       "family": "application",
       "fingerprint": "2c5e6fbbf0e4ed108245b99185131c2e99e422d5e2f16dc5107e631b5a22f660",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOnionPrev#1",
@@ -3465,19 +3726,23 @@
       "label": "Previous",
       "family": "viewport",
       "fingerprint": "da5f4a18bc5384c8e69315e0a5a281bf1480cc1f6ef564b92ae8e1fa4312051f",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOnionNext#1",
@@ -3487,19 +3752,23 @@
       "label": "Next",
       "family": "viewport",
       "fingerprint": "923aaca225cc528a83f540c987b89e2d476409ab500b247fdc52c66d0e0168a3",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPlay#1",
@@ -3531,19 +3800,22 @@
       "label": "Loop",
       "family": "application",
       "fingerprint": "6a2d414efe038107b2536e5c188104d1b3321c084bbc41b5f70f4251fa941f65",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "project.playback",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit loop/ranged/start/end values; undoable",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::project.playback",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNext_Frame#1",
@@ -3597,19 +3869,34 @@
       "label": "Add Frame",
       "family": "timeline",
       "fingerprint": "8559f25fd20f2d06922728abbffff48509249f33c2f0e689f463c7f5955739fd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.add_key",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "frame": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "frame"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionDuplicate_Frame#1",
@@ -3619,19 +3906,46 @@
       "label": "Duplicate Frame",
       "family": "timeline",
       "fingerprint": "e186449faf7a050419b864d41dda9f515b6710758d236a11994cc21fdeb5f5fc",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.duplicate_key",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "from": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "to": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "index",
+          "from",
+          "to"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionRemove_Frame#1",
@@ -3641,19 +3955,46 @@
       "label": "Remove Frame",
       "family": "timeline",
       "fingerprint": "f0c97c4ff88d4ebc4c6e6f99b7604eb3083b0ba73b509bf3fa898a36bbd17275",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.remove_keys",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "index",
+          "frames"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionMove#1",
@@ -3905,19 +4246,43 @@
       "label": "New Bitmap Layer",
       "family": "layers",
       "fingerprint": "0f832fac51d64ec48d4884b177aad699a988f6bffa47ffaf4149242c36674fc6",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNew_Vector_Layer#1",
@@ -3927,19 +4292,43 @@
       "label": "New Vector Layer",
       "family": "layers",
       "fingerprint": "9a59ccc16608985b6666230127773af227a51f14238794b35db6ee5e9f2414fc",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNew_Sound_Layer#1",
@@ -3949,19 +4338,43 @@
       "label": "New Sound Layer",
       "family": "layers",
       "fingerprint": "21e9663e467c4c8d86249b9e8493be48821762fc7c41de84f2bc43c5b212a98a",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionNew_Camera_Layer#1",
@@ -3971,19 +4384,43 @@
       "label": "New Camera Layer",
       "family": "camera",
       "fingerprint": "f4cf66c70488672659ae32357bfdc84c2be23cfa8f3c0edf9e69ceedac627de7",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.create",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_drawing_save_reopen_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "bitmap",
+              "vector",
+              "sound",
+              "camera"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionDelete_Current_Layer#1",
@@ -3993,19 +4430,34 @@
       "label": "Delete Current Layer",
       "family": "layers",
       "fingerprint": "085c13ca8e335a30d8f24fe714209d3a2696d2521df9003832f4e6476e5975ac",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.delete",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "index"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionHelp#1",
@@ -4125,19 +4577,22 @@
       "label": "Range",
       "family": "application",
       "fingerprint": "530a5a73c334df27008645cec8c4164ce941f996a16640e61e42f6d5d90ab877",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "project.playback",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit loop/ranged/start/end values; undoable",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::project.playback",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionFlip_X#1",
@@ -4147,19 +4602,22 @@
       "label": "Flip X",
       "family": "application",
       "fingerprint": "992b57ef6e306d56ca335e623e104828f1c95f2dd0f97bc8b9d34ebb2898e739",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.transform",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap region/native affine transform; UI and vector selection workflow still pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.transform",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionFlip_Y#1",
@@ -4169,19 +4627,22 @@
       "label": "Flip Y",
       "family": "application",
       "fingerprint": "cb388f21f80418e0413dadd71f73347e6541703cad0aa8f0b9f2876abb9aa48e",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.transform",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Explicit bitmap region/native affine transform; UI and vector selection workflow still pending",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.transform",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionMove_Frame_Forward#1",
@@ -4301,19 +4762,23 @@
       "label": "Animated Image...",
       "family": "import_export",
       "fingerprint": "51e3337c2b83c2517be31e80f6fa90796bc77d7d91ae652af615259e71fc0d75",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "import.animated",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_animated_image_import_preserves_spacing_and_undo"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::import.animated",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionExport_Animated_GIF#1",
@@ -4653,19 +5118,22 @@
       "label": "Append to Palette...",
       "family": "import_export",
       "fingerprint": "f11905d177f5de99e9c6170bd25cfd6242de8c9caff6714028bb5d97ae1cc749",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "palette.import",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_palette_roundtrip_and_used_color_guard"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Native append implementation; XML replacement fixture currently qualified",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::palette.import",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionImport_Replace_Palette#1",
@@ -4675,19 +5143,22 @@
       "label": "Replace Palette...",
       "family": "import_export",
       "fingerprint": "5e2abeadbb279e7516b0aa479765954ada994c100328cbd6acd703fea6030fef",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "palette.import",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_palette_roundtrip_and_used_color_guard"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Preserves existing vector indices; full GPL format matrix pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::palette.import",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionChangeLineColorCurrent_keyframe#1",
@@ -4741,19 +5212,23 @@
       "label": "Layers from Project file...",
       "family": "import_export",
       "fingerprint": "da1e98a0c39ca40497afb70d6cb0d30935a33c8fc29b124b2b464c59d5b64aaa",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "layer.import",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_project_layer_import_copies_content_assets_and_palette"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::layer.import",
+      "reviewed": true,
+      "review_rationale": "Native typed operation; limitations documented in EDITING.md"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVisibilityCurrentLayerOnly#1",
@@ -4763,19 +5238,23 @@
       "label": "Current layer only",
       "family": "layers",
       "fingerprint": "0b08331fc67bd823443378a332fdd14c1f4d393b192edadc96368b92892194cd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVisibilityRelative#1",
@@ -4785,19 +5264,23 @@
       "label": "Relative",
       "family": "application",
       "fingerprint": "9711ad6e3103e06d76939de40c3695688ed54d94b05e76b216e9fca9de056a59",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionVisibilityAll#1",
@@ -4807,19 +5290,23 @@
       "label": "All layers",
       "family": "application",
       "fingerprint": "0312c70e3471089318a1591046bfd6a3fc1b3e53dc356fb495b59d3f1815055d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionReposition_Selected_Frames#1",
@@ -4851,19 +5338,53 @@
       "label": "Layer / Keyframe opacity",
       "family": "layers",
       "fingerprint": "e8114d93195c5c053db73374b146852677f1a0d0e390334559b5d7320cd51670",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "content.opacity",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_layer_properties_order_duplication_opacity_and_deletion"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "opacity"
+        ],
+        "additionalProperties": false
+      },
+      "remaining": "Native fade-in/fade-out dialog actions remain pending; explicit uniform opacity is implemented."
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOpen_Temporary_Directory#1",
@@ -4895,19 +5416,23 @@
       "label": "Lock Windows",
       "family": "application",
       "fingerprint": "6c0c863cea920ff0bfa6ebb0afce1b9a725493dee5fa49cd9d45b65271a60e7d",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCenter_View#1",
@@ -4917,19 +5442,22 @@
       "label": "Center",
       "family": "viewport",
       "fingerprint": "df9629c1126a9a19c6f6abc88097891719a630788fecf9f150500382b20c5a87",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "view.set",
+      "implementation": "partial",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_playback_view_and_safe_close"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Native center parameter implemented; specific center fixture pending",
+      "effects": "Native operation; see shared contract effects",
+      "undo": "See shared operation undo contract",
+      "inputs": "contracts/operations.json::view.set",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionReset_Rotation#1",
@@ -4961,19 +5489,22 @@
       "label": "Replace Paper with Transparency",
       "family": "application",
       "fingerprint": "7e4a7d42b28a74bb10082f46b2b45593cb112721f21bb1c8ba097c8e2672a2a8",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "bitmap.paper",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_bitmap_region_transform_copy_cut_undo_and_paper"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_subset",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Native paper algorithm on explicit exact bitmap keys; preserves native transparency and color classification semantics",
+      "effects": "Native bitmap content transaction",
+      "undo": "native_document_transaction",
+      "inputs": "contracts/operations.json::bitmap.paper",
+      "reviewed": true
     },
     {
       "id": "app/ui/mainwindow2.ui::actionAdd_Frame_Exposure#1",
@@ -4983,19 +5514,52 @@
       "label": "Add Exposure",
       "family": "timeline",
       "fingerprint": "360de2d20febfbf381482cd3c462f08e090c977827b6f2fd2a28e8981ee38619",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.expose",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "delta": {
+            "type": "integer",
+            "minimum": -1000,
+            "maximum": 1000
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "delta"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSubtract_Frame_Exposure#1",
@@ -5005,19 +5569,52 @@
       "label": "Subtract Exposure",
       "family": "timeline",
       "fingerprint": "193c9d5f5dc48793e55aa13dca2b99b5399b1f4128043d4c0a8c05381c450781",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.expose",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          },
+          "delta": {
+            "type": "integer",
+            "minimum": -1000,
+            "maximum": 1000
+          }
+        },
+        "required": [
+          "index",
+          "frames",
+          "delta"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionReverse_Frames_Order#1",
@@ -5027,19 +5624,46 @@
       "label": "Reverse Frames Order",
       "family": "timeline",
       "fingerprint": "c113c174a99a412d2946b850bf7f02afb3f5356f18877adbbf38576ad21058dc",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.reverse",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "index",
+          "frames"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionRemove_Frames#1",
@@ -5049,19 +5673,46 @@
       "label": "Remove Frames",
       "family": "timeline",
       "fingerprint": "a9def7806e1ecf826b9a57e332addf94bc5a6bb5749efb0fa1d92a64650cb9ca",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "timeline.remove_keys",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_timeline_move_duplicate_exposure_reverse_and_remove"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "authenticated_session; current_document_id; expected_revision; editor_idle; visible layer for timeline content edits; current document and revision",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "minItems": 1,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "index",
+          "frames"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/ui/mainwindow2.ui::actionStatusBar#1",
@@ -5071,19 +5722,23 @@
       "label": "Status Bar",
       "family": "application",
       "fingerprint": "63b9151e9e0313c8dfbc37159d72db71feb3b3f2a62c14c675503737bfbcfa33",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionPaste_Previous#1",
@@ -5115,19 +5770,23 @@
       "label": "Show Invisible Lines",
       "family": "application",
       "fingerprint": "960300a58e4659cdc1ff3fa46525329af77a1ce46c6da5bc20c2ff1c0cd7026c",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionShowOutlinesOnly#1",
@@ -5137,19 +5796,23 @@
       "label": "Show Outlines Only",
       "family": "application",
       "fingerprint": "2ddffe1c7d0250be7960ac8366cf716194f5a2b3ce40f7f8e24f80f6ff283f47",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionCenter#1",
@@ -5159,19 +5822,23 @@
       "label": "Center",
       "family": "application",
       "fingerprint": "0be7643826859f3ce9ef02eb7fdbc26efc7262da7fddac571d5b22372334d4b6",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionThirds#1",
@@ -5181,19 +5848,23 @@
       "label": "Thirds",
       "family": "application",
       "fingerprint": "4095b40a02f2b6528f33fd315c86f21f722f73423aa769cdeb517bbc8898305b",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionGoldenRatio#1",
@@ -5203,19 +5874,23 @@
       "label": "Golden Ratio",
       "family": "application",
       "fingerprint": "c6cc09a9bed3acd538f9b4ce058a4cc2e3f3d701e126ce17f4ae9a02ca08217a",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionSafeAreas#1",
@@ -5225,19 +5900,23 @@
       "label": "Safe Areas",
       "family": "application",
       "fingerprint": "6a5e55c37afb22117b6d51cfa5e9b99f499512fdfe47ce27f0a7a178f863096b",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionOnePointPerspective#1",
@@ -5247,19 +5926,23 @@
       "label": "One Point Perspective",
       "family": "application",
       "fingerprint": "98ba28314c2a2b21f19051c2ec8dc081f1cad851886d4d9756067ebf0740d0f5",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionTwoPointPerspective#1",
@@ -5269,19 +5952,23 @@
       "label": "Two Point Perspective",
       "family": "application",
       "fingerprint": "59d63d0e354251a7d02791dcc337f21f96a49ef6e1694ce7a319faac9a6a2b34",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::actionThreePointPerspective#1",
@@ -5291,19 +5978,23 @@
       "label": "Three Point Perspective",
       "family": "application",
       "fingerprint": "b48a2997a01362df1c281098372a2ed968a9fe9f8c6c5d1d06a26215d12b2fcd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action2Degrees#1",
@@ -5313,19 +6004,23 @@
       "label": "2\u00b0",
       "family": "application",
       "fingerprint": "1832531e01c936c6fdeec189b03f313fb732404ff615fbe22c0655bbdea3adbd",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action3Degrees#1",
@@ -5335,19 +6030,23 @@
       "label": "3\u00b0",
       "family": "application",
       "fingerprint": "465cd75af5e29282198b303fa5deb3b7645f03608dd41bcc34c4f9f447b86cdf",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action5Degrees#1",
@@ -5357,19 +6056,23 @@
       "label": "5\u00b0",
       "family": "application",
       "fingerprint": "a28023af77c717676b66e6f2778e7afe6a38bf363270f0cf08f796946fc094a0",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action7_5Degrees#1",
@@ -5379,19 +6082,23 @@
       "label": "7.5\u00b0",
       "family": "application",
       "fingerprint": "5a152c2270b7ec4b1d5280144e8cd38b195c47945484af43bd3f0262ab2c8502",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action10Degrees#1",
@@ -5401,19 +6108,23 @@
       "label": "10\u00b0",
       "family": "application",
       "fingerprint": "7a076ec0a88bb3964de7cc73ed2897532d4e4ef3a137e728f566edf74243ecff",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action15Degrees#1",
@@ -5423,19 +6134,23 @@
       "label": "15\u00b0",
       "family": "application",
       "fingerprint": "904def167d7c31f25cb2b6a61d30617a8c251b12d698c45a1d43434d279c54bb",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action20Degrees#1",
@@ -5445,19 +6160,23 @@
       "label": "20\u00b0",
       "family": "application",
       "fingerprint": "b21c2eafaa01c6456b45da087d0d13408dcb4188edfde38c091c6e971b4658c1",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/mainwindow2.ui::action30Degrees#1",
@@ -5467,19 +6186,23 @@
       "label": "30\u00b0",
       "family": "application",
       "fingerprint": "5dcef3bd703948dde3ab489b7cde8b31412d14166c6446af103794679738caec",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "ui.configure",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_ui_controls_panels_and_invalid_context"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Authenticated, granted workspace, current document/revision; native enabled/context checks",
+      "effects": "settings",
+      "undo": "not_applicable",
+      "inputs": "contracts/operations.json::ui.configure",
+      "reviewed": true,
+      "review_rationale": "Explicit typed native QAction state; disabled/exclusive contexts exercised"
     },
     {
       "id": "app/ui/onionskin.ui::onionPrevFramesNumBox#1",
@@ -17457,19 +18180,34 @@
       "name": "mFpsBox = new QSpinBox(this);",
       "family": "application",
       "fingerprint": "3290e716e72f5aee1408892a5e5e05862253af7871c297cbab5a551cca536cac",
-      "operation": null,
-      "implementation": "pending",
-      "documentation": "pending",
-      "tests": [],
+      "operation": "project.fps",
+      "implementation": "implemented",
+      "documentation": "docs/EDITING.md",
+      "tests": [
+        "tests/test_native.py::test_native_camera_animation_reset_preview_and_save_reopen"
+      ],
       "platforms": {
-        "macos": "unqualified",
+        "macos": "local_native_test_passed",
         "windows": "unqualified",
         "linux": "unqualified"
       },
-      "preconditions": "requires semantic review",
-      "effects": "requires semantic review",
-      "undo": "requires semantic review",
-      "inputs": "requires semantic review"
+      "preconditions": "Current document/revision; explicit layer/key selection",
+      "effects": "document",
+      "undo": "native_document_transaction",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "fps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 120
+          }
+        },
+        "required": [
+          "fps"
+        ],
+        "additionalProperties": false
+      }
     },
     {
       "id": "app/src/timecontrols.cpp::timeSelectMenu->addAction(mNoTimecodeAction = new QAction(tr(\"No text\"), this));#1",

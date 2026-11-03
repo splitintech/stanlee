@@ -1,0 +1,65 @@
+{
+  "checks": [
+    "relocated native startup",
+    "installed SDK stdio",
+    "atomic edit undo/redo",
+    "bitmap region transaction undo",
+    "vector geometry",
+    "independent sound asset and duration",
+    "camera preview",
+    "save/new/reopen",
+    "four distinct PNG frames",
+    "four-frame 24 FPS movie with audio",
+    "native AVI/WebM with audio",
+    "native GIF/APNG frame counts",
+    "source file preservation",
+    "safe close"
+  ],
+  "additional_formats": {
+    "avi": {
+      "frames": 4,
+      "frame_rate": "24/1",
+      "duration": "0.208980",
+      "audio_streams": 1,
+      "codec": "mpeg4"
+    },
+    "webm": {
+      "frames": 4,
+      "frame_rate": "24/1",
+      "duration": "0.174000",
+      "audio_streams": 1,
+      "codec": "vp9"
+    },
+    "gif": {
+      "frames": 4,
+      "frame_rate": "25/1",
+      "duration": "0.170000",
+      "audio_streams": 0,
+      "codec": "gif"
+    },
+    "apng": {
+      "frames": 4,
+      "frame_rate": "24/1",
+      "duration": null,
+      "audio_streams": 0,
+      "codec": "apng"
+    }
+  },
+  "movie": {
+    "width": 320,
+    "height": 240,
+    "frames": 4,
+    "frame_rate": "24/1",
+    "duration": "0.166667",
+    "audio_streams": 1,
+    "codec": "h264"
+  },
+  "passed": true,
+  "target": "macos-arm64",
+  "controller_revision": "256d8c9392939be56616b1a81732bea7d9e890c1",
+  "native_revision": "b7d1b77a60ee3cc48faa327483c31b602b37ce22",
+  "package_sha256": "8904c19ad13aabda50c1737a5a337c29ac31f47cdef9132f494aced0c4125699",
+  "package_architectures": [
+    "arm64"
+  ]
+}
