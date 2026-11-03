@@ -83,7 +83,8 @@ def inspect_media(path: Path, options: ExportOptions, *, movie: bool, probe: str
     result = subprocess.run([probe, "-v", "error", "-count_frames", "-show_streams", "-show_format", "-of", "json", str(path)],
                             capture_output=True, timeout=30, check=False)
     if result.returncode:
-        raise StanleeError("output_invalid", "ffprobe could not decode native output")
+        raise StanleeError("output_invalid", "ffprobe could not decode native output",
+                           {"file":path.name,"exit_code":result.returncode,"stderr":result.stderr.decode(errors="replace")[-2000:]})
     data = json.loads(result.stdout)
     videos = [s for s in data.get("streams", []) if s.get("codec_type") == "video"]
     if not videos:
@@ -191,7 +192,11 @@ def export_saved(executable: Path, workspace: Workspace, options: ExportOptions,
                 target = workspace.path(str(destination.parent/file.name))
                 if target.exists() and not options.overwrite:
                     raise StanleeError("overwrite_required", "An output sequence frame already exists")
-                metadata = inspect_media(file, options, movie=movie, probe=probe)
+                try:
+                    metadata = inspect_media(file, options, movie=movie, probe=probe)
+                except StanleeError as error:
+                    error.details['native_log_tail'] = log[-8000:]
+                    raise
                 publish.append((file, target, metadata))
         if cancelled.is_set():
             raise StanleeError("cancelled", "Cancelled before publication")

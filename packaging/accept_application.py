@@ -102,7 +102,11 @@ async def accept(root,application,python):
             path=root/'reference.pclx';await edit('document.save',{'path':str(path)})
             saved=digest(path)
             await edit('document.new',{'discard':True});await edit('document.open',{'path':str(path)})
-            state=await inspect();assert state['fps']==24 and len(state['layers'])==4
+            for _ in range(200):
+                state=await inspect()
+                if state['layers'][sound]['frames'][0]['duration_ms']==1000:break
+                await asyncio.sleep(.05)
+            assert state['fps']==24 and len(state['layers'])==4 and state['layers'][sound]['frames'][0]['duration_ms']==1000
             async def export(outputs,end,transparency):
                 state=await inspect()
                 job=(await call('export_document',{'session_id':sid,'expected_revision':state['revision'],'document_id':state['document_id'],
@@ -111,19 +115,27 @@ async def accept(root,application,python):
                     result=(await call('job_status',{'job_id':job['job_id']})).structured_content
                     if result['state'] not in {'queued','running'}:break
                     await asyncio.sleep(.1)
-                assert result['state']=='succeeded',result
+                assert result['state']=='succeeded',(str(outputs),result)
                 return result['detail']['outputs']
             images=await export([root/'frames.png'],'4',True)
             assert len(images)==4 and len({i['sha256'] for i in images})==4
             movie=(await export([root/'reference.mp4'],'4',False))[0]
             assert movie['frames']==4 and movie['frame_rate']=='24/1' and movie['audio_streams']==1,movie
             assert abs(float(movie['duration'])-4/24)<.05,movie
+            formats={}
+            for extension in ('avi','webm','gif','apng'):
+                output=(await export([root/('reference.'+extension)],'4',False))[0]
+                assert output['frames']==4,output
+                assert output['audio_streams']==(1 if extension in {'avi','webm'} else 0),output
+                if extension in {'avi','webm'}:
+                    assert output['frame_rate']=='24/1' and abs(float(output['duration'])-4/24)<.06,output
+                formats[extension]={k:output[k] for k in ('frames','frame_rate','duration','audio_streams','codec')}
             assert digest(path)==saved,'Export changed the saved project'
             await edit('session.close',{})
             return {'checks':['relocated native startup','installed SDK stdio','atomic edit undo/redo','bitmap region transaction undo','vector geometry',
                 'independent sound asset and duration','camera preview','save/new/reopen','four distinct PNG frames',
-                'four-frame 24 FPS movie with audio','source file preservation','safe close'],
-                'movie':{k:movie[k] for k in ('width','height','frames','frame_rate','duration','audio_streams','codec')},'passed':True}
+                'four-frame 24 FPS movie with audio','native AVI/WebM with audio','native GIF/APNG frame counts','source file preservation','safe close'],
+                'additional_formats':formats,'movie':{k:movie[k] for k in ('width','height','frames','frame_rate','duration','audio_streams','codec')},'passed':True}
     finally:
         if service._jobs:service.jobs.close()
         for child in service.children:

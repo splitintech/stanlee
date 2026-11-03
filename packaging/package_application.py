@@ -133,6 +133,7 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--architecture',choices=['arm64','x86_64'],required=True)
     parser.add_argument('--license-dir',type=Path,action='append',default=[])
+    parser.add_argument('--encoder-manifest',type=Path)
     args=parser.parse_args()
     validator=args.encoder.parent/('ffprobe.exe' if sys.platform=='win32' else 'ffprobe')
     if not validator.is_file():raise RuntimeError('The encoder distribution must also include ffprobe')
@@ -141,6 +142,12 @@ def main():
     revision=run('git','-C',args.native,'rev-parse','HEAD')
     if revision!=build['fork_revision']:raise RuntimeError('Native source differs from the immutable package pin')
     if run('git','-C',args.native,'status','--porcelain','--untracked-files=no'):raise RuntimeError('Native source has uncommitted changes')
+    encoder_build=None
+    if args.encoder_manifest:
+        encoder_build=json.loads(args.encoder_manifest.read_text())
+        if encoder_build['architecture']!=args.architecture:raise RuntimeError('Encoder architecture differs from package target')
+        for name,path in [('bin/ffmpeg',args.encoder),('bin/ffprobe',validator)]:
+            if encoder_build['files'].get(name)!=sha(path):raise RuntimeError('Encoder bytes differ from source-build receipt')
     version=run(args.qt_bin/'qmake','-query','QT_VERSION')
     encoder_info=run(args.encoder,'-version')
     if '--enable-nonfree' in encoder_info:raise RuntimeError('Nonredistributable FFmpeg configuration is not permitted')
@@ -188,7 +195,7 @@ def main():
         manifest={'schema_version':1,'channel':'experimental','stable_qualified':False,'signing':'ad-hoc-only' if system=='macos' else 'unsigned',
                   'controller_revision':run('git','-C',repository,'rev-parse','HEAD'),'native_revision':revision,'upstream_revision':build['upstream_revision'],
                   'platform':system,'architectures':[args.architecture],'qt':version,'bridge_protocol':build['bridge_protocol'],
-                  'encoder':encoder_info.splitlines()[0],'dependencies':dependencies,
+                  'encoder':encoder_info.splitlines()[0],'encoder_build':encoder_build,'dependencies':dependencies,
                   'build_host':platform.platform(),'requires':{'python':'3.11+ for the separate MCP package'},
                   'symlinks':{str(p.relative_to(root)):os.readlink(p) for p in root.rglob('*') if p.is_symlink()},
                   'files':{str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and not p.is_symlink()}}

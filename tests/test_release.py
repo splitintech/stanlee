@@ -70,3 +70,14 @@ def test_empty_or_generic_json_cannot_qualify_client_proof(tmp_path):
     failures=evaluate(tmp_path,record)
     assert 'Capability inventory is empty' in failures
     assert 'Client reference workflow missing: macos/codex' in failures
+
+
+def test_encoder_source_integrity_fails_before_extraction(tmp_path,monkeypatch):
+    import io,hashlib
+    import build_macos_encoder as builder
+    entry={'name':'codec','version':'pinned','url':'https://example.invalid/codec.tar.gz',
+           'sha256':hashlib.sha256(b'official bytes').hexdigest()}
+    monkeypatch.setattr(builder.urllib.request,'urlopen',lambda *args,**kwargs:io.BytesIO(b'tampered source bytes'))
+    with pytest.raises(ValueError,match='Source checksum mismatch'):
+        builder.download(entry,tmp_path)
+    assert list(tmp_path.iterdir())==[]

@@ -58,3 +58,25 @@ version/architecture while retaining normal archive checksum verification and
 relocation. Other Qt versions/architectures are not rewritten. The official catalog
 dry run resolves base and multimedia archives. Acceptance removes build-machine
 Qt plugin/loader/PATH settings before launching the extracted application.
+
+
+## Pinned Mac encoder
+
+Mac packages build FFmpeg, x264, libvpx, Opus and LAME from `encoder-sources.json`.
+Archive hashes are mandatory before extraction. CLI codecs are statically linked;
+any remaining non-system shared dependency fails the build. Each package includes
+those exact source archives, license notices and a build receipt tied to executable
+hashes. This avoids architecture-divergent Homebrew codec ABIs. Qt media backend
+libraries remain separately deployed from the official Qt SDK.
+
+The encoder build requires macOS 14.4 or newer and native ARM/Intel compilation.
+CI caches are bound to architecture, runner image, source lock and builder code.
+Receipts and files are checked again on cache use. Universal manifests retain
+encoder build/dependency inventories for both CPUs; architecture-specific notices
+are preserved in separate directories. Every runtime Mach-O must contain both
+slices, and the final universal archive is accepted independently on both runners.
+
+The fixture also tests native AVI/WebM audio and GIF/APNG frame counts. GIF frame
+delays have centisecond quantization, APNG may omit a container duration field, and
+AVI can retain audio padding beyond the last video frame. Exact four-frame video
+counts remain required. Full format/codec/content acceptance is still unfinished.

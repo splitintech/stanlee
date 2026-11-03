@@ -23,7 +23,7 @@ waived or converted into unsupported upstream limitations.
 Native source integration is on `splitintech/pencil` branch
 `stanlee/qualified-integration`, pinned by this repository's build manifest. Normal
 fork `master` remains upstream code. The integrated native suite passes **1,175 assertions in
-79 cases** locally through both qmake and CMake. **72 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
+79 cases** locally through both qmake and CMake. **73 Python/native integration, CLI and release-boundary tests** pass locally (one Windows-only test skipped on Mac); the
 latest CI results must be read separately from this local evidence.
 
 The native shared registry currently advertises 67 implemented development
@@ -157,3 +157,17 @@ mappings; clipboard and selection UI workflows remain explicitly partial. Latest
 source pin and platform qualification are recorded separately from this local proof.
 
 The new bitmap source pin is `02c10d7d0953b4f1fbb12e9fcd46fa5fdb3a2622`.
+
+
+All architecture packages for the 63-operation checkpoint passed installed SDK
+acceptance on Windows, Linux, Mac ARM and Intel at `6bc4e0e`. The universal merge
+correctly rejected divergent Homebrew codec ABIs. The Mac encoder now builds from
+one source lock (FFmpeg 9.0.2, x264, libvpx, Opus and LAME), with static codecs,
+source archives and build receipts. Native WebM export now selects a compatible
+pixel format explicitly; the prior FFmpeg auto-selection produced an empty file.
+The extended SDK fixture validates AVI/WebM audio and GIF/APNG frame counts as well
+as PNG/MP4. GIF timing reflects its centisecond quantization; AVI audio padding can
+extend container duration beyond the four video frames. Final source-build package
+and universal/platform qualification remain separate pending evidence.
+
+The current native pin including the WebM format repair is `5b25d9495c01580dc6ef8ce8a0e56636a60563b7`.

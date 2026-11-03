@@ -6,4 +6,4 @@ recursive-include tests *.py
 recursive-include .github *.yml
 recursive-include patches *.patch *.json *.md
 include .gitattributes
-recursive-include packaging *.py
+recursive-include packaging *.py *.json

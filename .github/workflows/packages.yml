@@ -42,7 +42,7 @@ jobs:
           - {os: ubuntu-24.04, arch: x86_64, qt_arch: linux_gcc_64, tag: linux-x86_64}
           - {os: windows-2022, arch: x86_64, qt_arch: win64_msvc2022_64, tag: windows-x86_64}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -63,6 +63,7 @@ jobs:
           version: '6.12.0'
           arch: ${{ matrix.qt_arch }}
           modules: qtmultimedia
+          setup-python: false
           cache: true
       - name: Install Windows Qt from its split MSVC repository
         if: runner.os == 'Windows'
@@ -79,9 +80,19 @@ jobs:
       - name: Linux build and encoder dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libegl1 libxkbcommon-x11-0 libxcb-cursor0 libpulse0 ffmpeg patchelf
-      - name: Mac encoder
+      - name: Mac encoder build tools
         if: runner.os == 'macOS'
-        run: brew install ffmpeg
+        run: brew install nasm
+      - uses: actions/cache@v6
+        if: runner.os == 'macOS'
+        with:
+          path: |
+            encoder/install
+            encoder/source-archives
+          key: encoder-${{ matrix.os }}-${{ hashFiles('packaging/build_macos_encoder.py', 'packaging/encoder-sources.json', 'packaging/package_application.py') }}
+      - name: Build common pinned static Mac encoder
+        if: runner.os == 'macOS'
+        run: python packaging/build_macos_encoder.py --work encoder --jobs 4
       - name: Windows encoder
         if: runner.os == 'Windows'
         run: choco install ffmpeg --yes --no-progress
@@ -125,8 +136,12 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          if [ "$RUNNER_OS" = macOS ]; then app=native/build/app/Pencil2D-Stanlee.app; else app=native/build/app/pencil2d-stanlee; fi
-          python packaging/package_application.py --native native --application "$app" --qt-bin "$(dirname "$(command -v qmake)")" --encoder "$(command -v ffmpeg)" --architecture '${{ matrix.arch }}' --license-dir vendor-licenses/Qt --output dist
+          if [ "$RUNNER_OS" = macOS ]; then
+            app=native/build/app/Pencil2D-Stanlee.app
+            python packaging/package_application.py --native native --application "$app" --qt-bin "$(dirname "$(command -v qmake)")" --encoder encoder/install/bin/ffmpeg --encoder-manifest encoder/install/build-manifest.json --architecture '${{ matrix.arch }}' --license-dir vendor-licenses/Qt --license-dir encoder/install/licenses/Encoder --output dist
+          else
+            python packaging/package_application.py --native native --application native/build/app/pencil2d-stanlee --qt-bin "$(dirname "$(command -v qmake)")" --encoder "$(command -v ffmpeg)" --architecture '${{ matrix.arch }}' --license-dir vendor-licenses/Qt --output dist
+          fi
       - name: Deploy Windows application
         if: runner.os == 'Windows'
         shell: pwsh
