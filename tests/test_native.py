@@ -23,7 +23,7 @@ pytestmark = pytest.mark.skipif(not os.environ.get("STANLEE_TEST_APP"), reason="
 
 
 @pytest.fixture
-def native():
+def native(request):
     with tempfile.TemporaryDirectory(prefix="st-", dir="/private/tmp" if os.sys.platform == "darwin" else None) as folder:
         root = Path(folder).resolve()
         sessions = root/"sessions"
@@ -32,6 +32,9 @@ def native():
         environment.update(QT_QPA_PLATFORM=os.environ.get("STANLEE_QPA_PLATFORM", "offscreen"), QT_STYLE_OVERRIDE="Fusion",
                            STANLEE_AUTOMATION="1", STANLEE_DISCOVERY_DIR=str(sessions),
                            STANLEE_WORKSPACES=str(root), STANLEE_SETTINGS_DIR=str(root/"settings"))
+        if getattr(request, 'param', None) == 'isolated-temp':
+            temporary = root/'native-temporary'; temporary.mkdir()
+            environment.update(TMPDIR=str(temporary), TMP=str(temporary), TEMP=str(temporary))
         log = (root/"native.log").open("w")
         process = subprocess.Popen([os.environ["STANLEE_TEST_APP"]], env=environment, stdin=subprocess.DEVNULL, stdout=log, stderr=log)
         service = Service([str(root)], sessions)
@@ -150,6 +153,34 @@ def test_native_animated_image_import_preserves_spacing_and_undo(native):
     assert {key['frame'] for key in result['layers'][target]['frames']} == {1, 4}
     mutate(service, session, 'history.undo', {})
     assert service.command(session, 'frame.preview', {})['data'] == before
+
+
+@pytest.mark.parametrize('native', ['isolated-temp'], indirect=True)
+def test_native_restored_missing_assets_invalidate_the_unavailable_revision(native):
+    import wave
+    service, session, root = native
+    source = root/'asset.wav'
+    with wave.open(str(source), 'wb') as output:
+        output.setnchannels(1); output.setsampwidth(2); output.setframerate(8000); output.writeframes(b'\0\0'*2000)
+    index = mutate(service, session, 'layer.create', {'type': 'sound', 'name': 'Recovery edge'})['layer_index']
+    mutate(service, session, 'audio.import', {'index': index, 'frame': 1, 'path': str(source)})
+    for _ in range(200):
+        if service.inspect(session)['layers'][index]['frames'][0]['duration_ms'] == 250: break
+        time.sleep(.05)
+    owned = root/'native-temporary'
+    assets = {path: path.read_bytes() for path in owned.rglob('*.wav')}
+    assert assets, 'Fixture must affect only native assets in its own temporary directory'
+    for path in assets: path.unlink()
+    unavailable = service.inspect(session)
+    assert unavailable['content_available'] is False
+    with pytest.raises(StanleeError, match='missing_asset'):
+        service.command(session, 'project.fps', {'fps': 24}, unavailable['revision'], unavailable['document_id'])
+    for path, data in assets.items(): path.write_bytes(data)
+    restored = service.inspect(session)
+    assert restored['content_available'] is True
+    assert restored['revision'] > unavailable['revision']
+    with pytest.raises(StanleeError, match='stale_revision'):
+        service.command(session, 'project.fps', {'fps': 24}, unavailable['revision'], unavailable['document_id'])
 
 
 @pytest.mark.parametrize('layer_type', ['bitmap', 'vector'])

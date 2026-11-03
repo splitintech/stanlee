@@ -21,8 +21,8 @@ are not a product-completion percentage.
 
 ## Current local source
 
-`build-manifest.json` pins native `880b49778b71e865b837506bab9e4eaa3a3b47a1`
-on the review integration branch. Local verification passes **237 Python/native
+`build-manifest.json` pins native `f862a26167d207145972864b91d704758ce104c6`
+on the review integration branch. Local verification passes **238 Python/native
 integration, CLI, recovery and packaging tests**, with one Windows-only test skipped
 on Mac, plus **83 native cases / 1,210 assertions** through qmake and CMake.
 Both bridge-enabled and bridge-disabled CMake applications build on Mac.
@@ -31,6 +31,8 @@ The audit-gap implementation synchronizes first job-manager construction,
 preserves existing POSIX output access modes, validates typed native payloads and
 PNG image metadata, reconciles unobserved GUI content changes through independent
 snapshots, and streams native archives through atomic `QSaveFile` publication.
+Missing/restored assets also invalidate revisions, and capability/event probes
+do not snapshot or mark dirty a document opened outside the workspace grant.
 Native process death before archive commit preserves the original project.
 Media validation enforces resolved format/dimensions/range/video timing and
 expected audio-stream presence. Complete image/audio content equivalence remains
@@ -39,6 +41,9 @@ queued jobs can time out, authorized peer CLI instances can request owner-handle
 cancellation, and imports reject document revisions changed during decoding.
 The current source requires fresh platform/package/client qualification; historical
 package runs below qualify their recorded revisions only.
+The native CI fixture explicitly deploys its installed encoder/probe beside the
+source app; production Mac/Windows encoder lookup remains restricted to the
+application's deployed tools.
 
 Native export handling propagates image/movie failures into CLI exit status,
 rejects invalid numeric/range/format/camera requests, and rejects ambiguous explicit
